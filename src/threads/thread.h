@@ -138,4 +138,5 @@ int thread_get_load_avg (void);
 void sleep_thread(int64_t ticks);
 void awake_thread(int64_t ticks); 
 bool priority_compare (const struct list_elem *a, const struct list_elem *b, void *aux);
+void test_max_priority(void);
 #endif /* threads/thread.h */
