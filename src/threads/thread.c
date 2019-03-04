@@ -55,6 +55,8 @@ static long long user_ticks;    /* # of timer ticks in user programs. */
 #define TIME_SLICE 4            /* # of timer ticks to give each thread. */
 static unsigned thread_ticks;   /* # of timer ticks since last yield. */
 
+static struct list sleep_list; /*List for sleeping threads*/
+
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */
@@ -95,12 +97,15 @@ thread_init (void)
 
   lock_init (&tid_lock);
   list_init (&ready_list);
+  //list_init (&all_list);
+  list_init (&sleep_list);
 
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
   init_thread (initial_thread, "main", PRI_DEFAULT);
   initial_thread->status = THREAD_RUNNING;
   initial_thread->tid = allocate_tid ();
+  initial_thread->wake_up = 0; 
 }
 
 /* Starts preemptive thread scheduling by enabling interrupts.
@@ -140,6 +145,8 @@ thread_tick (void)
   /* Enforce preemption. */
   if (++thread_ticks >= TIME_SLICE)
     intr_yield_on_return ();
+
+  awake_thread(ticks);
 }
 
 /* Prints thread statistics. */
@@ -444,6 +451,7 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
   t->magic = THREAD_MAGIC;
+  t->wake_up = 0;
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
@@ -559,3 +567,34 @@ allocate_tid (void)
 /* Offset of `stack' member within `struct thread'.
    Used by switch.S, which can't figure it out on its own. */
 uint32_t thread_stack_ofs = offsetof (struct thread, stack);
+
+void sleep_thread(int64_t ticks) {
+  /*ticks : time that the thread should wake up*/
+  struct thread *cur = thread_current();
+  ASSERT(cur != idle_thread);
+  cur->wake_up = ticks;
+  list_push_back(&sleep_list, &cur->sleep_elem);
+  thread_block();
+}
+
+void awake_thread(int64_t ticks) {
+
+  struct list_elem *e = list_begin(&sleep_list);
+
+  ASSERT (intr_get_level () == INTR_OFF);
+
+  while (e != list_end(&sleep_list)) {
+
+    struct thread *cur = list_entry(e, struct thread, sleep_elem);
+
+    /*awake*/
+    if (cur->wake_up <= ticks) {
+      cur->wake_up = 0;
+      list_remove(&cur->sleep_elem);
+      thread_unblock(cur);
+    }
+
+    e = list_next(e);
+  }
+
+}
