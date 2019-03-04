@@ -128,7 +128,7 @@ thread_start (void)
 /* Called by the timer interrupt handler at each timer tick.
    Thus, this function runs in an external interrupt context. */
 void
-thread_tick (void) 
+thread_tick (int64_t ticks) 
 {
   struct thread *t = thread_current ();
 
