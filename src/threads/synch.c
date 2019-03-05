@@ -119,7 +119,7 @@ sema_up (struct semaphore *sema)
   old_level = intr_disable ();
   
   if (!list_empty (&sema->waiters)) {
-  list_sort(&(sema->waiters), priority_compare, 0);
+    list_sort(&(sema->waiters), priority_compare, 0); /*We need to consider why this sort is mandatory*/
     thread_unblock (t = list_entry (list_pop_front (&sema->waiters),
                                 struct thread, elem));
   }
@@ -208,6 +208,8 @@ lock_acquire (struct lock *lock)
 
   struct thread *cur = thread_current();
   cur->hurdle = lock;
+  if (lock->holder == NULL) lock->priority = cur->priority;
+    
 
   priority_donation(lock);
   sema_down (&lock->semaphore);
@@ -364,7 +366,6 @@ void priority_donation(struct lock *lock_donate) {
   struct thread *t = lock_donate->holder;
 
   if (t == NULL) {
-    lock_donate->priority = cur->priority;
     return;
   }
 
