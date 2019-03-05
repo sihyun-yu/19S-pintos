@@ -390,7 +390,7 @@ void priority_donation_finished (struct lock *lock) {
     priority_change(cur, cur->original_priority);
   }
   else {
-    //list_sort(&(cur->lock_list), lock_priority_compare, NULL);
+    list_sort(&(cur->lock_list), lock_priority_compare, NULL);
     priority_change(cur, list_entry( list_front(&(cur->lock_list)), struct lock, lock_elem )->priority);  
 
   }
