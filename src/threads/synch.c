@@ -205,7 +205,7 @@ lock_acquire (struct lock *lock)
   ASSERT (!lock_held_by_current_thread (lock));
 
   struct thread *cur = thread_current();
-  cur->hurdle = lock;
+  //cur->hurdle = lock;
 
   priority_donation(lock);
   sema_down (&lock->semaphore);
@@ -354,7 +354,7 @@ cond_broadcast (struct condition *cond, struct lock *lock)
     cond_signal (cond, lock);
 }
 
-void priority_donation(struct lock *lock_donate) {
+/*void priority_donation(struct lock *lock_donate) {
 
   if (lock_donate == NULL) return;
 
@@ -376,6 +376,30 @@ void priority_donation(struct lock *lock_donate) {
 
   lock_donate = t->hurdle;
   priority_donation(lock_donate);
+}*/
+
+void priority_donation (struct lock *lock_donate) {
+
+  struct thread *cur = thread_current();
+  struct thread *t = lock_donate->holder;
+
+  cur->hurdle = lock_donate; // hmmmm
+
+  if (t == NULL) lock_donate->priority = cur->priority;
+
+  while (t!=NULL && t->priority < cur->priority) {
+
+    priority_change(t, cur->priority);
+
+    if (lock_donate->priority < cur->priority) {
+      lock_donate->priority = cur->priority;
+    }
+    //need to update t
+    lock_donate = t->hurdle;
+    if (lock_donate == NULL) return;
+    t = lock_donate->holder; 
+  }
+
 }
 
 
