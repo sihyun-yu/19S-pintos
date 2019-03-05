@@ -184,8 +184,8 @@ void
 lock_init (struct lock *lock)
 {
   ASSERT (lock != NULL);
-
   lock->holder = NULL;
+  lock->priority = 0;
   sema_init (&lock->semaphore, 1);
 }
 
@@ -204,8 +204,15 @@ lock_acquire (struct lock *lock)
   ASSERT (!intr_context ());
   ASSERT (!lock_held_by_current_thread (lock));
 
+  struct thread *cur = thread_current();
+  cur->hurdle = lock;
+
+  priority_donation(lock);
   sema_down (&lock->semaphore);
-  lock->holder = thread_current ();
+  lock->holder = cur;
+  lock->holder->hurdle = NULL; // Now, acquired 
+
+  list_insert_ordered(&lock->holder->lock_list, &lock->lock_elem, lock_priority_compare, 0);
 }
 
 /* Tries to acquires LOCK and returns true if successful or false
@@ -242,6 +249,7 @@ lock_release (struct lock *lock)
 
   lock->holder = NULL;
   sema_up (&lock->semaphore);
+  priority_donation_finished(lock);
 }
 
 /* Returns true if the current thread holds LOCK, false
@@ -345,3 +353,48 @@ cond_broadcast (struct condition *cond, struct lock *lock)
   while (!list_empty (&cond->waiters))
     cond_signal (cond, lock);
 }
+
+void priority_donation(struct lock *lock_donate) {
+
+  if (lock_donate == NULL) return;
+
+  struct thread *cur = thread_current();
+  struct thread *t = lock_donate->holder;
+
+  if (t == NULL) {
+    lock_donate->priority = cur->priority;
+    return;
+  }
+
+  if (t->priority >= cur->priority) return;
+  
+  priority_change (t, cur->priority);
+
+  if (lock_donate->priority < cur->priority) {
+    lock_donate->priority = cur->priority;
+  }
+
+  lock_donate = t->hurdle;
+  priority_donation(lock_donate);
+}
+
+
+void priority_donation_finished (struct lock *lock) {
+  struct thread *cur = thread_current();
+
+  list_remove(&lock->lock_elem);
+
+  if (list_empty(&cur->lock_list)) {
+    priority_change(cur, cur->original_priority);
+  }
+  else {
+    //list_sort(&(cur->lock_list), lock_priority_compare, NULL);
+    priority_change(cur, list_entry( list_front(&(cur->lock_list)), struct lock, lock_elem )->priority);  
+
+  }
+}
+
+bool lock_priority_compare (struct list_elem *e1, struct list_elem *e2, void *aux UNUSED){
+  return list_entry (e1, struct lock, lock_elem)->priority > list_entry (e2, struct lock, lock_elem)->priority; 
+}
+

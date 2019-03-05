@@ -7,6 +7,7 @@
 /* A counting semaphore. */
 struct semaphore 
   {
+    int priority;
     unsigned value;             /* Current value. */
     struct list waiters;        /* List of waiting threads. */
   };
@@ -22,6 +23,8 @@ struct lock
   {
     struct thread *holder;      /* Thread holding lock (for debugging). */
     struct semaphore semaphore; /* Binary semaphore controlling access. */
+    struct list_elem lock_elem;
+    int priority;
   };
 
 void lock_init (struct lock *);
@@ -46,6 +49,11 @@ void cond_broadcast (struct condition *, struct lock *);
    The compiler will not reorder operations across an
    optimization barrier.  See "Optimization Barriers" in the
    reference guide for more information.*/
+
+void priority_donation (struct lock *);
+void priority_donation_finished (struct lock *);
+bool lock_priority_compare (struct list_elem *, struct list_elem *, void *aux);
+
 #define barrier() asm volatile ("" : : : "memory")
 
 #endif /* threads/synch.h */

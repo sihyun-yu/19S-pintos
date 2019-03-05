@@ -97,7 +97,6 @@ thread_init (void)
 
   lock_init (&tid_lock);
   list_init (&ready_list);
-  //list_init (&all_list);
   list_init (&sleep_list);
 
   /* Set up a thread structure for the running thread. */
@@ -329,8 +328,16 @@ thread_yield (void)
 void
 thread_set_priority (int new_priority) 
 {
-  thread_current ()->priority = new_priority;
-  test_max_priority();
+  struct thread *cur = thread_current();
+  if (cur->priority == cur->original_priority) cur->priority = new_priority;
+  cur->original_priority = new_priority;
+  
+  if (!list_empty (&ready_list)) {
+    struct thread *t = list_entry(list_begin(&ready_list), struct thread, elem);
+      if (t->priority > new_priority) {
+      thread_yield();
+    }
+  }
 }
 
 /* Returns the current thread's priority. */
@@ -453,7 +460,9 @@ init_thread (struct thread *t, const char *name, int priority)
   memset (t, 0, sizeof *t);
   t->status = THREAD_BLOCKED;
   strlcpy (t->name, name, sizeof t->name);
+  list_init(&t->lock_list);
   t->stack = (uint8_t *) t + PGSIZE;
+  t->original_priority = priority;
   t->priority = priority;
   t->magic = THREAD_MAGIC;
   t->wake_up = 0;
@@ -615,3 +624,16 @@ void test_max_priority(void) {
   }
 }
 
+
+void priority_change(struct thread *t, int priority) {
+  t->priority = priority;
+
+  if (t == thread_current() && !list_empty(&ready_list)) {
+
+    struct thread *maximum = list_entry(list_begin(&ready_list), struct thread, elem);
+
+      if (maximum->priority > priority) {
+        thread_yield();
+     }
+  }
+}

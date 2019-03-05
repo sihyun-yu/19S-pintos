@@ -87,12 +87,18 @@ struct thread
     enum thread_status status;          /* Thread state. */
     char name[16];                      /* Name (for debugging purposes). */
     uint8_t *stack;                     /* Saved stack pointer. */
+    int original_priority;
     int priority;                       /* Priority. */
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
     struct list_elem sleep_elem;
     int64_t wake_up;
+
+    /*for donation */
+
+    struct list lock_list;
+    struct lock *hurdle;
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
@@ -139,4 +145,5 @@ void sleep_thread(int64_t ticks);
 void awake_thread(int64_t ticks); 
 bool priority_compare (const struct list_elem *a, const struct list_elem *b, void *aux);
 void test_max_priority(void);
+void priority_change(struct thread *, int priority);
 #endif /* threads/thread.h */
