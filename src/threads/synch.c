@@ -316,7 +316,8 @@ cond_wait (struct condition *cond, struct lock *lock)
   ASSERT (lock_held_by_current_thread (lock));
   
   sema_init (&waiter.semaphore, 0);
-  list_push_back (&cond->waiters, &waiter.elem);
+  list_insert_ordered(&cond->waiters, &waiter.elem, sema_priority_compare, 0);
+  //list_push_back (&cond->waiters, &waiter.elem);
   lock_release (lock);
   sema_down (&waiter.semaphore);
   lock_acquire (lock);
@@ -390,7 +391,7 @@ void priority_donation_finished (struct lock *lock) {
     priority_change(cur, cur->original_priority);
   }
   else {
-    list_sort(&(cur->lock_list), lock_priority_compare, NULL);
+    list_sort(&(cur->lock_list), lock_priority_compare, NULL); /*Need to be considered */
     priority_change(cur, list_entry( list_front(&(cur->lock_list)), struct lock, lock_elem )->priority);  
 
   }
@@ -400,3 +401,7 @@ bool lock_priority_compare (struct list_elem *e1, struct list_elem *e2, void *au
   return list_entry (e1, struct lock, lock_elem)->priority > list_entry (e2, struct lock, lock_elem)->priority; 
 }
 
+
+bool sema_priority_compare (struct list_elem *e1, struct list_elem *e2, void *aux UNUSED){
+  return list_entry (e1, struct semaphore_elem, elem)->semaphore.priority > list_entry (e2, struct semaphore_elem, elem)->semaphore.priority; 
+}

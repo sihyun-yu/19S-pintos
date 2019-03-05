@@ -53,6 +53,7 @@ void cond_broadcast (struct condition *, struct lock *);
 void priority_donation (struct lock *);
 void priority_donation_finished (struct lock *);
 bool lock_priority_compare (struct list_elem *, struct list_elem *, void *aux);
+bool sema_priority_compare (struct list_elem *, struct list_elem *, void *aux);
 
 #define barrier() asm volatile ("" : : : "memory")
 
