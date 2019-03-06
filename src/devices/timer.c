@@ -141,22 +141,6 @@ timer_interrupt (struct intr_frame *args UNUSED)
   ticks++;
   if (thread_current() != idle_thread) thread_current()->recent_cpu += (1<<14);
 
-  struct list_elem *e;
-
-  for (e = list_begin (&ready_list); e != list_end (&ready_list);
-       e = list_next (e))
-    {
-      struct thread *t = list_entry (e, struct thread, elem);
-      /*recalculate recent_cpu*/
-    }
-
-  for (e = list_begin (&sleep_list); e != list_end (&sleep_list);
-       e = list_next (e))
-    {
-      struct thread *t = list_entry (e, struct thread, sleep_elem);
-      /*recalculate recent_cpu*/
-    }
-
   /*recalculate current thread's recent cpu*/
 
    thread_tick (timer_ticks());
