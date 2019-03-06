@@ -380,7 +380,7 @@ thread_get_load_avg (void)
   int i = 0;
   int imsi = 0;
 
-  while (load_avg > (60 * (2 << i)) ) {
+  while (load_avg > (60 * (1 << i)) ) {
   	i++;
   }
   // i = 17;
