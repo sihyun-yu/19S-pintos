@@ -370,7 +370,7 @@ int
 thread_get_load_avg (void) 
 {
   int cnt_ready_list = list_size(&ready_list);
-  //load_avg = ((59/60) * load_avg  +  (1/60) * cnt_ready_list);
+  load_avg = ((59/60) * load_avg + (1/60) * cnt_ready_list);
   return (int)(100 * load_avg);
 }
 
