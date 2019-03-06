@@ -374,13 +374,13 @@ thread_get_nice (void)
 int
 thread_get_load_avg (void) 
 {
-  int cnt_ready_list = list_size(&ready_list) << 14;
+  int cnt_ready_list = list_size(&ready_list) << 18;
   load_avg = 59 * load_avg + cnt_ready_list;
 
   int i = 0;
   int imsi = 0;
 
-  while (load_avg > (60 * (1 << i)) ) {
+  while (load_avg > (60 * (2 << i)) ) {
   	i++;
   }
   // i = 17;
@@ -397,7 +397,7 @@ thread_get_load_avg (void)
 
   load_avg = imsi;
 
-  return (load_avg * 100) >> 14;
+  return (load_avg * 100) >> 18;
 }
 
 
@@ -406,7 +406,7 @@ thread_get_load_avg (void)
 int
 thread_get_recent_cpu (void) 
 {
-  return (thread_current()->recent_cpu * 100) >> 14;
+  return (thread_current()->recent_cpu * 100) >> 18;
 }
 
 
