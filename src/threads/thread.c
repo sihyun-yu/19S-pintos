@@ -56,7 +56,7 @@ static long long user_ticks;    /* # of timer ticks in user programs. */
 static unsigned thread_ticks;   /* # of timer ticks since last yield. */
 
 static struct list sleep_list; /*List for sleeping threads*/
-//static float load_avg;
+int load_avg;
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
@@ -99,7 +99,7 @@ thread_init (void)
   lock_init (&tid_lock);
   list_init (&ready_list);
   list_init (&sleep_list);
-  //load_avg = 0;
+  load_avg = 0;
 
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
@@ -353,17 +353,20 @@ thread_get_priority (void)
 /* Sets the current thread's nice value to NICE. */
 void
 thread_set_nice (int nice) 
-{
+{ 
+  enum intr_level old_level = intr_disable ();
   thread_current()->nice = nice;
-  /* Not yet implemented. */
-}
+  intr_set_level (old_level);
+  }
 
 /* Returns the current thread's nice value. */
 int
 thread_get_nice (void) 
 {
-  /* Not yet implemented. */
-  return thread_current()->nice;
+  enum intr_level old_level = intr_disable ();
+  int nice  = thread_current()->nice;
+  intr_set_level (old_level);
+  return nice;
 }
 
 /* Returns 100 times the system load average. */
