@@ -374,8 +374,8 @@ thread_get_nice (void)
 int
 thread_get_load_avg (void) 
 {
-  int cnt_ready_list = list_size(&ready_list) << 14;
-  if (thread_current() != idle_thread) cnt_ready_list += (1<<14);
+  int cnt_ready_list = list_size(&ready_list) << 20;
+  if (thread_current() != idle_thread) cnt_ready_list += (1<<20);
 
   load_avg = 59 * load_avg + cnt_ready_list;
 
@@ -395,7 +395,7 @@ thread_get_load_avg (void)
 
   load_avg = imsi;
 
-  return (load_avg * 100) >> 14;
+  return (load_avg * 100) >> 20;
 }
 
 
