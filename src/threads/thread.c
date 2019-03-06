@@ -394,7 +394,7 @@ thread_get_load_avg (void)
   imsi = (int64_t)load_avg / 60;
   load_avg = imsi;
   
-  return ((load_avg + (1<<14)) * 100) >> 14;
+  return ((load_avg) * 100 + (1<<14)) >> 14;
 
 }
 
