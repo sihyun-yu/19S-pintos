@@ -385,13 +385,15 @@ thread_get_load_avg (void)
   // i = 17;
 
   for (; i>=0; i--) {
-  	if (load_avg - 60 * (1 << i) < 0)
+  	if (load_avg - 60 * (1 << i) < 0){
+      
+    }
   	else {
       load_avg -= 60 * (1 << i);
       imsi += (1 << i);
   	}
   }
-  
+
   load_avg = imsi;
 
   return (load_avg * 100) >> 14;
