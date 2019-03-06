@@ -94,6 +94,7 @@ struct thread
     struct list_elem elem;              /* List element. */
     struct list_elem sleep_elem;
     int64_t wake_up;
+    int nice;
 
     /*for donation */
 
