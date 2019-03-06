@@ -56,7 +56,7 @@ static long long user_ticks;    /* # of timer ticks in user programs. */
 static unsigned thread_ticks;   /* # of timer ticks since last yield. */
 
 static struct list sleep_list; /*List for sleeping threads*/
-static float load_avg = 0;
+float load_avg = 0;
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
@@ -371,7 +371,6 @@ thread_get_load_avg (void)
 {
   int cnt_ready_list = list_size(&ready_list);
   load_avg = ((59/60) * load_avg  +  (1/60) * cnt_ready_list);
-  /* Not yet implemented. */
   return (int)(100 * load_avg);
 }
 
