@@ -362,7 +362,7 @@ thread_set_nice (int nice)
 /* Returns the current thread's nice value. */
 int
 thread_get_nice (void) 
-{
+{ 
   enum intr_level old_level = intr_disable ();
   int nice  = thread_current()->nice;
   intr_set_level (old_level);
@@ -373,10 +373,31 @@ thread_get_nice (void)
 int
 thread_get_load_avg (void) 
 {
-  int cnt_ready_list = list_size(&ready_list);
-  //load_avg = ((59/60) * load_avg +(1/60) * cnt_ready_list);
-  return 0;
+  int cnt_ready_list = list_size(&ready_list) << 14;
+  load_avg = 59 * load_avg + cnt_ready_list;
+
+  int i = 0;
+  int imsi = 0;
+
+  while (load_avg > (60 * (2 << i)) ) {
+  	i++;
+  }
+  // i = 17;
+
+  for (; i>=0; i--) {
+  	if (load_avg - 60 * (1 << i) < 0)
+  	else {
+      load_avg -= 60 * (1 << i);
+      imsi += (1 << i);
+  	}
+  }
+  
+  load_avg = imsi;
+
+  return (load_avg * 100) >> 14;
 }
+
+
 
 /* Returns 100 times the current thread's recent_cpu value. */
 int
@@ -385,6 +406,8 @@ thread_get_recent_cpu (void)
   /* Not yet implemented. */
   return 0;
 }
+
+
 
 /* Idle thread.  Executes when no other thread is ready to run.
 
