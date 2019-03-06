@@ -56,7 +56,7 @@ static long long user_ticks;    /* # of timer ticks in user programs. */
 static unsigned thread_ticks;   /* # of timer ticks since last yield. */
 
 static struct list sleep_list; /*List for sleeping threads*/
-int load_avg;
+static int load_avg;
 
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
@@ -108,6 +108,7 @@ thread_init (void)
   initial_thread->tid = allocate_tid ();
   initial_thread->wake_up = 0; 
   initial_thread->nice = 0;
+  initial_thread->recent_cpu = 0;
 }
 
 /* Starts preemptive thread scheduling by enabling interrupts.
@@ -386,7 +387,7 @@ thread_get_load_avg (void)
 
   for (; i>=0; i--) {
   	if (load_avg - 60 * (1 << i) < 0){
-      
+
     }
   	else {
       load_avg -= 60 * (1 << i);
@@ -405,8 +406,7 @@ thread_get_load_avg (void)
 int
 thread_get_recent_cpu (void) 
 {
-  /* Not yet implemented. */
-  return 0;
+  return (thread_current() * 100) >> 14;
 }
 
 

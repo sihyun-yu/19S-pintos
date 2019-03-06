@@ -95,6 +95,7 @@ struct thread
     struct list_elem sleep_elem;
     int64_t wake_up;
     int nice;
+    int recent_cpu;
 
     /*for donation */
 
