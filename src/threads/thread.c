@@ -377,17 +377,13 @@ thread_get_load_avg (void)
   int cnt_ready_list = list_size(&ready_list) << 14;
   if (thread_current() != idle_thread) cnt_ready_list += (1<<14);
 
-  load_avg = 58 * load_avg + 2* cnt_ready_list;
+  load_avg = 59 * load_avg + cnt_ready_list;
 
   int i = 0;
   int imsi = 0;
 
-  while (load_avg > (60 * (2 << i)) ) {
-  	i++;
-  }
-  // i = 17;
 
-  for (; i>=0; i--) {
+  for (i=25; i>=0; i--) {
   	if (load_avg - 60 * (1 << i) < 0){
 
     }
