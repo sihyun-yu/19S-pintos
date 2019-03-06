@@ -139,7 +139,8 @@ static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
-  if (thread_current() != idle_thread) thread_current()->recent_cpu += (1<<14);
+  //if (thread_current() != idle_thread) 
+  thread_current()->recent_cpu += (1<<14);
 
   /*recalculate current thread's recent cpu*/
 
