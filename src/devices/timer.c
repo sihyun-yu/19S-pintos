@@ -152,7 +152,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
       thread_calculate_priority ();
     }
   }
-  test_max_priority();
+  //test_max_priority();
 
 }
 
