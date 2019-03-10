@@ -410,7 +410,7 @@ thread_get_recent_cpu (void)
 
 
 void thread_calculate_load_avg (void) {
-  int frac1 = (59 << 14) / 60;
+  int frac1 = (59 * (1<< 14)) / 60;
   int frac2 = (1 << 14) / 60;
   int cnt = list_size(&ready_list);
   
@@ -470,7 +470,7 @@ void thread_calculate_priority(void) {
   int recent_cpu = cur->recent_cpu;
   int nice = cur->nice;
 
-  int imsi = (PRI_MAX << 14) - (recent_cpu / 4);
+  int64_t imsi = (PRI_MAX << 14) - (recent_cpu / 4);
   imsi -= (nice * 2 * (1<<14));
 
   cur->priority = (imsi + (1<<14)/2) / (1<<14);
