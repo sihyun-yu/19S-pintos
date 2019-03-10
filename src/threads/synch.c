@@ -399,8 +399,8 @@ void priority_donation_finished (struct lock *lock) {
 }
 
 bool lock_priority_compare (struct list_elem *e1, struct list_elem *e2, void *aux UNUSED){
-  struct thread *a = list_entry (e1, struct lock, lock_elem);
-  struct thread *b = list_entry (e2, struct lock, lock_elem);
+  struct lock *a = list_entry (e1, struct lock, lock_elem);
+  struct lock *b = list_entry (e2, struct lock, lock_elem);
   ASSERT(a!=NULL);
   ASSERT(b!=NULL);
   return a->priority > b->priority; 
