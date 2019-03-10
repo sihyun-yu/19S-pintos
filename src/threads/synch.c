@@ -206,6 +206,9 @@ lock_acquire (struct lock *lock)
   ASSERT (!intr_context ());
   ASSERT (!lock_held_by_current_thread (lock));
 
+
+  enum intr_level old_level = intr_disable();
+
   struct thread *cur = thread_current();
   cur->hurdle = lock;
   if (lock->holder == NULL) lock->priority = cur->priority;
@@ -219,6 +222,7 @@ lock_acquire (struct lock *lock)
   lock->holder = cur;
   lock->holder->hurdle = NULL; // Now, acquired
 
+  intr_set_level(old_level);
 }
 
 /* Tries to acquires LOCK and returns true if successful or false
@@ -253,11 +257,15 @@ lock_release (struct lock *lock)
   ASSERT (lock != NULL);
   ASSERT (lock_held_by_current_thread (lock));
 
+  enum intr_level old_level = intr_disable();
+
   lock->holder = NULL;
   sema_up (&lock->semaphore);
   if (!thread_mlfqs) {
   priority_donation_finished(lock);
   }
+  intr_set_level(old_level);
+
 }
 
 /* Returns true if the current thread holds LOCK, false
