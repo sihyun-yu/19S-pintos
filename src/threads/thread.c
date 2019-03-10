@@ -480,6 +480,7 @@ void thread_calculate_priority(void) {
   if (cur->priority <= PRI_MIN) cur->priority = PRI_MIN;
   if (cur->priority >= PRI_MAX) cur->priority = PRI_MAX;
 
+  ASSERT(list_front(&ready_list) != NULL)
   if (thread_current()->priority < list_entry(list_front(&ready_list), struct thread, elem)) {
     intr_yield_on_return();
   }
