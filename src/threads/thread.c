@@ -459,7 +459,7 @@ void thread_calculate_recent_cpu (void) {
 
 
 void increase_recent_cpu(void) {
-  if (thread_current() != idle_thread) thread->recent_cpu += (1<<14);
+  if (thread_current() != idle_thread) thread_current()->recent_cpu += (1<<14);
 }
 
 /* Idle thread.  Executes when no other thread is ready to run.
