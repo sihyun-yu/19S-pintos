@@ -377,7 +377,7 @@ int
 thread_get_load_avg (void) 
 {
   enum intr_level old_level = intr_disable ();
-  int for_return  = (load_avg * 100) >> 14;
+  int for_return  = (load_avg * 100 + (1 << 14)/2) >> 14;
   intr_set_level (old_level);
 
   return for_return;
