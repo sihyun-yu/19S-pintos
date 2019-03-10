@@ -394,6 +394,7 @@ void thread_calculate_load_avg (void) {
   load_avg = 59 * load_avg + cnt_ready_list;
 
   load_avg = load_avg / 60;
+  ASSERT (load_avg >= 0)
 }
 
 
