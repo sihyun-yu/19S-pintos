@@ -151,25 +151,6 @@ timer_interrupt (struct intr_frame *args UNUSED)
     if (ticks % 4 == 0) {
       thread_calculate_priority ();
     }
-  struct list_elem *lea = sleep_list_begin;
-  
-  while (lea != sleep_list_end)
-    {
-      struct thread *t = list_entry(lea, struct thread, sleep_elem);      
-      if (ticks < t->wake_up) // chcek if the ticks have crossed the os ticks limit
-  {
-    break;
-  }
-      list_remove(lea); // remove from sleep list
-      thread_unblock(t); // Unblock and add to ready list
-      lea = sleep_list_begin;
-    }
-  }
-
-
-
-  test_max_priority();
-
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
