@@ -569,7 +569,7 @@ init_thread (struct thread *t, const char *name, int priority)
   t->wake_up = 0;
   t->recent_cpu = 0;
   t->nice = 0;
-  if (thread_mlfqs) t->priority = thread_calculate_priority();
+  if (thread_mlfqs) thread_calculate_priority();
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
