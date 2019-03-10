@@ -214,7 +214,7 @@ lock_acquire (struct lock *lock)
   priority_donation(lock);
   sema_down (&lock->semaphore);
   lock->holder = cur;
-  lock->holder->hurdle = NULL; // Now, acquired 
+  lock->holder->hurdle = NULL; // Now, acquired!
 
   list_insert_ordered(&lock->holder->lock_list, &lock->lock_elem, lock_priority_compare, 0);
 }
