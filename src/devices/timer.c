@@ -151,9 +151,10 @@ timer_interrupt (struct intr_frame *args UNUSED)
     if (ticks % 4 == 0) {
       thread_calculate_priority ();
     }
+      test_max_priority();
+
   }
 
-  test_max_priority();
 
 
   /*recalculate current thread's recent cpu*/
