@@ -390,7 +390,7 @@ int
 thread_get_load_avg (void) 
 {
   enum intr_level old_level = intr_disable ();
-  int for_return  = (load_avg * 100 + (1 << 14)/2) >> 14;
+  int for_return  = ((int64_t)load_avg * 100 + (1 << 14)/2) >> 14;
   intr_set_level (old_level);
 
   return for_return;
@@ -403,15 +403,15 @@ int
 thread_get_recent_cpu (void) 
 {
   enum intr_level old_level = intr_disable ();
-  int for_return = ((thread_current()->recent_cpu) * 100 + (1 << 14)/2) >> 14;
+  int for_return = ((int64_t)(thread_current()->recent_cpu) * 100 + (1 << 14)/2) >> 14;
   intr_set_level (old_level);
   return for_return;
 }
 
 
 void thread_calculate_load_avg (void) {
-  int frac1 = (59 * (1<< 14)) / 60;
-  int frac2 = (1 << 14) / 60;
+  int64_t frac1 = (59 * (1<< 14)) / 60;
+  int64_t frac2 = (1 << 14) / 60;
   int cnt = list_size(&ready_list);
   
   if (thread_current()!=idle_thread) cnt++;
