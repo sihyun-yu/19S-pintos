@@ -718,7 +718,11 @@ void awake_thread(int64_t ticks) {
 }
 
 bool priority_compare (const struct list_elem *a, const struct list_elem *b, void *aux UNUSED){
-  return list_entry (a, struct thread, elem)->priority > list_entry (b, struct thread, elem)->priority; 
+  struct thread *x = list_entry (a, struct thread, elem);
+  struct thread *y = list_entry (b, struct thread, elem);
+  ASSERT(x!=NULL);
+  ASSERT(y!=NULL);
+  return x->priority > y->priority; 
 }
 
 void test_max_priority(void) {
