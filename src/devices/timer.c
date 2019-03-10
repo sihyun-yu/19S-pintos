@@ -151,8 +151,6 @@ timer_interrupt (struct intr_frame *args UNUSED)
     if (ticks % 4 == 0) {
       thread_calculate_priority ();
     }
-  }
-
   struct list_elem *lea = sleep_list_begin;
   
   while (lea != sleep_list_end)
@@ -166,6 +164,9 @@ timer_interrupt (struct intr_frame *args UNUSED)
       thread_unblock(t); // Unblock and add to ready list
       lea = sleep_list_begin;
     }
+  }
+
+
 
   test_max_priority();
 
