@@ -397,16 +397,15 @@ thread_get_recent_cpu (void)
 
 
 void thread_calculate_load_avg (void) {
+  int frac1 = (59 << 14) / 60;
+  int frac2 = (1 << 14) / 60;
+  int cnt = list_size(&ready_list);
   
-  load_avg *= 59;
-  load_avg /= 60;
+  if (thread_current()!=idle_thread) cnt++;
 
-	int cnt_ready_list = list_size(&ready_list) << 14;
-  	if (thread_current() != idle_thread) cnt_ready_list += (1<<14);
-
-  cnt_ready_list /= 60;
-  load_avg = cnt_ready_list + load_avg;
-  ASSERT (load_avg >= 0)
+  load_avg = ((int64_t)load_avg * frac) / (1 << 14);
+  load_avg = load_avg + cnt * frac2;
+	ASSERT (load_avg >= 0)
 }
 
 void thread_calculate_recent_cpu (void) {
