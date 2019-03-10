@@ -400,9 +400,7 @@ void thread_calculate_load_avg (void) {
 	int cnt_ready_list = list_size(&ready_list) << 14;
   	if (thread_current() != idle_thread) cnt_ready_list += (1<<14);
 
-  load_avg = 59 * load_avg + cnt_ready_list;
-
-  load_avg = load_avg / 60;
+  load_avg = ((int64_t)59 * load_avg + cnt_ready_list) / 60;
   ASSERT (load_avg >= 0)
 }
 
