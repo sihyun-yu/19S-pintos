@@ -149,6 +149,8 @@ void thread_calculate_load_avg (void);
 void thread_calculate_recent_cpu (void);
 void increase_recent_cpu(void);
 void thread_calculate_priority (void);
+struct list_elem *sleep_list_begin(void);
+struct list_elem *sleep_list_end(void);
 
 
 void sleep_thread(int64_t ticks);

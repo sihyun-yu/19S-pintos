@@ -761,3 +761,11 @@ void priority_change(struct thread *t, int priority) {
      }
   }
 }
+
+struct list_elem *sleep_list_begin() {
+  return list_begin(&sleep_list);
+}
+
+struct list_elem *sleep_list_end() {
+  return list_end(&sleep_list);
+}
