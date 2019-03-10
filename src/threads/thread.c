@@ -461,6 +461,23 @@ void thread_calculate_recent_cpu (void) {
 void increase_recent_cpu(void) {
   if (thread_current() != idle_thread) thread_current()->recent_cpu += (1<<14);
 }
+
+void thread_calculate_priority(void) {
+  struct thread *cur = thread_current();
+  int recent_cpu = cur->recent_cpu;
+  int nice = cur->nice;
+  
+  int imsi = (PRI_MAX << 14) - (recent_cpu / 4);
+  if (nice >= 0) {
+    imsi -= (nice << 15);
+  }
+  else{
+    imsi += (nice << 15);
+  }
+  cur->priority = imsi >> 14;
+  if (cur->priority <= PRI_MIN) cur->priority = PRI_MIN;
+  if (cur->priority >= PRI_MAX) cur->priority = PRI_MAX;
+} 
 
 /* Idle thread.  Executes when no other thread is ready to run.
 

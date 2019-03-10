@@ -147,6 +147,10 @@ timer_interrupt (struct intr_frame *args UNUSED)
       thread_calculate_load_avg();
       thread_calculate_recent_cpu ();
     }
+
+    if (ticks % 4 == 0) {
+      thread_calculate_recent_cpu ();
+    }
   }
   /*recalculate current thread's recent cpu*/
 
