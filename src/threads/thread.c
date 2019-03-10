@@ -349,7 +349,10 @@ thread_set_priority (int new_priority)
 int
 thread_get_priority (void) 
 {
-  return thread_current ()->priority;
+  enum intr_level old_level = intr_disable ();
+  int priority = thread_current()->priority;
+  intr_set_level (old_level);
+  return priority;
 }
 
 /* Sets the current thread's nice value to NICE. */
@@ -375,7 +378,11 @@ thread_get_nice (void)
 int
 thread_get_load_avg (void) 
 {
-  return ((load_avg) * 100) >> 14;
+  enum intr_level old_level = intr_disable ();
+  int for_return  = (load_avg * 100) >> 14;
+  intr_set_level (old_level);
+
+  return for_return;
 }
 
 
