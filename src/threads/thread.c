@@ -147,8 +147,6 @@ thread_tick (int64_t ticks)
     kernel_ticks++;
 
   /* Enforce preemption. */
-  if (++thread_ticks >= TIME_SLICE)
-    intr_yield_on_return ();
 
   awake_thread(ticks);
 }
@@ -736,7 +734,7 @@ void test_max_priority(void) {
 
     if (intr_context())
     {
-      //thread_ticks++;
+      thread_ticks++;
 
       if ( thread_current ()->priority < list_entry (list_front (&ready_list), struct thread, elem)->priority 
         || (thread_ticks >= TIME_SLICE && thread_current ()->priority == list_entry (list_front (&ready_list), struct thread, elem)->priority) )
