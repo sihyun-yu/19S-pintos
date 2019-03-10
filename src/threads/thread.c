@@ -735,7 +735,6 @@ void test_max_priority(void) {
     struct thread *t = list_entry(list_front (&ready_list), struct thread, elem);
 
     if (intr_context()) {
-      thread_ticks++;
 
       return;
     }
