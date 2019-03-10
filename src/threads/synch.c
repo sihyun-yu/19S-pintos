@@ -214,7 +214,7 @@ lock_acquire (struct lock *lock)
   if (lock->holder == NULL) lock->priority = cur->priority;
     
 
-  if(!thread_mlfqs && lock->holder) {
+  if(thread_mlfqs && lock->holder) {
     priority_donation(lock);
     list_insert_ordered(&lock->holder->lock_list, &lock->lock_elem, lock_priority_compare, 0);
   }
