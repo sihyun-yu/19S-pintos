@@ -106,6 +106,8 @@ thread_init (void)
   initial_thread->status = THREAD_RUNNING;
   initial_thread->tid = allocate_tid ();
   initial_thread->wake_up = 0; 
+  list_init(&initial_thread->lock_list);
+
 }
 
 /* Starts preemptive thread scheduling by enabling interrupts.
@@ -466,7 +468,7 @@ void thread_calculate_priority(void) {
   struct thread *cur = thread_current();
   int recent_cpu = cur->recent_cpu;
   int nice = cur->nice;
-  
+
   int imsi = (PRI_MAX << 14) - (recent_cpu / 4);
   if (nice >= 0) {
     imsi -= (nice << 15);
