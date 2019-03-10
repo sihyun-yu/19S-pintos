@@ -158,7 +158,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
   while (lea != list_end(&sleep_list))
     {
       struct thread *t = list_entry(lea, struct thread, sleep_elem);      
-      if (ticks < t->ticks) // chcek if the ticks have crossed the os ticks limit
+      if (ticks < t->wake_up) // chcek if the ticks have crossed the os ticks limit
   {
     break;
   }
