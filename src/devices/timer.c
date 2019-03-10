@@ -141,7 +141,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
   ticks++;
   thread_tick (timer_ticks());
 
-  if (thread_mlfqs) {
+/*  if (thread_mlfqs) {
     increase_recent_cpu();
    if (ticks % TIMER_FREQ == 0 ) {
       thread_calculate_load_avg();
@@ -151,7 +151,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
     if (ticks % 4 == 0) {
       thread_calculate_priority ();
     }
-  }
+  }*/
   /*recalculate current thread's recent cpu*/
 
 }
