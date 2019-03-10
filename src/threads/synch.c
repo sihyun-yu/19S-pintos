@@ -260,7 +260,7 @@ lock_release (struct lock *lock)
   enum intr_level old_level = intr_disable();
 
   lock->holder = NULL;
-  if (!thread_mlfqs) {
+  if (thread_mlfqs) {
   priority_donation_finished(lock);
   }
 
