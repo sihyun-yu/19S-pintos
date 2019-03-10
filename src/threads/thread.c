@@ -416,14 +416,16 @@ void thread_calculate_recent_cpu (void) {
   int64_t imsi;
   struct list_elem *e;
   struct thread *t; 
+  A
 
   for (e=list_begin(&ready_list); e!=list_end(&ready_list); e=list_next(e)) {
     imsi = load_avg;
     t= list_entry(e, struct thread, elem);
 
     imsi *= 2;
-    imsi = imsi / ((imsi >> 14) + 1);
+    imsi = imsi * (1 << 14) / (imsi + (1 << 14));
     imsi = (int64_t)imsi * (t->recent_cpu) / (1<<14);
+
     if (t->nice >= 0) {
       t->recent_cpu = imsi + ((t->nice) << 14);
     }
@@ -437,8 +439,9 @@ void thread_calculate_recent_cpu (void) {
     t= list_entry(e, struct thread, sleep_elem);
 
     imsi *= 2;
-    imsi = imsi / ((imsi >> 14) + 1);
+    imsi = imsi * (1 << 14) / (imsi + (1 << 14));
     imsi = (int64_t)imsi * (t->recent_cpu) / (1<<14);
+    
     if (t->nice >= 0) {
       t->recent_cpu = imsi + ((t->nice) << 14);
     }
@@ -451,7 +454,7 @@ void thread_calculate_recent_cpu (void) {
   imsi = load_avg;
 
   imsi *= 2;
-  imsi = imsi / ((imsi >> 14) + 1);
+  imsi = imsi * (1 << 14) / (imsi + (1 << 14));
   imsi = (int64_t)imsi * (t->recent_cpu) / (1<<14);
   if (t->nice >= 0) {
     t->recent_cpu = imsi + ((t->nice) << 14);
