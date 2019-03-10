@@ -140,7 +140,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   if (thread_mlfqs) {
-    thread_current()->recent_cpu += (1<<14);
+    increase_recent_cpu();
    if (ticks % TIMER_FREQ == 0 ) {
       thread_calculate_load_avg();
       thread_calculate_recent_cpu ();
