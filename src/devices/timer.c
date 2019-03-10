@@ -140,7 +140,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   if (ticks % TIMER_FREQ == 0 ) {
-    thread_calculate_load_avg();
+    //thread_calculate_load_avg();
   }
   /*recalculate current thread's recent cpu*/
 
