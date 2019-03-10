@@ -423,7 +423,7 @@ void thread_calculate_recent_cpu (void) {
     if (t->nice >= 0) {
       t->recent_cpu = imsi + ((t->nice) << 14);
     }
-    else (t->nice < 0) {
+    else  {
       t->recent_cpu = imsi - ((t->nice) << 14);
     }
   }
