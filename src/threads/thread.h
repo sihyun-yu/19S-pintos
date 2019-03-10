@@ -142,11 +142,11 @@ int thread_get_nice (void);
 void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
+void thread_calculate_load_avg (void);
 
 void sleep_thread(int64_t ticks);
 void awake_thread(int64_t ticks); 
 bool priority_compare (const struct list_elem *a, const struct list_elem *b, void *aux);
 void test_max_priority(void);
 void priority_change(struct thread *, int priority);
-void thread_calculate_load_avg (void);
 #endif /* threads/thread.h */
