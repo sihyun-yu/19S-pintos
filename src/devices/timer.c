@@ -167,7 +167,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
       lea = sleep_list_begin;
   }
 
-  test_max_priority();
+  //test_max_priority();
   /*recalculate current thread's recent cpu*/
 
 }
