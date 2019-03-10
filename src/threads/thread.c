@@ -365,6 +365,7 @@ thread_set_nice (int nice)
 { 
   enum intr_level old_level = intr_disable ();
   thread_current()->nice = nice;
+  thread_calculate_priority();
   intr_set_level (old_level);
   }
 
