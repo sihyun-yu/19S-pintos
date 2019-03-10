@@ -480,9 +480,9 @@ void thread_calculate_priority(void) {
     imsi = (PRI_MAX * (1<<14)) - (recent_cpu / 4);
     imsi -= (nice * 2 * (1<<14));
 
-    cur->priority = (imsi) / (1<<14);
-    if (cur->priority <= PRI_MIN) t->priority = PRI_MIN;
-    if (cur->priority >= PRI_MAX) t->priority = PRI_MAX;
+    t->priority = (imsi) / (1<<14);
+    if (t->priority <= PRI_MIN) t->priority = PRI_MIN;
+    if (t->priority >= PRI_MAX) t->priority = PRI_MAX;
 
   }
 
@@ -495,9 +495,9 @@ void thread_calculate_priority(void) {
     imsi = (PRI_MAX * (1<<14)) - (recent_cpu / 4);
     imsi -= (nice * 2 * (1<<14));
 
-    cur->priority = (imsi) / (1<<14);
-    if (cur->priority <= PRI_MIN) t->priority = PRI_MIN;
-    if (cur->priority >= PRI_MAX) t->priority = PRI_MAX;
+    t->priority = (imsi) / (1<<14);
+    if (t->priority <= PRI_MIN) t->priority = PRI_MIN;
+    if (t->priority >= PRI_MAX) t->priority = PRI_MAX;
   }
 
   struct thread *cur = thread_current();
