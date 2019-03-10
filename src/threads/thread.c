@@ -333,6 +333,8 @@ thread_yield (void)
 void
 thread_set_priority (int new_priority) 
 {
+  if (thread_mlfqs) return;
+  
   struct thread *cur = thread_current();
   if (cur->priority == cur->original_priority) cur->priority = new_priority;
   cur->original_priority = new_priority;
