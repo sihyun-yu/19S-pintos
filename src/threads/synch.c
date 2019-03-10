@@ -214,7 +214,7 @@ lock_acquire (struct lock *lock)
   priority_donation(lock);
   sema_down (&lock->semaphore);
   lock->holder = cur;
-  lock->holder->hurdle = NULL; // Now, acquired!
+  lock->holder->hurdle = NULL; // Now, acquired
 
   list_insert_ordered(&lock->holder->lock_list, &lock->lock_elem, lock_priority_compare, 0);
 }
@@ -399,10 +399,10 @@ void priority_donation_finished (struct lock *lock) {
 }
 
 bool lock_priority_compare (struct list_elem *e1, struct list_elem *e2, void *aux UNUSED){
-  struct thread *a = list_entry (e1, struct lock, lock_elem);
-  struct thread *b = list_entry (e2, struct lock, lock_elem);
-  ASSERT(a != NULL);
-  ASSERT(b != NULL);
+  struct thread *a = list_entry (e1, struct lock, lock_elem)->priority;
+  struct thread *b = list_entry (e2, struct lock, lock_elem)->priority;
+  ASSERT(a!=NULL);
+  ASSERT(b!=NULL);
   return a->priority > b->priority; 
 }
 
