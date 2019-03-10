@@ -151,6 +151,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
     if (ticks % 4 == 0) {
       thread_calculate_priority ();
     }
+  }
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
