@@ -367,7 +367,7 @@ thread_set_nice (int nice)
   thread_current()->nice = nice;
   thread_calculate_priority();
   ASSERT(list_begin(&ready_list) != NULL)
-  if (thread_current()->priority < list_entry(list_begin(&ready_list), struct thread, elem)) {
+  if (thread_current()->priority < list_entry(list_begin(&ready_list), struct thread, elem)->priority) {
     thread_yield();
   }
   intr_set_level (old_level);
