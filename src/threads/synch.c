@@ -220,8 +220,9 @@ lock_acquire (struct lock *lock)
   sema_down (&lock->semaphore);
   lock->holder = cur;
   lock->holder->hurdle = NULL; // Now, acquired
+  if(!thread_mlfqs && lock->holder) {
   list_insert_ordered(&lock->holder->lock_list, &lock->lock_elem, lock_priority_compare, 0);
-
+  }
   intr_set_level(old_level);
 }
 
