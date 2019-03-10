@@ -409,7 +409,7 @@ void thread_calculate_load_avg (void) {
 }
 
 void thread_calculate_recent_cpu (void) {
-  int imsi;
+  int64_t imsi;
   struct list_elem *e;
   struct thread *t; 
 
