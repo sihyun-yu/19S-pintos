@@ -410,7 +410,7 @@ void thread_calculate_load_avg (void) {
 
 void thread_calculate_recent_cpu (void) {
   int imsi;
-  struct thread *t;
+  struct list_elem *t;
   for (t=list_begin(&ready_list); t!=list_end(&ready_list); t=list_next(t)) {
     imsi = load_avg;
 
@@ -434,7 +434,7 @@ void thread_calculate_recent_cpu (void) {
     if (t->nice >= 0) {
       t->recent_cpu = imsi + ((t->nice) << 14);
     }
-    else (t->nice < 0) {
+    else {
       t->recent_cpu = imsi - ((t->nice) << 14);
     }
   }
@@ -448,7 +448,7 @@ void thread_calculate_recent_cpu (void) {
   if (t->nice >= 0) {
     t->recent_cpu = imsi + ((t->nice) << 14);
   }
-  else (t->nice < 0) {
+  else {
     t->recent_cpu = imsi - ((t->nice) << 14);
   }
 }
