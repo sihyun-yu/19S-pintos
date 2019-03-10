@@ -734,7 +734,8 @@ void test_max_priority(void) {
     ASSERT(list_entry (list_front (&ready_list), struct thread, elem) != NULL)
     struct thread *t = list_entry(list_front (&ready_list), struct thread, elem);
 
-    if ( thread_current ()->priority < list_entry (list_front (&ready_list), struct thread, elem)->priority || (thread_ticks >= TIME_SLICE && temp_pri == ready_pri) )
+    if ( thread_current ()->priority < list_entry (list_front (&ready_list), struct thread, elem)->priority 
+      || (thread_ticks >= TIME_SLICE && thread_current ()->priority == list_entry (list_front (&ready_list), struct thread, elem)->priority) )
       {
          intr_yield_on_return();
          return;
