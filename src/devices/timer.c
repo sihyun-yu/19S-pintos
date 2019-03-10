@@ -151,13 +151,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
     if (ticks % 4 == 0) {
       thread_calculate_priority ();
     }
-
-    //we need to reconsider
-    ASSERT(&ready_list != NULL)
-    struct thread *t = list_entry(list_front(&ready_list), struct thread, elem);
-    if (t->priority > thread_current()->priority) {
-      thread_yield();
-    }
+    test_max_priority()
   }
   /*recalculate current thread's recent cpu*/
 
