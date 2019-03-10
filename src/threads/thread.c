@@ -367,8 +367,8 @@ thread_set_nice (int nice)
   thread_current()->nice = nice;
   thread_calculate_priority();
   ASSERT(list_begin(&ready_list) != NULL)
-  if (thread_current()->priority < list_entry(list_begin(&ready_list), struct thread, elem)->priority) {
-    intr_yield_on_return ();
+  if (thread_current()->priority <= list_entry(list_begin(&ready_list), struct thread, elem)->priority) {
+    thread_yield();
   }
   intr_set_level (old_level);
   }
@@ -433,12 +433,7 @@ void thread_calculate_recent_cpu (void) {
     imsi = imsi * (1 << 14) / (imsi + (1 << 14));
     imsi = (int64_t)imsi * (t->recent_cpu) / (1<<14);
 
-    if (t->nice >= 0) {
-      t->recent_cpu = imsi + ((t->nice) << 14);
-    }
-    else  {
-      t->recent_cpu = imsi - ((t->nice) << 14);
-    }
+    t->recent_cpu = imsi + t->nice * (1<<14);
   }
 
   for (e=list_begin(&sleep_list); e!=list_end(&sleep_list); e=list_next(e)) {
@@ -449,13 +444,8 @@ void thread_calculate_recent_cpu (void) {
     imsi = imsi * (1 << 14) / (imsi + (1 << 14));
     imsi = (int64_t)imsi * (t->recent_cpu) / (1<<14);
     
-    if (t->nice >= 0) {
-      t->recent_cpu = imsi + ((t->nice) << 14);
-    }
-    else {
-      t->recent_cpu = imsi - ((t->nice) << 14);
-    }
-  }
+    t->recent_cpu = imsi + t->nice * (1<<14);
+}
 
   t = thread_current();
   imsi = load_avg;
