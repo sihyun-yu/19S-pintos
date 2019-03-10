@@ -470,10 +470,10 @@ void thread_calculate_priority(void) {
   int recent_cpu = cur->recent_cpu;
   int nice = cur->nice;
 
-  int64_t imsi = (PRI_MAX << 14) - (recent_cpu / 4);
+  int64_t imsi = (PRI_MAX * (1<<14)) - (recent_cpu / 4);
   imsi -= (nice * 2 * (1<<14));
 
-  cur->priority = (imsi + (1<<14)/2) / (1<<14);
+  cur->priority = (imsi) / (1<<14);
   if (cur->priority <= PRI_MIN) cur->priority = PRI_MIN;
   if (cur->priority >= PRI_MAX) cur->priority = PRI_MAX;
 
