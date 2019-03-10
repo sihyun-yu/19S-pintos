@@ -152,6 +152,21 @@ timer_interrupt (struct intr_frame *args UNUSED)
       thread_calculate_priority ();
     }
   }
+
+  lea = list_begin(&sleep_list);
+  
+  while (lea != list_end(&sleep_list))
+    {
+      struct thread *t = list_entry(lea, struct thread, sleep_elem);      
+      if (ticks < t->ticks) // chcek if the ticks have crossed the os ticks limit
+  {
+    break;
+  }
+      list_remove(lea); // remove from sleep list
+      thread_unblock(t); // Unblock and add to ready list
+      lea = list_begin(&sleep_list);
+  }
+
   test_max_priority();
   /*recalculate current thread's recent cpu*/
 
