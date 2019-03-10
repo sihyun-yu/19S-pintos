@@ -214,7 +214,7 @@ lock_acquire (struct lock *lock)
   if (lock->holder == NULL) lock->priority = cur->priority;
     
 
-  if(thread_mlfqs && lock->holder) {
+  if(!thread_mlfqs && lock->holder) {
     priority_donation(lock);
     list_insert_ordered(&lock->holder->lock_list, &lock->lock_elem, lock_priority_compare, 0);
   }
@@ -260,12 +260,10 @@ lock_release (struct lock *lock)
   enum intr_level old_level = intr_disable();
 
   lock->holder = NULL;
-  if (thread_mlfqs) {
+  sema_up (&lock->semaphore);
+  if (!thread_mlfqs) {
   priority_donation_finished(lock);
   }
-
-  sema_up (&lock->semaphore);
-
   intr_set_level(old_level);
 
 }
