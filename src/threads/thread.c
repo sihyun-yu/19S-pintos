@@ -391,7 +391,10 @@ thread_get_load_avg (void)
 int
 thread_get_recent_cpu (void) 
 {
-  return (thread_current()->recent_cpu * 100) >> 14;
+  enum intr_level old_level = intr_disable ();
+  int for_return = ((thread_current()->recent_cpu) * 100) >> 14;
+  intr_set_level (old_level);
+  return for_return;
 }
 
 
@@ -403,6 +406,50 @@ void thread_calculate_load_avg (void) {
 
   load_avg = load_avg / 60;
   ASSERT (load_avg >= 0)
+}
+
+void thread_calculate_recent_cpu (void) {
+  int imsi;
+  for (t=list_begin(&ready_list); t!=list_end(&ready_list); t=list_next(e)) {
+    imsi = load_avg;
+
+    imsi *= 2;
+    imsi = imsi / ((imsi >> 14) + 1);
+    imsi = (int64_t)imsi * (t->recent_cpu) / (1<<14);
+    if (t->nice >= 0) {
+      t->recent_cpu = imsi + ((t->nice) << 14);
+    }
+    else (t->nice < 0) {
+      t->recent_cpu = imsi - ((t->nice) << 14);
+    }
+  }
+
+  for (t=list_begin(&sleep_list); t!=list_end(&sleep_list); t=list_next(e)) {
+    imsi = load_avg;
+
+    imsi *= 2;
+    imsi = imsi / ((imsi >> 14) + 1);
+    imsi = (int64_t)imsi * (t->recent_cpu) / (1<<14);
+    if (t->nice >= 0) {
+      t->recent_cpu = imsi + ((t->nice) << 14);
+    }
+    else (t->nice < 0) {
+      t->recent_cpu = imsi - ((t->nice) << 14);
+    }
+  }
+  
+  t = thread_current();
+  imsi = load_avg;
+
+  imsi *= 2;
+  imsi = imsi / ((imsi >> 14) + 1);
+  imsi = (int64_t)imsi * (t->recent_cpu) / (1<<14);
+  if (t->nice >= 0) {
+    t->recent_cpu = imsi + ((t->nice) << 14);
+  }
+  else (t->nice < 0) {
+    t->recent_cpu = imsi - ((t->nice) << 14);
+  }
 }
 
 

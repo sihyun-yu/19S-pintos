@@ -143,6 +143,7 @@ void thread_set_nice (int);
 int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 void thread_calculate_load_avg (void);
+void thread_calculate_recent_cpu (void);
 
 void sleep_thread(int64_t ticks);
 void awake_thread(int64_t ticks); 

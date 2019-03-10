@@ -142,6 +142,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
   if (thread_mlfqs) {
    if (ticks % TIMER_FREQ == 0 ) {
       thread_calculate_load_avg();
+      thread_calculate_recent_cpu ();
     }
   }
   /*recalculate current thread's recent cpu*/
