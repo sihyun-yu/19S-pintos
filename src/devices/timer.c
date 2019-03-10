@@ -139,6 +139,8 @@ static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
+  thread_tick (timer_ticks());
+
   if (thread_mlfqs) {
     increase_recent_cpu();
    if (ticks % TIMER_FREQ == 0 ) {
@@ -148,7 +150,6 @@ timer_interrupt (struct intr_frame *args UNUSED)
   }
   /*recalculate current thread's recent cpu*/
 
-   thread_tick (timer_ticks());
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
