@@ -90,8 +90,6 @@ struct thread
     int original_priority;
     int priority;                       /* Priority. */
     int64_t wake_up;
-    int nice;
-    int recent_cpu;
 
 
     /* Shared between thread.c and synch.c. */
@@ -101,6 +99,9 @@ struct thread
 
     struct list lock_list;
     struct lock *hurdle;
+
+    int nice;
+    int recent_cpu;
 
 
 
