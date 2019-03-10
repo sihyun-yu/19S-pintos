@@ -334,7 +334,7 @@ void
 thread_set_priority (int new_priority) 
 {
   if (thread_mlfqs) return;
-  
+
   struct thread *cur = thread_current();
   if (cur->priority == cur->original_priority) cur->priority = new_priority;
   cur->original_priority = new_priority;
@@ -394,7 +394,7 @@ int
 thread_get_recent_cpu (void) 
 {
   enum intr_level old_level = intr_disable ();
-  int for_return = ((thread_current()->recent_cpu) * 100) >> 14;
+  int for_return = ((thread_current()->recent_cpu) * 100 + (1 << 14)/2) >> 14;
   intr_set_level (old_level);
   return for_return;
 }
