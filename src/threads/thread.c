@@ -736,9 +736,9 @@ void test_max_priority(void) {
 
     if (intr_context()) {
       thread_ticks++;
-      if ( thread_current()->priority < t->priority || (thread_ticks >= TIME_SLICE && thread_current()->priority == t->priority) )
+      if ((thread_ticks >= TIME_SLICE && thread_current()->priority == t->priority) )
       {
-         //intr_yield_on_return();
+         intr_yield_on_return();
       }
       return;
     }
