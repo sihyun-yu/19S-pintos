@@ -153,7 +153,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
     }
   }
 
-  lea = list_begin(&sleep_list);
+  struct list_elem *lea = list_begin(&sleep_list);
   
   while (lea != list_end(&sleep_list))
     {

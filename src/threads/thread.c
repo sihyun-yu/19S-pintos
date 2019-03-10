@@ -55,7 +55,7 @@ static long long user_ticks;    /* # of timer ticks in user programs. */
 #define TIME_SLICE 4            /* # of timer ticks to give each thread. */
 static unsigned thread_ticks;   /* # of timer ticks since last yield. */
 
-static struct list sleep_list; /*List for sleeping threads*/
+struct list sleep_list; /*List for sleeping threads*/
 int load_avg;
 
 /* If false (default), use round-robin scheduler.
