@@ -325,7 +325,7 @@ thread_yield (void)
   if (curr != idle_thread) 
     //list_push_back (&ready_list, &curr->elem);
     list_insert_ordered(&ready_list, &curr->elem, priority_compare, 0);
-  
+
   curr->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
@@ -731,6 +731,18 @@ void test_max_priority(void) {
   if (!list_empty (&ready_list)) {
     ASSERT(list_front(&ready_list) != NULL)
     ASSERT(list_entry (list_front (&ready_list), struct thread, elem) != NULL)
+    struct *thread thr = list_entry (list_front (&ready_list), struct thread, elem);
+
+    if (intr_context())
+    {
+      thread_ticks++;
+      if ( thread_current()->priority < thr->priority || (thread_ticks >= TIME_SLICE && thread_current()->priority == thr->priority) )
+      {
+        intr_yield_on_return();
+      }
+      return;
+    }
+
     if (thread_current ()->priority < list_entry (list_front (&ready_list), struct thread, elem)->priority){
     thread_yield ();
     }
