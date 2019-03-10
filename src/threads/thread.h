@@ -94,13 +94,13 @@ struct thread
     struct list_elem elem;              /* List element. */
     struct list_elem sleep_elem;
     int64_t wake_up;
-    int nice;
-    int recent_cpu;
-
     /*for donation */
 
     struct list lock_list;
     struct lock *hurdle;
+    int nice;
+    int recent_cpu;
+
 
 #ifdef USERPROG
     /* Owned by userprog/process.c. */
