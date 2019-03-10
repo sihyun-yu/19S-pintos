@@ -465,12 +465,46 @@ void increase_recent_cpu(void) {
 }
 
 void thread_calculate_priority(void) {
+  struct list_elem *e;
+  struct thread *t;
+  int64_t imsi;
+  int recent_cpu;
+  int nice;
+
+  for (e=list_begin(&ready_list); e!=list_end(&ready_list); e=list_next(e)) {
+    t = list_entry(e, struct thread, elem);
+
+    recent_cpu = t->recent_cpu;
+    nice = t->nice;
+
+    imsi = (PRI_MAX * (1<<14)) - (recent_cpu / 4);
+    imsi -= (nice * 2 * (1<<14));
+
+    cur->priority = (imsi) / (1<<14);
+    if (cur->priority <= PRI_MIN) t->priority = PRI_MIN;
+    if (cur->priority >= PRI_MAX) t->priority = PRI_MAX;
+
+  }
+
+  for (e=list_begin(&sleep_list); e!=list_end(&sleep_list); e=list_next(e)) {
+    t = list_entry(e, struct thread, sleep_elem);
+
+    recent_cpu = t->recent_cpu;
+    nice = t->nice;
+
+    imsi = (PRI_MAX * (1<<14)) - (recent_cpu / 4);
+    imsi -= (nice * 2 * (1<<14));
+
+    cur->priority = (imsi) / (1<<14);
+    if (cur->priority <= PRI_MIN) t->priority = PRI_MIN;
+    if (cur->priority >= PRI_MAX) t->priority = PRI_MAX;
+  }
 
   struct thread *cur = thread_current();
-  int recent_cpu = cur->recent_cpu;
-  int nice = cur->nice;
+  recent_cpu = cur->recent_cpu;
+  nice = cur->nice;
 
-  int64_t imsi = (PRI_MAX * (1<<14)) - (recent_cpu / 4);
+  imsi = (PRI_MAX * (1<<14)) - (recent_cpu / 4);
   imsi -= (nice * 2 * (1<<14));
 
   cur->priority = (imsi) / (1<<14);
@@ -569,7 +603,6 @@ init_thread (struct thread *t, const char *name, int priority)
   t->wake_up = 0;
   t->recent_cpu = 0;
   t->nice = 0;
-  if (thread_mlfqs) thread_calculate_priority();
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
