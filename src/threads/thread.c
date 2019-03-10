@@ -404,7 +404,7 @@ void thread_calculate_load_avg (void) {
   if (thread_current()!=idle_thread) cnt++;
 
   load_avg = ((int64_t)load_avg * frac1) / (1 << 14);
-  load_avg = load_avg + cnt * frac2;
+  load_avg = ((int64_t)load_avg + cnt * frac2);
 	ASSERT (load_avg >= 0)
 }
 
