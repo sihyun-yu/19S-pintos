@@ -428,7 +428,7 @@ void thread_calculate_recent_cpu (void) {
     }
   }
 
-  for (t=list_begin(&sleep_list); t!=list_end(&sleep_list); e=list_next(e)) {
+  for (e=list_begin(&sleep_list); e!=list_end(&sleep_list); e=list_next(e)) {
     imsi = load_avg;
     t= list_entry(e, struct thread, sleep_elem);
 
