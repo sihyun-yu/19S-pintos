@@ -456,7 +456,7 @@ void thread_calculate_recent_cpu (void) {
   imsi *= 2;
   imsi = imsi * (1 << 14) / (imsi + (1 << 14));
   imsi = (int64_t)imsi * (t->recent_cpu) / (1<<14);
-  t->recent_cpu = imsi + nice * (1<<14);
+  t->recent_cpu = imsi + t->nice * (1<<14);
 
 }
 
