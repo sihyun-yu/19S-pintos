@@ -724,9 +724,10 @@ bool priority_compare (const struct list_elem *a, const struct list_elem *b, voi
 }
 
 void test_max_priority(void) {
-  if (!list_empty (&ready_list) && thread_current ()->priority < list_entry (list_front (&ready_list), struct thread, elem)->priority){
+  if (!list_empty (&ready_list)) {
+    if (thread_current ()->priority < list_entry (list_front (&ready_list), struct thread, elem)->priority){
     thread_yield ();
-  }
+  } 
 }
 
 
