@@ -144,7 +144,7 @@ int thread_get_recent_cpu (void);
 int thread_get_load_avg (void);
 void thread_calculate_load_avg (void);
 void thread_calculate_recent_cpu (void);
-void increase_recent_cpu()
+void increase_recent_cpu();
 
 void sleep_thread(int64_t ticks);
 void awake_thread(int64_t ticks); 
