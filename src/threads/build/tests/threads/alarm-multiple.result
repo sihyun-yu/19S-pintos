@@ -1,1 +1,13 @@
-PASS
+FAIL
+Kernel panic in run: PANIC at ../../lib/kernel/list.c:290 in list_front(): assertion `!list_empty (list)' failed.
+Call stack: 0xc0107b19 0xc01087ec 0xc01011c8 0xc0101602 0xc0109cdd 0xc0109e61 0xc0109a4b 0xc01000a0 0xc0100641
+Translation of call stack:
+0xc0107b19: debug_panic (.../../lib/kernel/debug.c:34)
+0xc01087ec: list_front (.../../lib/kernel/list.c:290)
+0xc01011c8: test_max_priority (..../../threads/thread.c:734)
+0xc0101602: thread_create (..../../threads/thread.c:220)
+0xc0109cdd: test_sleep (...s/threads/alarm-wait.c:93)
+0xc0109e61: test_alarm_multiple (...s/threads/alarm-wait.c:25)
+0xc0109a4b: run_test (.../tests/threads/tests.c:57)
+0xc01000a0: run_task (.../../../threads/init.c:270)
+0xc0100641: run_actions (.../../../threads/init.c:319)
