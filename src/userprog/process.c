@@ -54,6 +54,31 @@ start_process (void *f_name)
   struct intr_frame if_;
   bool success;
 
+// parsing part that we make
+  char *token;
+  char *next_ptr;
+  int cnt = 1;
+  const char **cmdline_tokens = (const char**) palloc_get_page(0);
+  token = strtok_r(file_name, " ", &next_ptr);
+  cmdline_tokens[0] = token;
+  //printf("string : %s with index %d\n", cmdline_tokens[0], 0);
+
+  while (token){
+    token = strtok_r(NULL, " ", &next_ptr);
+    cmdline_tokens[cnt++] = token;
+    //printf("string : %s with index %d\n", cmdline_tokens[cnt-1], cnt-1);
+    //printf("%s\n", token);
+  }
+
+  //printf("string : %p\n", cmdline_tokens[3]);
+  //printf("string : %p\n", cmdline_tokens[2]);
+  //printf("string : %p\n", cmdline_tokens[1]);
+  //printf("string : %p\n", cmdline_tokens[0]);
+
+
+
+
+
   /* Initialize interrupt frame and load executable. */
   memset (&if_, 0, sizeof if_);
   if_.gs = if_.fs = if_.es = if_.ds = if_.ss = SEL_UDSEG;
@@ -62,7 +87,17 @@ start_process (void *f_name)
   success = load (file_name, &if_.eip, &if_.esp);
 
   /* If load failed, quit. */
-  palloc_free_page (file_name);
+  //palloc_free_page (file_name);
+
+  if (success) {
+    push_stack_cmdline(cmdline_tokens, cnt, &if_.esp);
+
+  }
+
+  palloc_free_page(cmdline_tokens);
+
+
+
   if (!success) 
     thread_exit ();
 
@@ -90,6 +125,7 @@ start_process (void *f_name)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
+  while(1){}
   return -1;
 }
 
@@ -439,7 +475,7 @@ setup_stack (void **esp)
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
       if (success)
-        *esp = PHYS_BASE;
+        *esp = PHYS_BASE - 12;
       else
         palloc_free_page (kpage);
     }
@@ -465,3 +501,66 @@ install_page (void *upage, void *kpage, bool writable)
   return (pagedir_get_page (t->pagedir, upage) == NULL
           && pagedir_set_page (t->pagedir, upage, kpage, writable));
 }
+
+
+void push_stack_cmdline(const char **cmdline_tokens, int cnt, void **esp){
+  //esp : current stack pointer
+  int word_align = 0;
+  int len, len_sum=0;
+  int i;
+  cnt--;
+  void *argv[cnt];
+  printf("%d\n", cnt);
+    
+  for (i = cnt-1; i>=0 ; i--){
+    len = strlen(cmdline_tokens[i]) + 1;
+    *esp -= len;
+    len_sum += len;
+    memcpy(*esp, cmdline_tokens[i], len);
+    //printf("esp : %p len : %d, memory : %s\n", *esp, len, *esp);
+    argv[i] = *esp;
+  }
+
+  word_align = (4 - len_sum%4)%4;
+  *esp -= word_align;
+
+  //printf("esp : %p\n", *esp);
+   
+  *esp -= 4;
+  *((uint32_t*) *esp) = 0;
+  //printf("esp : %p value : %d\n", *esp, *((uint32_t*) *esp));
+  
+  for (i = cnt-1; i>=0; i--){
+    *esp -= 4;
+    *((void **) *esp) = argv[i];
+    //printf("esp : %p value : %p\n", *esp, *((void **) *esp));
+  }
+
+  *esp -= 4;
+  *((void **) *esp) = (*esp + 4);
+  //printf("esp : %p value : %p\n", *esp, *((void **) *esp));
+
+  *esp -= 4;
+  *((uint32_t*) *esp) = cnt;
+  //printf("esp : %p value : %d\n", *esp, *((uint32_t*) *esp));
+
+  *esp -= 4;
+  *((uint32_t*) *esp) = 0;
+  //printf("esp : %p value : %d\n", *esp, *((uint32_t*) *esp));
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
