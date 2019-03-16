@@ -1,0 +1,28 @@
+Copying tests/userprog/open-empty into /tmp/L8Nz_cZmHh.dsk...
+Writing command line to /tmp/hCq1B6mdJ8.dsk...
+qemu -hda /tmp/hCq1B6mdJ8.dsk -hdb /tmp/Xtw2dhnkyg.dsk -hdc /tmp/L8Nz_cZmHh.dsk -m 4 -net none -nographic -monitor null
+Kernel command line: -q -f put open-empty run open-empty
+Pintos booting with 4,096 kB RAM...
+374 pages available in kernel pool.
+374 pages available in user pool.
+Calibrating timer...  104,755,200 loops/s.
+hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
+hd1:0: detected 97 sector (48 kB) disk, model "QEMU HARDDISK", serial "QM00003"
+Formatting file system...done.
+Boot complete.
+Putting 'open-empty' into the file system...
+Executing 'open-empty':
+(open-empty) begin
+(open-empty) open() returned 256 instead of -1: FAILED
+open-empty: exit(1)
+Execution of 'open-empty' complete.
+Timer: 148 ticks
+Thread: 30 idle ticks, 117 kernel ticks, 1 user ticks
+hd0:0: 0 reads, 0 writes
+hd0:1: 59 reads, 202 writes
+hd1:0: 97 reads, 0 writes
+Console: 844 characters output
+Keyboard: 0 keys pressed
+Exception: 0 page faults
+Powering off...

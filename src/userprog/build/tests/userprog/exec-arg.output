@@ -1,0 +1,30 @@
+Copying tests/userprog/exec-arg into /tmp/7FywCafkGN.dsk...
+Copying tests/userprog/child-args into /tmp/7FywCafkGN.dsk...
+Writing command line to /tmp/YGWnDWwrjF.dsk...
+qemu -hda /tmp/YGWnDWwrjF.dsk -hdb /tmp/4FiBVgEJp8.dsk -hdc /tmp/7FywCafkGN.dsk -m 4 -net none -nographic -monitor null
+Kernel command line: -q -f put exec-arg put child-args run exec-arg
+Pintos booting with 4,096 kB RAM...
+374 pages available in kernel pool.
+374 pages available in user pool.
+Calibrating timer...  104,755,200 loops/s.
+hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
+hd1:0: detected 193 sector (96 kB) disk, model "QEMU HARDDISK", serial "QM00003"
+Formatting file system...done.
+Boot complete.
+Putting 'exec-arg' into the file system...
+Putting 'child-args' into the file system...
+Executing 'exec-arg':
+(exec-arg) begin
+(exec-arg) end
+exec-arg: exit(0)
+Execution of 'exec-arg' complete.
+Timer: 177 ticks
+Thread: 30 idle ticks, 147 kernel ticks, 0 user ticks
+hd0:0: 0 reads, 0 writes
+hd0:1: 86 reads, 396 writes
+hd1:0: 193 reads, 0 writes
+Console: 852 characters output
+Keyboard: 0 keys pressed
+Exception: 0 page faults
+Powering off...

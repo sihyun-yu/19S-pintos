@@ -30,6 +30,7 @@ process_execute (const char *file_name)
 {
   char *fn_copy;
   tid_t tid;
+  char *next_ptr;
 
   /* Make a copy of FILE_NAME.
      Otherwise there's a race between the caller and load(). */
@@ -37,7 +38,7 @@ process_execute (const char *file_name)
   if (fn_copy == NULL)
     return TID_ERROR;
   strlcpy (fn_copy, file_name, PGSIZE);
-
+  file_name = strtok_r(file_name, " ", &next_ptr);
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
   if (tid == TID_ERROR)
@@ -91,16 +92,14 @@ start_process (void *f_name)
 
   if (success) {
     push_stack_cmdline(cmdline_tokens, cnt, &if_.esp);
-
+    //hex_dump(if_.esp, if_.esp, 200, true);
   }
 
   palloc_free_page(cmdline_tokens);
 
 
 
-  if (!success) 
-    thread_exit ();
-
+  if (!success) sys_exit(-1);//sys_exit();
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in
      threads/intr-stubs.S).  Because intr_exit takes all of its
@@ -125,7 +124,10 @@ start_process (void *f_name)
 int
 process_wait (tid_t child_tid UNUSED) 
 {
-  while(1){}
+  int dummy = 0, i;
+  for(i=0; i<  10000 * 10000; ++i) dummy += i;
+  ASSERT(dummy != 0);
+
   return -1;
 }
 
@@ -475,7 +477,7 @@ setup_stack (void **esp)
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
       if (success)
-        *esp = PHYS_BASE - 12;
+        *esp = PHYS_BASE -12;
       else
         palloc_free_page (kpage);
     }
@@ -510,7 +512,7 @@ void push_stack_cmdline(const char **cmdline_tokens, int cnt, void **esp){
   int i;
   cnt--;
   void *argv[cnt];
-  printf("%d\n", cnt);
+  //printf("%d\n", cnt);
     
   for (i = cnt-1; i>=0 ; i--){
     len = strlen(cmdline_tokens[i]) + 1;
@@ -550,7 +552,11 @@ void push_stack_cmdline(const char **cmdline_tokens, int cnt, void **esp){
 
 }
 
-
+void check_address(void *address){
+  if ((uint32_t) address < 0x08048000 || (uint32_t) address > 0xc0000000) {
+    //exit(-1);
+  }
+}
 
 
 

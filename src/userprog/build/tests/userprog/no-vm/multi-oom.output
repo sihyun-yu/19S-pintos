@@ -1,0 +1,28 @@
+Copying tests/userprog/no-vm/multi-oom into /tmp/2U0SigqISa.dsk...
+Writing command line to /tmp/VzjcH10Yyj.dsk...
+qemu -hda /tmp/VzjcH10Yyj.dsk -hdb /tmp/kQ1usn17OJ.dsk -hdc /tmp/2U0SigqISa.dsk -m 4 -net none -nographic -monitor null
+Kernel command line: -q -f put multi-oom run multi-oom
+Pintos booting with 4,096 kB RAM...
+374 pages available in kernel pool.
+374 pages available in user pool.
+Calibrating timer...  104,755,200 loops/s.
+hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
+hd1:0: detected 112 sector (56 kB) disk, model "QEMU HARDDISK", serial "QM00003"
+Formatting file system...done.
+Boot complete.
+Putting 'multi-oom' into the file system...
+Executing 'multi-oom':
+(multi-oom) begin
+(multi-oom) should have forked at least 30 times.: FAILED
+multi-oom: exit(1)
+Execution of 'multi-oom' complete.
+Timer: 146 ticks
+Thread: 30 idle ticks, 115 kernel ticks, 1 user ticks
+hd0:0: 0 reads, 0 writes
+hd0:1: 65 reads, 232 writes
+hd1:0: 112 reads, 0 writes
+Console: 842 characters output
+Keyboard: 0 keys pressed
+Exception: 0 page faults
+Powering off...
