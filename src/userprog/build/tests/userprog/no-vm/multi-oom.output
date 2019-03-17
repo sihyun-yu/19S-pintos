@@ -1,6 +1,6 @@
-Copying tests/userprog/no-vm/multi-oom into /tmp/2U0SigqISa.dsk...
-Writing command line to /tmp/VzjcH10Yyj.dsk...
-qemu -hda /tmp/VzjcH10Yyj.dsk -hdb /tmp/kQ1usn17OJ.dsk -hdc /tmp/2U0SigqISa.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/no-vm/multi-oom into /tmp/CmfGwQeGKq.dsk...
+Writing command line to /tmp/2YzveuZGGk.dsk...
+qemu -hda /tmp/2YzveuZGGk.dsk -hdb /tmp/lZpYMcJZvA.dsk -hdc /tmp/CmfGwQeGKq.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put multi-oom run multi-oom
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
@@ -14,15 +14,328 @@ Boot complete.
 Putting 'multi-oom' into the file system...
 Executing 'multi-oom':
 (multi-oom) begin
-(multi-oom) should have forked at least 30 times.: FAILED
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+Page fault at 0: not present error writing page in user context.
+multi-oom: dying due to interrupt 0x0e (#PF Page-Fault Exception).
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0x8048104
+ cr2=00000000 error=00000006
+ eax=5fe68ecb ebx=00000019 ecx=00000000 edx=132e1c8f
+ esi=bffffff4 edi=0804b04f esp=bfffff40 ebp=bfffff58
+ cs=001b ds=0023 es=0023 ss=0023
+(multi-oom) crashed child should return -1.: FAILED
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+Page fault at 0: not present error writing page in user context.
+multi-oom: dying due to interrupt 0x0e (#PF Page-Fault Exception).
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0x8048104
+ cr2=00000000 error=00000006
+ eax=5fe68ecb ebx=00000019 ecx=00000000 edx=132e1c8f
+ esi=bffffff4 edi=0804b04f esp=bfffff40 ebp=bfffff58
+ cs=001b ds=0023 es=0023 ss=0023
+(multi-oom) crashed child should return -1.: FAILED
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+Page fault at 0: not present error writing page in user context.
+multi-oom: dying due to interrupt 0x0e (#PF Page-Fault Exception).
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0x8048104
+ cr2=00000000 error=00000006
+ eax=5fe68ecb ebx=00000019 ecx=00000000 edx=132e1c8f
+ esi=bffffff4 edi=0804b04f esp=bfffff40 ebp=bfffff58
+ cs=001b ds=0023 es=0023 ss=0023
+(multi-oom) crashed child should return -1.: FAILED
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+Page fault at 0: not present error writing page in user context.
+multi-oom: dying due to interrupt 0x0e (#PF Page-Fault Exception).
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0x8048104
+ cr2=00000000 error=00000006
+ eax=5fe68ecb ebx=00000019 ecx=00000000 edx=132e1c8f
+ esi=bffffff4 edi=0804b04f esp=bfffff40 ebp=bfffff58
+ cs=001b ds=0023 es=0023 ss=0023
+(multi-oom) crashed child should return -1.: FAILED
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+Page fault at 0: not present error writing page in user context.
+multi-oom: dying due to interrupt 0x0e (#PF Page-Fault Exception).
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0x8048104
+ cr2=00000000 error=00000006
+ eax=5fe68ecb ebx=00000019 ecx=00000000 edx=132e1c8f
+ esi=bffffff4 edi=0804b04f esp=bfffff40 ebp=bfffff58
+ cs=001b ds=0023 es=0023 ss=0023
+(multi-oom) crashed child should return -1.: FAILED
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+Page fault at 0: not present error writing page in user context.
+multi-oom: dying due to interrupt 0x0e (#PF Page-Fault Exception).
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0x8048104
+ cr2=00000000 error=00000006
+ eax=5fe68ecb ebx=00000019 ecx=00000000 edx=132e1c8f
+ esi=bffffff4 edi=0804b04f esp=bfffff40 ebp=bfffff58
+ cs=001b ds=0023 es=0023 ss=0023
+(multi-oom) crashed child should return -1.: FAILED
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+Page fault at 0: not present error writing page in user context.
+multi-oom: dying due to interrupt 0x0e (#PF Page-Fault Exception).
+Interrupt 0x0e (#PF Page-Fault Exception) at eip=0x8048104
+ cr2=00000000 error=00000006
+ eax=5fe68ecb ebx=00000019 ecx=00000000 edx=132e1c8f
+ esi=bffffff4 edi=0804b04f esp=bfffff40 ebp=bfffff58
+ cs=001b ds=0023 es=0023 ss=0023
+(multi-oom) crashed child should return -1.: FAILED
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+multi-oom: exit(24)
+(multi-oom) after run 7/10, expected depth 1, actual depth 24.: FAILED
 multi-oom: exit(1)
 Execution of 'multi-oom' complete.
-Timer: 146 ticks
-Thread: 30 idle ticks, 115 kernel ticks, 1 user ticks
+Timer: 316 ticks
+Thread: 30 idle ticks, 92 kernel ticks, 194 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 65 reads, 232 writes
+hd0:1: 9537 reads, 232 writes
 hd1:0: 112 reads, 0 writes
-Console: 842 characters output
+Console: 8707 characters output
 Keyboard: 0 keys pressed
-Exception: 0 page faults
+Exception: 24 page faults
 Powering off...

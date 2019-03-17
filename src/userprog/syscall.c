@@ -4,7 +4,8 @@
 #include "threads/interrupt.h"
 #include "threads/thread.h"
 #include "threads/init.h"
-
+#include "userprog/process.h"
+#include "threads/synch.h"
 static void syscall_handler (struct intr_frame *);
 
 void
@@ -26,18 +27,28 @@ syscall_handler (struct intr_frame *f)
 		case SYS_EXIT:
 		{
 			//printf("");
+			check_address(f->esp+4);
 			uint32_t status = *((uint32_t *)(f->esp+4));
+			//printf("status : %d\n", status);
+			//printf("exit id : %d\n", status);
 			sys_exit(status);
 
 			break;
 		}
 		case SYS_EXEC:
 		{
+			check_address(f->esp+4);
+			char *cmd_line = (char *) *((uint32_t *)(f->esp+4));
+			pid_t exec_pid = process_execute(cmd_line);
+			if (exec_pid < 0) f->eax = -1;
+			else (f->eax) = exec_pid;
+			//printf("exec pid : %d\n", exec_pid);
 			break;
 		}
 		case SYS_WAIT:
 		{
-			//printf("")
+			check_address(f->esp+4);
+			f->eax = sys_wait((int) *((uint32_t *)(f->esp+4)));
 			break;
 		}
 		case SYS_CREATE:
@@ -71,7 +82,10 @@ syscall_handler (struct intr_frame *f)
 		}
 
 		case SYS_WRITE:
-		{
+		{	
+			check_address(f->esp+4);
+			check_address(f->esp+8);
+			check_address(f->esp+12);
 
 			//printf("")
 			int fd;
@@ -112,12 +126,13 @@ syscall_handler (struct intr_frame *f)
 
 void sys_exit(int status){
 	printf ("%s: exit(%d)\n", thread_current()->name, status);
+	thread_current()->exit_status = status;
 	thread_exit();
 }
 
 
 int sys_write (int fd, const void *buffer, unsigned size) {
-
+	// check address
 
   if (fd == 1) {
     putbuf(buffer, size);
@@ -126,8 +141,20 @@ int sys_write (int fd, const void *buffer, unsigned size) {
   return -1; 
 }
 
+int sys_exec(char *cmd_line){
+	
+	return process_execute(cmd_line);
+}
 
 
+int sys_filesize(int fd){
+	return 0;
+}
+
+
+int sys_wait(pid_t pid){
+	process_wait(pid);
+}
 
 
 

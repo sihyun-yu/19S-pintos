@@ -1,6 +1,6 @@
-Copying tests/userprog/bad-write into /tmp/zM8RGWt_0b.dsk...
-Writing command line to /tmp/USkBTk1vfz.dsk...
-qemu -hda /tmp/USkBTk1vfz.dsk -hdb /tmp/dWvWD_Me8Z.dsk -hdc /tmp/zM8RGWt_0b.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/bad-write into /tmp/fd0C7_mGKT.dsk...
+Writing command line to /tmp/LBgeDgrtOf.dsk...
+qemu -hda /tmp/LBgeDgrtOf.dsk -hdb /tmp/yyuFLmNQ5Y.dsk -hdc /tmp/fd0C7_mGKT.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put bad-write run bad-write
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
@@ -22,12 +22,12 @@ Interrupt 0x0e (#PF Page-Fault Exception) at eip=0x80480a6
  esi=00000000 edi=00000000 esp=bfffff80 ebp=bfffff98
  cs=001b ds=0023 es=0023 ss=0023
 Execution of 'bad-write' complete.
-Timer: 139 ticks
-Thread: 30 idle ticks, 107 kernel ticks, 2 user ticks
+Timer: 96 ticks
+Thread: 30 idle ticks, 64 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 59 reads, 202 writes
+hd0:1: 61 reads, 202 writes
 hd1:0: 97 reads, 0 writes
-Console: 1122 characters output
+Console: 1120 characters output
 Keyboard: 0 keys pressed
 Exception: 1 page faults
 Powering off...

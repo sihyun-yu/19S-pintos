@@ -17,6 +17,7 @@
 #include "threads/palloc.h"
 #include "threads/thread.h"
 #include "threads/vaddr.h"
+#include "userprog/syscall.h"
 
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
@@ -31,6 +32,7 @@ process_execute (const char *file_name)
   char *fn_copy;
   tid_t tid;
   char *next_ptr;
+  char *real_file_name;
 
   /* Make a copy of FILE_NAME.
      Otherwise there's a race between the caller and load(). */
@@ -38,9 +40,14 @@ process_execute (const char *file_name)
   if (fn_copy == NULL)
     return TID_ERROR;
   strlcpy (fn_copy, file_name, PGSIZE);
-  file_name = strtok_r(file_name, " ", &next_ptr);
+
+  real_file_name = strtok_r(file_name, " ", &next_ptr);
+
+  if (filesys_open(file_name) == NULL) {
+    return -1;
+  }
   /* Create a new thread to execute FILE_NAME. */
-  tid = thread_create (file_name, PRI_DEFAULT, start_process, fn_copy);
+  tid = thread_create (real_file_name, PRI_DEFAULT, start_process, fn_copy);
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
   return tid;
@@ -122,12 +129,21 @@ start_process (void *f_name)
    This function will be implemented in problem 2-2.  For now, it
    does nothing. */
 int
-process_wait (tid_t child_tid UNUSED) 
+process_wait (tid_t child_tid) 
 {
-  int dummy = 0, i;
-  for(i=0; i<  10000 * 10000; ++i) dummy += i;
-  ASSERT(dummy != 0);
-
+  struct thread *curr = thread_current();
+  struct list_elem *e;
+  struct thread *child;
+  for(e = list_begin(&curr->child_list); e != list_end(&curr->child_list); e = list_next(e)){
+    child = list_entry(e, struct thread, child_elem);
+    if (child->tid == child_tid){
+      sema_down(&child->child_lock);
+      int status = child->exit_status;
+      list_remove(e);
+      sema_up(&child->sync_lock);
+      return status;
+    }
+  }
   return -1;
 }
 
@@ -154,6 +170,9 @@ process_exit (void)
       pagedir_activate (NULL);
       pagedir_destroy (pd);
     }
+  sema_up(&thread_current()->child_lock);
+  sema_down(&thread_current()->sync_lock);
+
 }
 
 /* Sets up the CPU for running user code in the current
@@ -553,9 +572,7 @@ void push_stack_cmdline(const char **cmdline_tokens, int cnt, void **esp){
 }
 
 void check_address(void *address){
-  if ((uint32_t) address < 0x08048000 || (uint32_t) address > 0xc0000000) {
-    //exit(-1);
-  }
+  if (!is_user_vaddr(address)) sys_exit(-1);
 }
 
 

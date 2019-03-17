@@ -603,6 +603,17 @@ init_thread (struct thread *t, const char *name, int priority)
   t->wake_up = 0;
   t->recent_cpu = 0;
   t->nice = 0;
+#ifdef USERPROG
+  list_init(&t->child_list);
+  t->exit_status = 0;
+  sema_init (&t->child_lock, 0);
+  sema_init (&t->sync_lock, 0);
+  list_push_back(&(running_thread()->child_list), &(t->child_elem));
+
+#endif 
+
+
+
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and

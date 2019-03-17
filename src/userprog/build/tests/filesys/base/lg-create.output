@@ -1,6 +1,6 @@
-Copying tests/filesys/base/lg-create into /tmp/FGj1H_i6IU.dsk...
-Writing command line to /tmp/k9CxMEHtFS.dsk...
-qemu -hda /tmp/k9CxMEHtFS.dsk -hdb /tmp/31gvx5qOTI.dsk -hdc /tmp/FGj1H_i6IU.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/base/lg-create into /tmp/PVnkCxLPs_.dsk...
+Writing command line to /tmp/zKZJDDXRTx.dsk...
+qemu -hda /tmp/zKZJDDXRTx.dsk -hdb /tmp/5LeTx05kvH.dsk -hdc /tmp/PVnkCxLPs_.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put lg-create run lg-create
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
@@ -18,12 +18,12 @@ Executing 'lg-create':
 (lg-create) create "blargle": FAILED
 lg-create: exit(1)
 Execution of 'lg-create' complete.
-Timer: 148 ticks
-Thread: 30 idle ticks, 117 kernel ticks, 1 user ticks
+Timer: 92 ticks
+Thread: 30 idle ticks, 61 kernel ticks, 1 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 60 reads, 208 writes
+hd0:1: 62 reads, 208 writes
 hd1:0: 100 reads, 0 writes
-Console: 850 characters output
+Console: 848 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

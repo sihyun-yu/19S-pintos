@@ -1,12 +1,12 @@
-Copying tests/userprog/close-twice into /tmp/sMu1Th_mQE.dsk...
-Copying ../../tests/userprog/sample.txt into /tmp/sMu1Th_mQE.dsk...
-Writing command line to /tmp/qDRqnuXQkV.dsk...
-qemu -hda /tmp/qDRqnuXQkV.dsk -hdb /tmp/g_W2swmKuQ.dsk -hdc /tmp/sMu1Th_mQE.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/close-twice into /tmp/4pS94sPEin.dsk...
+Copying ../../tests/userprog/sample.txt into /tmp/4pS94sPEin.dsk...
+Writing command line to /tmp/kHuiS9gFOf.dsk...
+qemu -hda /tmp/kHuiS9gFOf.dsk -hdb /tmp/mGV92VVL7R.dsk -hdc /tmp/4pS94sPEin.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put close-twice put sample.txt run close-twice
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
 374 pages available in user pool.
-Calibrating timer...  78,540,800 loops/s.
+Calibrating timer...  117,555,200 loops/s.
 hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 99 sector (49 kB) disk, model "QEMU HARDDISK", serial "QM00003"
@@ -20,12 +20,12 @@ Executing 'close-twice':
 (close-twice) open "sample.txt": FAILED
 close-twice: exit(1)
 Execution of 'close-twice' complete.
-Timer: 143 ticks
-Thread: 30 idle ticks, 112 kernel ticks, 1 user ticks
+Timer: 94 ticks
+Thread: 30 idle ticks, 63 kernel ticks, 1 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 86 reads, 208 writes
+hd0:1: 88 reads, 208 writes
 hd1:0: 99 reads, 0 writes
-Console: 927 characters output
+Console: 926 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
