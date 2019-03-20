@@ -1,2 +1,2 @@
 FAIL
-run: open "sample.txt": FAILED
+run: write() returned 2 instead of 0: FAILED

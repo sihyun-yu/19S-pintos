@@ -3,12 +3,22 @@
 #include <syscall-nr.h>
 #include "threads/interrupt.h"
 #include "threads/thread.h"
+
 #include "threads/init.h"
 #include "userprog/process.h"
 #include "threads/synch.h"
 #include "filesys/filesys.h"
 #include "filesys/file.h"
 #include "devices/input.h"
+#include "threads/malloc.h"
+#include "pagedir.h"
+#include "threads/vaddr.h"
+#include <string.h>
+#include "filesys/inode.h"
+#include "filesys/directory.h"
+#include "threads/palloc.h"
+#include "lib/kernel/list.h"
+
 
 static void syscall_handler (struct intr_frame *);
 
@@ -77,7 +87,7 @@ syscall_handler (struct intr_frame *f)
 		{
 			check_address(f->esp+4);
 			const char *file = (char *) *((uint32_t *)(f->esp+4));
-			f->eax = (bool) sys_open(file);
+			f->eax = sys_open(file);
 			break;
 		}
 
@@ -134,7 +144,7 @@ syscall_handler (struct intr_frame *f)
 		{
 			check_address(f->esp+4);
 			int fd = (int) *((uint32_t *)(f->esp+4));
-			sys_tell(fd);
+			f->eax = sys_tell(fd);
 			break;
 		}
 
@@ -192,17 +202,33 @@ int sys_create(const char *file, unsigned initial_size)
  }
 
 int sys_remove (const char *file) {
+	//should remove this node
  	return filesys_remove(file);
 }
 
 int sys_open (const char *file) {
-	filesys_open(file);
-	return 0;
+	if (*file == NULL) return -1;
+	struct file *open_file = filesys_open(file);
+	if (open_file == NULL) return -1;
+
+	//printf("Pass here ?\n");
+	struct file_fd *node = (struct file_fd *) malloc (sizeof (struct file_fd));
+	//printf("correctly defined?\n");
+	//printf("%d : current thread's fd\n", thread_current()->fd);
+	node->fd = thread_current()->fd;
+	//printf("correctly defined? 2\n");
+	//printf("At here, fd = %d\n", thread_current()->fd);
+	node->open_file = open_file;
+	thread_current()->fd++;
+	//printf("At here, fd = %d\n", thread_current()->fd);
+	push_file_fd(node);
+	//printf("work!\n");
+	return node->fd;
 }
 
 int sys_filesize(int fd){
-	struct file *file_for_size;
-	return 0;
+	struct file *file_for_size = find_file_from_fd(fd);
+	return file_length(file_for_size);
 }
 
 
@@ -215,7 +241,8 @@ void sys_seek(int fd, unsigned position) {
 }
 
 unsigned sys_tell (int fd) {
-	return 0;
+	struct file *file_for_tell = find_file_from_fd(fd);
+	return file_tell(file_for_tell);
 }
 
 void sys_close(int fd ){

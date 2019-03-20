@@ -1,2 +1,2 @@
 FAIL
-run: open "sample.txt": FAILED
+run: read() returned 134533120 instead of 239: FAILED

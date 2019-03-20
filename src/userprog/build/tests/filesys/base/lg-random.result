@@ -1,2 +1,2 @@
 FAIL
-run: open "bazzle": FAILED
+run: write 512 bytes at offset 6144 failed: FAILED

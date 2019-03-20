@@ -1,2 +1,2 @@
 FAIL
-run: open "data": FAILED
+run: write "data": FAILED

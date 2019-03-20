@@ -1,12 +1,12 @@
-Copying tests/userprog/write-zero into /tmp/KTxD1Q2aEC.dsk...
-Copying ../../tests/userprog/sample.txt into /tmp/KTxD1Q2aEC.dsk...
-Writing command line to /tmp/kO8ZieYqVD.dsk...
-qemu -hda /tmp/kO8ZieYqVD.dsk -hdb /tmp/NbKXErTgOd.dsk -hdc /tmp/KTxD1Q2aEC.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/write-zero into /tmp/tsAipg8Q1X.dsk...
+Copying ../../tests/userprog/sample.txt into /tmp/tsAipg8Q1X.dsk...
+Writing command line to /tmp/IDzfx2dZ1v.dsk...
+qemu -hda /tmp/IDzfx2dZ1v.dsk -hdb /tmp/Z1coXIjJzx.dsk -hdc /tmp/tsAipg8Q1X.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put write-zero put sample.txt run write-zero
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
 374 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
+Calibrating timer...  117,760,000 loops/s.
 hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 99 sector (49 kB) disk, model "QEMU HARDDISK", serial "QM00003"
@@ -17,15 +17,15 @@ Putting 'sample.txt' into the file system...
 Executing 'write-zero':
 (write-zero) begin
 (write-zero) open "sample.txt"
-(write-zero) open "sample.txt": FAILED
+(write-zero) write() returned 2 instead of 0: FAILED
 write-zero: exit(1)
 Execution of 'write-zero' complete.
-Timer: 94 ticks
-Thread: 30 idle ticks, 63 kernel ticks, 1 user ticks
+Timer: 99 ticks
+Thread: 30 idle ticks, 67 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 92 reads, 208 writes
 hd1:0: 99 reads, 0 writes
-Console: 917 characters output
+Console: 931 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

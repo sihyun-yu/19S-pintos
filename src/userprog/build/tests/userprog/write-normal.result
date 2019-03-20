@@ -1,2 +1,2 @@
 FAIL
-run: open "test.txt": FAILED
+run: write() returned 2 instead of 239: FAILED

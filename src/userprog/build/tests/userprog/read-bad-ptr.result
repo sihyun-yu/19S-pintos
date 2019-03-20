@@ -1,2 +1,2 @@
 FAIL
-run: open "sample.txt": FAILED
+run: should not have survived read(): FAILED

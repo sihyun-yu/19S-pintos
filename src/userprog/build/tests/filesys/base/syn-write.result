@@ -1,2 +1,2 @@
 FAIL
-run: ((null)) open "stuff": FAILED
+run: read "stuff": FAILED

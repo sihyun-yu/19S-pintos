@@ -1,7 +1,7 @@
-Copying tests/filesys/base/syn-read into /tmp/HyHrTk20CF.dsk...
-Copying tests/filesys/base/child-syn-read into /tmp/HyHrTk20CF.dsk...
-Writing command line to /tmp/XyoDXqtHuI.dsk...
-qemu -hda /tmp/XyoDXqtHuI.dsk -hdb /tmp/93wBJ5FT4u.dsk -hdc /tmp/HyHrTk20CF.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/base/syn-read into /tmp/8OmKicJV4G.dsk...
+Copying tests/filesys/base/child-syn-read into /tmp/8OmKicJV4G.dsk...
+Writing command line to /tmp/t4Dsij7ysd.dsk...
+qemu -hda /tmp/t4Dsij7ysd.dsk -hdb /tmp/_lQ8KFXTs2.dsk -hdc /tmp/8OmKicJV4G.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put syn-read put child-syn-read run syn-read
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
@@ -18,15 +18,16 @@ Executing 'syn-read':
 (syn-read) begin
 (syn-read) create "data"
 (syn-read) open "data"
-(syn-read) open "data": FAILED
+(syn-read) write "data"
+(syn-read) write "data": FAILED
 syn-read: exit(1)
 Execution of 'syn-read' complete.
-Timer: 136 ticks
-Thread: 30 idle ticks, 103 kernel ticks, 3 user ticks
+Timer: 138 ticks
+Thread: 30 idle ticks, 105 kernel ticks, 3 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 118 reads, 442 writes
 hd1:0: 213 reads, 0 writes
-Console: 926 characters output
+Console: 951 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

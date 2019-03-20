@@ -1,12 +1,12 @@
-Copying tests/userprog/read-normal into /tmp/ThBwDHdRSR.dsk...
-Copying ../../tests/userprog/sample.txt into /tmp/ThBwDHdRSR.dsk...
-Writing command line to /tmp/zQcfWR4c5U.dsk...
-qemu -hda /tmp/zQcfWR4c5U.dsk -hdb /tmp/RDwxU5ph_p.dsk -hdc /tmp/ThBwDHdRSR.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/read-normal into /tmp/iIt7s6aENj.dsk...
+Copying ../../tests/userprog/sample.txt into /tmp/iIt7s6aENj.dsk...
+Writing command line to /tmp/ha4uM3PSus.dsk...
+qemu -hda /tmp/ha4uM3PSus.dsk -hdb /tmp/OkGOGMCjfT.dsk -hdc /tmp/iIt7s6aENj.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put read-normal put sample.txt run read-normal
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
 374 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
+Calibrating timer...  117,760,000 loops/s.
 hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 100 sector (50 kB) disk, model "QEMU HARDDISK", serial "QM00003"
@@ -17,15 +17,15 @@ Putting 'sample.txt' into the file system...
 Executing 'read-normal':
 (read-normal) begin
 (read-normal) open "sample.txt" for verification
-(read-normal) open "sample.txt" for verification: FAILED
+(read-normal) read of 239 bytes at offset 0 in "sample.txt" returned 2: FAILED
 read-normal: exit(1)
 Execution of 'read-normal' complete.
-Timer: 97 ticks
-Thread: 30 idle ticks, 66 kernel ticks, 1 user ticks
+Timer: 96 ticks
+Thread: 30 idle ticks, 64 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 99 reads, 210 writes
 hd1:0: 100 reads, 0 writes
-Console: 962 characters output
+Console: 984 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

@@ -1,2 +1,2 @@
 FAIL
-run: open "sample.txt": FAILED
+run: should have exited with -1: FAILED

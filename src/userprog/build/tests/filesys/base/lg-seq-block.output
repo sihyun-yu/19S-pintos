@@ -1,11 +1,11 @@
-Copying tests/filesys/base/lg-seq-block into /tmp/wy6YNdibRa.dsk...
-Writing command line to /tmp/7K4e7CuJXT.dsk...
-qemu -hda /tmp/7K4e7CuJXT.dsk -hdb /tmp/OEQeyp6djm.dsk -hdc /tmp/wy6YNdibRa.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/base/lg-seq-block into /tmp/SCL4djqMsR.dsk...
+Writing command line to /tmp/uLdIUheBzr.dsk...
+qemu -hda /tmp/uLdIUheBzr.dsk -hdb /tmp/V29B2TNksU.dsk -hdc /tmp/SCL4djqMsR.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put lg-seq-block run lg-seq-block
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
 374 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
+Calibrating timer...  117,760,000 loops/s.
 hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 101 sector (50 kB) disk, model "QEMU HARDDISK", serial "QM00003"
@@ -16,15 +16,16 @@ Executing 'lg-seq-block':
 (lg-seq-block) begin
 (lg-seq-block) create "noodle"
 (lg-seq-block) open "noodle"
-(lg-seq-block) open "noodle": FAILED
+(lg-seq-block) writing "noodle"
+(lg-seq-block) write 513 bytes at offset 0 in "noodle" failed: FAILED
 lg-seq-block: exit(1)
 Execution of 'lg-seq-block' complete.
 Timer: 128 ticks
-Thread: 30 idle ticks, 66 kernel ticks, 32 user ticks
+Thread: 30 idle ticks, 65 kernel ticks, 33 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 88 reads, 362 writes
 hd1:0: 101 reads, 0 writes
-Console: 902 characters output
+Console: 967 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

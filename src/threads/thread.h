@@ -5,6 +5,17 @@
 #include <list.h>
 #include <stdint.h>
 #include "threads/synch.h"
+#include "filesys/filesys.h"
+#include "filesys/file.h"
+
+
+#ifdef USERPROG
+struct file_fd {
+  int fd; 
+  struct file *open_file;
+  struct list_elem file_elem; 
+};
+#endif
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -115,6 +126,7 @@ struct thread
     struct list child_list;
     struct list_elem child_elem;
     int exit_status;
+    int fd;
 
 #endif
 
@@ -122,10 +134,12 @@ struct thread
     unsigned magic;                     /* Detects stack overflow. */
   };
 
+extern bool thread_mlfqs;
+
+
 /* If false (default), use round-robin scheduler.
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */
-extern bool thread_mlfqs;
 
 void thread_init (void);
 void thread_start (void);
@@ -166,4 +180,6 @@ void awake_thread(int64_t ticks);
 bool priority_compare (const struct list_elem *a, const struct list_elem *b, void *aux);
 void test_max_priority(void);
 void priority_change(struct thread *, int priority);
+void push_file_fd(struct file_fd *node);
+
 #endif /* threads/thread.h */

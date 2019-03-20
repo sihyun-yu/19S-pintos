@@ -1,2 +1,2 @@
 FAIL
-run: open "nibble": FAILED
+run: write 717 bytes at offset 0 in "nibble" failed: FAILED

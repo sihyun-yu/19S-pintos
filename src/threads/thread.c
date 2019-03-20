@@ -13,6 +13,7 @@
 #include "threads/vaddr.h"
 #ifdef USERPROG
 #include "userprog/process.h"
+#include "threads/malloc.h"
 #endif
 
 
@@ -37,6 +38,8 @@ static struct thread *initial_thread;
 
 /* Lock used by allocate_tid(). */
 static struct lock tid_lock;
+
+struct list fd_file_list;
 
 /* Stack frame for kernel_thread(). */
 struct kernel_thread_frame 
@@ -99,6 +102,7 @@ thread_init (void)
   lock_init (&tid_lock);
   list_init (&ready_list);
   list_init (&sleep_list);
+  list_init (&fd_file_list);
 
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
@@ -609,6 +613,7 @@ init_thread (struct thread *t, const char *name, int priority)
   sema_init (&t->child_lock, 0);
   sema_init (&t->sync_lock, 0);
   list_push_back(&(running_thread()->child_list), &(t->child_elem));
+  t->fd = 2;
 
 #endif 
 
@@ -802,4 +807,21 @@ struct list_elem *sleep_list_begin() {
 
 struct list_elem *sleep_list_end() {
   return list_end(&sleep_list);
+}
+
+
+void push_file_fd(struct file_fd *node) {
+  list_push_back(&fd_file_list, &node->file_elem);
+}
+
+struct file* find_file_from_fd(int fd) {
+  struct list_elem* e;
+  struct file_fd *node;
+ for (e=list_begin(&fd_file_list); e!=list_end(&fd_file_list); e=list_next(e)) {
+    node = list_entry(e, struct file_fd, file_elem);
+    if (node->fd == fd) {
+      return node->open_file;
+    }
+  }  
+  return NULL;
 }

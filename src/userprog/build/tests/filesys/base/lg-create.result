@@ -1,2 +1,2 @@
 FAIL
-run: open "blargle" for verification: FAILED
+run: read of 512 bytes at offset 0 in "blargle" returned 2: FAILED

@@ -1,11 +1,11 @@
-Copying tests/userprog/no-vm/multi-oom into /tmp/12eXx0YLFd.dsk...
-Writing command line to /tmp/2tOHCCrh3q.dsk...
-qemu -hda /tmp/2tOHCCrh3q.dsk -hdb /tmp/oa689iNWmD.dsk -hdc /tmp/12eXx0YLFd.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/no-vm/multi-oom into /tmp/Al2yZeJDfe.dsk...
+Writing command line to /tmp/OfDnG2M_Zn.dsk...
+qemu -hda /tmp/OfDnG2M_Zn.dsk -hdb /tmp/JBI5tJbLlh.dsk -hdc /tmp/Al2yZeJDfe.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put multi-oom run multi-oom
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
 374 pages available in user pool.
-Calibrating timer...  117,760,000 loops/s.
+Calibrating timer...  104,755,200 loops/s.
 hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 112 sector (56 kB) disk, model "QEMU HARDDISK", serial "QM00003"
@@ -178,31 +178,9 @@ multi-oom: exit(-1)
 multi-oom: exit(-1)
 multi-oom: exit(-1)
 multi-oom: exit(-1)
-multi-oom: exit(-1)
-multi-oom: exit(-1)
-multi-oom: exit(-1)
-multi-oom: exit(-1)
-Page fault at 0: not present error writing page in user context.
-multi-oom: dying due to interrupt 0x0e (#PF Page-Fault Exception).
-Interrupt 0x0e (#PF Page-Fault Exception) at eip=0x8048104
- cr2=00000000 error=00000006
- eax=5fe68ecb ebx=00000019 ecx=00000000 edx=132e1c8f
- esi=bffffff4 edi=0804b04f esp=bfffff40 ebp=bfffff58
- cs=001b ds=0023 es=0023 ss=0023
-(multi-oom) crashed child should return -1.: FAILED
-multi-oom: exit(1)
-multi-oom: exit(1)
-multi-oom: exit(1)
-multi-oom: exit(1)
-multi-oom: exit(1)
-multi-oom: exit(1)
-multi-oom: exit(1)
-multi-oom: exit(1)
-multi-oom: exit(1)
-multi-oom: exit(1)
-multi-oom: exit(1)
-multi-oom: exit(1)
-multi-oom: exit(1)
-multi-oom: exit(1)
-multi-oom: exit(1)
+multi-oom: exit(19)
+multi-oom: exit(19)
+multi-oom: exit(19)
+multi-oom: exit(19)
+multi-oom: exit(19)
 Simulation terminated due to test failure.
