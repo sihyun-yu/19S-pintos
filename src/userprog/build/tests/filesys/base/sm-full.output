@@ -1,6 +1,6 @@
-Copying tests/filesys/base/sm-full into /tmp/0OEaeHi33w.dsk...
-Writing command line to /tmp/8dqbLjnDdt.dsk...
-qemu -hda /tmp/8dqbLjnDdt.dsk -hdb /tmp/UEdRiDE4rq.dsk -hdc /tmp/0OEaeHi33w.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/base/sm-full into /tmp/2izecpp_82.dsk...
+Writing command line to /tmp/oOFO1x1UwZ.dsk...
+qemu -hda /tmp/oOFO1x1UwZ.dsk -hdb /tmp/AysvR1m04L.dsk -hdc /tmp/2izecpp_82.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put sm-full run sm-full
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
@@ -16,16 +16,15 @@ Executing 'sm-full':
 (sm-full) begin
 (sm-full) create "quux"
 (sm-full) open "quux"
-(sm-full) writing "quux"
-(sm-full) write 5678 bytes at offset 0 in "quux" failed: FAILED
+(sm-full) open "quux": FAILED
 sm-full: exit(1)
 Execution of 'sm-full' complete.
-Timer: 92 ticks
-Thread: 30 idle ticks, 60 kernel ticks, 2 user ticks
+Timer: 94 ticks
+Thread: 30 idle ticks, 60 kernel ticks, 5 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 62 reads, 210 writes
+hd0:1: 88 reads, 226 writes
 hd1:0: 101 reads, 0 writes
-Console: 903 characters output
+Console: 844 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

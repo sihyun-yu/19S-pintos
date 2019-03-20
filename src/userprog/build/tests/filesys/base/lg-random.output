@@ -1,6 +1,6 @@
-Copying tests/filesys/base/lg-random into /tmp/HVlgWRdTST.dsk...
-Writing command line to /tmp/zk1fLDRfZX.dsk...
-qemu -hda /tmp/zk1fLDRfZX.dsk -hdb /tmp/Abn0nNWLoj.dsk -hdc /tmp/HVlgWRdTST.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/base/lg-random into /tmp/Pz4VxSBYpt.dsk...
+Writing command line to /tmp/tZ8WjVkhD2.dsk...
+qemu -hda /tmp/tZ8WjVkhD2.dsk -hdb /tmp/ZsyrQuKPj5.dsk -hdc /tmp/Pz4VxSBYpt.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put lg-random run lg-random
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
@@ -15,15 +15,16 @@ Putting 'lg-random' into the file system...
 Executing 'lg-random':
 (lg-random) begin
 (lg-random) create "bazzle"
-(lg-random) create "bazzle": FAILED
+(lg-random) open "bazzle"
+(lg-random) open "bazzle": FAILED
 lg-random: exit(1)
 Execution of 'lg-random' complete.
-Timer: 96 ticks
-Thread: 30 idle ticks, 65 kernel ticks, 1 user ticks
+Timer: 129 ticks
+Thread: 30 idle ticks, 67 kernel ticks, 32 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 63 reads, 214 writes
+hd0:1: 89 reads, 368 writes
 hd1:0: 103 reads, 0 writes
-Console: 846 characters output
+Console: 872 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

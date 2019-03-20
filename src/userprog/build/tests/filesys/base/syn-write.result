@@ -1,2 +1,2 @@
 FAIL
-run: create "stuff": FAILED
+run: ((null)) open "stuff": FAILED

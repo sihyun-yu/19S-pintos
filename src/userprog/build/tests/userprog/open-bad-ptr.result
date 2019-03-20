@@ -1,2 +1,1 @@
-FAIL
-run: should have called exit(-1): FAILED
+PASS

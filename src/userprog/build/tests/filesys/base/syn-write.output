@@ -1,12 +1,12 @@
-Copying tests/filesys/base/syn-write into /tmp/3wX3IntNJT.dsk...
-Copying tests/filesys/base/child-syn-wrt into /tmp/3wX3IntNJT.dsk...
-Writing command line to /tmp/JciPuBRsce.dsk...
-qemu -hda /tmp/JciPuBRsce.dsk -hdb /tmp/x0iObwTHqv.dsk -hdc /tmp/3wX3IntNJT.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/base/syn-write into /tmp/h6p7X0BtP3.dsk...
+Copying tests/filesys/base/child-syn-wrt into /tmp/h6p7X0BtP3.dsk...
+Writing command line to /tmp/BBy49yXSQ0.dsk...
+qemu -hda /tmp/BBy49yXSQ0.dsk -hdb /tmp/e0ScSKEy6l.dsk -hdc /tmp/h6p7X0BtP3.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put syn-write put child-syn-wrt run syn-write
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
 374 pages available in user pool.
-Calibrating timer...  117,760,000 loops/s.
+Calibrating timer...  111,206,400 loops/s.
 hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 213 sector (106 kB) disk, model "QEMU HARDDISK", serial "QM00003"
@@ -17,15 +17,46 @@ Putting 'child-syn-wrt' into the file system...
 Executing 'syn-write':
 (syn-write) begin
 (syn-write) create "stuff"
-(syn-write) create "stuff": FAILED
+(syn-write) exec child 1 of 10: "child-syn-wrt 0"
+(syn-write) exec child 2 of 10: "child-syn-wrt 1"
+(syn-write) exec child 3 of 10: "child-syn-wrt 2"
+(syn-write) exec child 4 of 10: "child-syn-wrt 3"
+(syn-write) exec child 5 of 10: "child-syn-wrt 4"
+(syn-write) exec child 6 of 10: "child-syn-wrt 5"
+(syn-write) exec child 7 of 10: "child-syn-wrt 6"
+(syn-write) exec child 8 of 10: "child-syn-wrt 7"
+(syn-write) exec child 9 of 10: "child-syn-wrt 8"
+(syn-write) exec child 10 of 10: "child-syn-wrt 9"
+((null)) open "stuff": FAILED
+child-syn-wrt: exit(1)
+((null)) open "stuff": FAILED
+child-syn-wrt: exit(1)
+((null)) open "stuff": FAILED
+child-syn-wrt: exit(1)
+((null)) open "stuff": FAILED
+child-syn-wrt: exit(1)
+((null)) open "stuff": FAILED
+child-syn-wrt: exit(1)
+((null)) open "stuff": FAILED
+child-syn-wrt: exit(1)
+((null)) open "stuff": FAILED
+child-syn-wrt: exit(1)
+((null)) open "stuff": FAILED
+child-syn-wrt: exit(1)
+((null)) open "stuff": FAILED
+child-syn-wrt: exit(1)
+((null)) open "stuff": FAILED
+child-syn-wrt: exit(1)
+(syn-write) wait for child 1 of 10 returned 1 (expected 0)
+(syn-write) wait for child 1 of 10 returned 1 (expected 0): FAILED
 syn-write: exit(1)
 Execution of 'syn-write' complete.
-Timer: 135 ticks
-Thread: 30 idle ticks, 104 kernel ticks, 1 user ticks
+Timer: 166 ticks
+Thread: 30 idle ticks, 119 kernel ticks, 17 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 90 reads, 436 writes
+hd0:1: 505 reads, 450 writes
 hd1:0: 213 reads, 0 writes
-Console: 913 characters output
+Console: 2037 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

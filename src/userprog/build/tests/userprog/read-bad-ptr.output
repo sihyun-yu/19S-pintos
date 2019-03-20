@@ -1,7 +1,7 @@
-Copying tests/userprog/read-bad-ptr into /tmp/IxdFt28eUx.dsk...
-Copying ../../tests/userprog/sample.txt into /tmp/IxdFt28eUx.dsk...
-Writing command line to /tmp/j25zm9hDRy.dsk...
-qemu -hda /tmp/j25zm9hDRy.dsk -hdb /tmp/BJovtkN9rS.dsk -hdc /tmp/IxdFt28eUx.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/read-bad-ptr into /tmp/4QSy3nVB4L.dsk...
+Copying ../../tests/userprog/sample.txt into /tmp/4QSy3nVB4L.dsk...
+Writing command line to /tmp/DkhWg6Iztd.dsk...
+qemu -hda /tmp/DkhWg6Iztd.dsk -hdb /tmp/uPtNn3aht4.dsk -hdc /tmp/4QSy3nVB4L.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put read-bad-ptr put sample.txt run read-bad-ptr
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
@@ -20,10 +20,10 @@ Executing 'read-bad-ptr':
 (read-bad-ptr) open "sample.txt": FAILED
 read-bad-ptr: exit(1)
 Execution of 'read-bad-ptr' complete.
-Timer: 93 ticks
-Thread: 30 idle ticks, 62 kernel ticks, 1 user ticks
+Timer: 98 ticks
+Thread: 30 idle ticks, 66 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 88 reads, 208 writes
+hd0:1: 92 reads, 208 writes
 hd1:0: 99 reads, 0 writes
 Console: 935 characters output
 Keyboard: 0 keys pressed

@@ -1,2 +1,2 @@
 FAIL
-run: create "test.txt": FAILED
+run: open "test.txt": FAILED

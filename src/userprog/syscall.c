@@ -6,6 +6,10 @@
 #include "threads/init.h"
 #include "userprog/process.h"
 #include "threads/synch.h"
+#include "filesys/filesys.h"
+#include "filesys/file.h"
+#include "devices/input.h"
+
 static void syscall_handler (struct intr_frame *);
 
 void
@@ -53,31 +57,49 @@ syscall_handler (struct intr_frame *f)
 		}
 		case SYS_CREATE:
 		{
-			//printf("")
-
+			check_address(f->esp+4);
+			check_address(f->esp+8);
+			const char *file = (char *) *((uint32_t *)(f->esp+4));
+			unsigned initial_size = (unsigned) *((uint32_t *)(f->esp+8));
+			f->eax = (bool) sys_create(file, initial_size);
 			break;
 		}
 
 		case SYS_REMOVE:
 		{
-			//printf("")
+			check_address(f->esp+4);
+			const char *file = (char *) *((uint32_t *)(f->esp+4));
+			f->eax = sys_remove(file);
 			break;
 		}
 
 		case SYS_OPEN:
 		{
-			//printf("")
+			check_address(f->esp+4);
+			const char *file = (char *) *((uint32_t *)(f->esp+4));
+			f->eax = (bool) sys_open(file);
 			break;
 		}
 
 		case SYS_FILESIZE:
 		{
-			//printf("")
+			check_address(f->esp+4);
+			int fd = (int) *((uint32_t *)(f->esp+4));
+			f->eax = sys_filesize(fd);
 			break;
 		}
 
 		case SYS_READ:
-		{			
+		{
+			check_address(f->esp+4);
+			check_address(f->esp+8);
+			check_address(f->esp+12);
+
+			int fd = (int) *((uint32_t *)(f->esp+4));	
+			void *buffer = (void *) *((uint32_t *)(f->esp+8));	
+			unsigned size = (unsigned) *((uint32_t *)(f->esp+12));	
+
+			sys_read(fd, buffer, size);
 			break;
 		}
 
@@ -100,19 +122,27 @@ syscall_handler (struct intr_frame *f)
 		}
 		case SYS_SEEK:
 		{
-			//printf("")
+			check_address(f->esp+4);
+			check_address(f->esp+8);
+			int fd = (int) *((uint32_t *)(f->esp+4));
+			unsigned position = (unsigned) *((uint32_t *)(f->esp+8));
+			sys_seek(fd, position);
 			break;
 		}
 
 		case SYS_TELL:
 		{
-			//printf("")
+			check_address(f->esp+4);
+			int fd = (int) *((uint32_t *)(f->esp+4));
+			sys_tell(fd);
 			break;
 		}
 
 		case SYS_CLOSE:
 		{
-			//printf("")
+			check_address(f->esp+4);
+			int fd = (int) *((uint32_t *)(f->esp+4));
+			sys_close(fd);
 			break;
 		}
 
@@ -147,17 +177,50 @@ int sys_exec(char *cmd_line){
 }
 
 
-int sys_filesize(int fd){
-	return 0;
-}
-
 
 int sys_wait(pid_t pid){
 	process_wait(pid);
 }
 
+int sys_create(const char *file, unsigned initial_size)
+ {
+ 	if (file == NULL) {
+ 		sys_exit(-1);
+ 		return 0; 
+ 	}
+ 	return filesys_create(file, initial_size);
+ }
+
+int sys_remove (const char *file) {
+ 	return filesys_remove(file);
+}
+
+int sys_open (const char *file) {
+	filesys_open(file);
+	return 0;
+}
+
+int sys_filesize(int fd){
+	struct file *file_for_size;
+	return 0;
+}
 
 
+int sys_read(int fd, void *buffer, unsigned size) {
+	if (fd == 0)
+		input_getc();
+	return 0;
+}
+void sys_seek(int fd, unsigned position) {
+}
+
+unsigned sys_tell (int fd) {
+	return 0;
+}
+
+void sys_close(int fd ){
+
+}
 
 //	  SYS_HALT,                   /* Halt the operating system. */
 //    SYS_EXIT,                   /* Terminate this process. */

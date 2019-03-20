@@ -1,1 +1,2 @@
-PASS
+FAIL
+run: open "sample.txt": FAILED

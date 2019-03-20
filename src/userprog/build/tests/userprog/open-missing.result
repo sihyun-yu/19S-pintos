@@ -1,2 +1,2 @@
 FAIL
-run: open() returned 256: FAILED
+run: open() returned 0: FAILED

@@ -1,11 +1,11 @@
-Copying tests/filesys/base/sm-create into /tmp/Ly55wIw2OG.dsk...
-Writing command line to /tmp/AwYeiFPjs2.dsk...
-qemu -hda /tmp/AwYeiFPjs2.dsk -hdb /tmp/lNoaEbI940.dsk -hdc /tmp/Ly55wIw2OG.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/base/sm-create into /tmp/RzDbY8ODto.dsk...
+Writing command line to /tmp/mO35p6ksXo.dsk...
+qemu -hda /tmp/mO35p6ksXo.dsk -hdb /tmp/G5gbG6m3k1.dsk -hdc /tmp/RzDbY8ODto.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put sm-create run sm-create
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
 374 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
+Calibrating timer...  117,760,000 loops/s.
 hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 100 sector (50 kB) disk, model "QEMU HARDDISK", serial "QM00003"
@@ -15,15 +15,16 @@ Putting 'sm-create' into the file system...
 Executing 'sm-create':
 (sm-create) begin
 (sm-create) create "blargle"
-(sm-create) create "blargle": FAILED
+(sm-create) open "blargle" for verification
+(sm-create) open "blargle" for verification: FAILED
 sm-create: exit(1)
 Execution of 'sm-create' complete.
-Timer: 92 ticks
-Thread: 30 idle ticks, 61 kernel ticks, 1 user ticks
+Timer: 106 ticks
+Thread: 30 idle ticks, 71 kernel ticks, 5 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 62 reads, 208 writes
+hd0:1: 88 reads, 224 writes
 hd1:0: 100 reads, 0 writes
-Console: 848 characters output
+Console: 908 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
