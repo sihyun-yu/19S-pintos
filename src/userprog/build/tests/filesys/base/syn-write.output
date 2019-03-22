@@ -1,7 +1,7 @@
-Copying tests/filesys/base/syn-write into /tmp/nL0OUX8rzp.dsk...
-Copying tests/filesys/base/child-syn-wrt into /tmp/nL0OUX8rzp.dsk...
-Writing command line to /tmp/CYYVUa1zHg.dsk...
-qemu -hda /tmp/CYYVUa1zHg.dsk -hdb /tmp/57KmO6qOhc.dsk -hdc /tmp/nL0OUX8rzp.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/base/syn-write into /tmp/T4kQCl17Hd.dsk...
+Copying tests/filesys/base/child-syn-wrt into /tmp/T4kQCl17Hd.dsk...
+Writing command line to /tmp/sxx9L_JjhE.dsk...
+qemu -hda /tmp/sxx9L_JjhE.dsk -hdb /tmp/7PCzbWJ6Hh.dsk -hdc /tmp/T4kQCl17Hd.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put syn-write put child-syn-wrt run syn-write
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
@@ -49,15 +49,15 @@ child-syn-wrt: exit(9)
 (syn-write) wait for child 10 of 10 returned 9 (expected 9)
 (syn-write) open "stuff"
 (syn-write) read "stuff"
-(syn-write) read "stuff": FAILED
-syn-write: exit(1)
+(syn-write) end
+syn-write: exit(0)
 Execution of 'syn-write' complete.
-Timer: 157 ticks
-Thread: 30 idle ticks, 112 kernel ticks, 16 user ticks
+Timer: 150 ticks
+Thread: 30 idle ticks, 101 kernel ticks, 19 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 509 reads, 450 writes
+hd0:1: 529 reads, 460 writes
 hd1:0: 213 reads, 0 writes
-Console: 2285 characters output
+Console: 2268 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

@@ -43,13 +43,21 @@ process_execute (const char *file_name)
 
   real_file_name = strtok_r(file_name, " ", &next_ptr);
 
-  if (filesys_open(file_name) == NULL) {
+  if (filesys_open(real_file_name) == NULL) {
     return -1;
   }
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (real_file_name, PRI_DEFAULT, start_process, fn_copy);
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
+
+  struct thread *child_thread = find_thread_from_tid(tid);
+
+
+
+
+
+
   return tid;
 }
 

@@ -1,6 +1,6 @@
-Copying tests/userprog/create-exists into /tmp/IinhiJkSAL.dsk...
-Writing command line to /tmp/RlHD1vNUAe.dsk...
-qemu -hda /tmp/RlHD1vNUAe.dsk -hdb /tmp/4TER4FrqSz.dsk -hdc /tmp/IinhiJkSAL.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/create-exists into /tmp/_cUzqERW1y.dsk...
+Writing command line to /tmp/RAnEoD1kbq.dsk...
+qemu -hda /tmp/RAnEoD1kbq.dsk -hdb /tmp/UVxwShzwQq.dsk -hdc /tmp/_cUzqERW1y.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put create-exists run create-exists
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
@@ -22,8 +22,8 @@ Executing 'create-exists':
 (create-exists) end
 create-exists: exit(0)
 Execution of 'create-exists' complete.
-Timer: 96 ticks
-Thread: 30 idle ticks, 60 kernel ticks, 6 user ticks
+Timer: 99 ticks
+Thread: 30 idle ticks, 63 kernel ticks, 6 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 144 reads, 222 writes
 hd1:0: 97 reads, 0 writes

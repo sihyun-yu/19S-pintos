@@ -1,6 +1,6 @@
-Copying tests/userprog/halt into /tmp/tn8QA0A8MJ.dsk...
-Writing command line to /tmp/7NIZ7A2DMd.dsk...
-qemu -hda /tmp/7NIZ7A2DMd.dsk -hdb /tmp/GCiTq3fmg6.dsk -hdc /tmp/tn8QA0A8MJ.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/halt into /tmp/pfhfwvAssp.dsk...
+Writing command line to /tmp/mFN3MKmJOf.dsk...
+qemu -hda /tmp/mFN3MKmJOf.dsk -hdb /tmp/FbpWAcX6Rs.dsk -hdc /tmp/pfhfwvAssp.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put halt run halt
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
@@ -14,8 +14,8 @@ Boot complete.
 Putting 'halt' into the file system...
 Executing 'halt':
 (halt) begin
-Timer: 92 ticks
-Thread: 30 idle ticks, 62 kernel ticks, 0 user ticks
+Timer: 96 ticks
+Thread: 30 idle ticks, 65 kernel ticks, 1 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 61 reads, 202 writes
 hd1:0: 97 reads, 0 writes

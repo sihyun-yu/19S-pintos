@@ -825,3 +825,32 @@ struct file* find_file_from_fd(int fd) {
   }  
   return NULL;
 }
+
+void remove_file_from_list (struct file *file) {
+  struct list_elem* e;
+  struct file_fd *node;
+ for (e=list_begin(&fd_file_list); e!=list_end(&fd_file_list); e=list_next(e)) {
+    node = list_entry(e, struct file_fd, file_elem);
+    if (node->open_file == file) {
+      list_remove(e);
+    }
+  }  
+}
+
+struct thread *find_thread_from_tid(int tid){
+  struct list_elem *e;
+  struct thread *tmp;
+
+  for (e=list_begin(&sleep_list); e!=list_end(&sleep_list); e=list_next(e)) {
+    tmp = list_entry(e, struct thread, sleep_elem);
+    if (tmp->tid == tid) return tmp;
+  }
+  for (e=list_begin(&ready_list); e!=list_end(&ready_list); e=list_next(e)) {
+    tmp = list_entry(e, struct thread, elem);
+    if (tmp->tid == tid) return tmp;
+  }
+  tmp = thread_current();
+  if (tmp->tid == tid) return tmp;
+
+  return NULL;
+}

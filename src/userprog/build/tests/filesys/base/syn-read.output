@@ -1,12 +1,12 @@
-Copying tests/filesys/base/syn-read into /tmp/8OmKicJV4G.dsk...
-Copying tests/filesys/base/child-syn-read into /tmp/8OmKicJV4G.dsk...
-Writing command line to /tmp/t4Dsij7ysd.dsk...
-qemu -hda /tmp/t4Dsij7ysd.dsk -hdb /tmp/_lQ8KFXTs2.dsk -hdc /tmp/8OmKicJV4G.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/base/syn-read into /tmp/ErNXN0b7X8.dsk...
+Copying tests/filesys/base/child-syn-read into /tmp/ErNXN0b7X8.dsk...
+Writing command line to /tmp/sX2V9dNpaj.dsk...
+qemu -hda /tmp/sX2V9dNpaj.dsk -hdb /tmp/u_5xu98RWx.dsk -hdc /tmp/ErNXN0b7X8.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put syn-read put child-syn-read run syn-read
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
 374 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
+Calibrating timer...  117,760,000 loops/s.
 hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 213 sector (106 kB) disk, model "QEMU HARDDISK", serial "QM00003"
@@ -19,15 +19,47 @@ Executing 'syn-read':
 (syn-read) create "data"
 (syn-read) open "data"
 (syn-read) write "data"
-(syn-read) write "data": FAILED
+(syn-read) close "data"
+(syn-read) exec child 1 of 10: "child-syn-read 0"
+(syn-read) exec child 2 of 10: "child-syn-read 1"
+(syn-read) exec child 3 of 10: "child-syn-read 2"
+(syn-read) exec child 4 of 10: "child-syn-read 3"
+(syn-read) exec child 5 of 10: "child-syn-read 4"
+(syn-read) exec child 6 of 10: "child-syn-read 5"
+(syn-read) exec child 7 of 10: "child-syn-read 6"
+(syn-read) exec child 8 of 10: "child-syn-read 7"
+(syn-read) exec child 9 of 10: "child-syn-read 8"
+(syn-read) exec child 10 of 10: "child-syn-read 9"
+load: child-syn-read: open failed
+child-syn-read: exit(-1)
+load: child-syn-read: open failed
+child-syn-read: exit(-1)
+load: child-syn-read: open failed
+child-syn-read: exit(-1)
+load: child-syn-read: open failed
+child-syn-read: exit(-1)
+load: child-syn-read: open failed
+child-syn-read: exit(-1)
+load: child-syn-read: open failed
+child-syn-read: exit(-1)
+load: child-syn-read: open failed
+child-syn-read: exit(-1)
+load: child-syn-read: open failed
+child-syn-read: exit(-1)
+child-syn-read: exit(0)
+(syn-read) wait for child 1 of 10 returned 0 (expected 0)
+child-syn-read: exit(1)
+(syn-read) wait for child 2 of 10 returned 1 (expected 1)
+(syn-read) wait for child 3 of 10 returned -1 (expected 2)
+(syn-read) wait for child 3 of 10 returned -1 (expected 2): FAILED
 syn-read: exit(1)
 Execution of 'syn-read' complete.
-Timer: 138 ticks
-Thread: 30 idle ticks, 105 kernel ticks, 3 user ticks
+Timer: 161 ticks
+Thread: 30 idle ticks, 98 kernel ticks, 34 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 118 reads, 442 writes
+hd0:1: 2277 reads, 444 writes
 hd1:0: 213 reads, 0 writes
-Console: 951 characters output
+Console: 2207 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

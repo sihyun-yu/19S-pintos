@@ -1,11 +1,11 @@
-Copying tests/userprog/bad-write into /tmp/F5C1uPSJSN.dsk...
-Writing command line to /tmp/FkonHxZRRf.dsk...
-qemu -hda /tmp/FkonHxZRRf.dsk -hdb /tmp/Okq0PAiqrE.dsk -hdc /tmp/F5C1uPSJSN.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/bad-write into /tmp/P0x_JF3Q5D.dsk...
+Writing command line to /tmp/8AGlRughRv.dsk...
+qemu -hda /tmp/8AGlRughRv.dsk -hdb /tmp/xzhsLBGGEB.dsk -hdc /tmp/P0x_JF3Q5D.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put bad-write run bad-write
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
 374 pages available in user pool.
-Calibrating timer...  114,483,200 loops/s.
+Calibrating timer...  104,755,200 loops/s.
 hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 97 sector (48 kB) disk, model "QEMU HARDDISK", serial "QM00003"
@@ -22,12 +22,12 @@ Interrupt 0x0e (#PF Page-Fault Exception) at eip=0x80480a6
  esi=00000000 edi=00000000 esp=bfffff80 ebp=bfffff98
  cs=001b ds=0023 es=0023 ss=0023
 Execution of 'bad-write' complete.
-Timer: 102 ticks
-Thread: 30 idle ticks, 70 kernel ticks, 2 user ticks
+Timer: 94 ticks
+Thread: 30 idle ticks, 63 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 61 reads, 202 writes
 hd1:0: 97 reads, 0 writes
-Console: 1121 characters output
+Console: 1120 characters output
 Keyboard: 0 keys pressed
 Exception: 1 page faults
 Powering off...

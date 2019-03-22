@@ -1,12 +1,12 @@
-Copying tests/userprog/open-normal into /tmp/ZUGdN4LpgB.dsk...
-Copying ../../tests/userprog/sample.txt into /tmp/ZUGdN4LpgB.dsk...
-Writing command line to /tmp/Fnm1CjonVx.dsk...
-qemu -hda /tmp/Fnm1CjonVx.dsk -hdb /tmp/sq6hhydg6s.dsk -hdc /tmp/ZUGdN4LpgB.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/open-normal into /tmp/jn9FiYednQ.dsk...
+Copying ../../tests/userprog/sample.txt into /tmp/jn9FiYednQ.dsk...
+Writing command line to /tmp/yid9FMNgxV.dsk...
+qemu -hda /tmp/yid9FMNgxV.dsk -hdb /tmp/PsMCjQgrKK.dsk -hdc /tmp/jn9FiYednQ.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put open-normal put sample.txt run open-normal
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
 374 pages available in user pool.
-Calibrating timer...  78,540,800 loops/s.
+Calibrating timer...  104,755,200 loops/s.
 hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 99 sector (49 kB) disk, model "QEMU HARDDISK", serial "QM00003"
@@ -24,7 +24,7 @@ Thread: 30 idle ticks, 61 kernel ticks, 1 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 92 reads, 208 writes
 hd1:0: 99 reads, 0 writes
-Console: 871 characters output
+Console: 872 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

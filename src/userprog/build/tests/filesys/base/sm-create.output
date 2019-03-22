@@ -1,6 +1,6 @@
-Copying tests/filesys/base/sm-create into /tmp/nrW9DPGzuD.dsk...
-Writing command line to /tmp/bmCo5dVRnd.dsk...
-qemu -hda /tmp/bmCo5dVRnd.dsk -hdb /tmp/G0xNs3kIba.dsk -hdc /tmp/nrW9DPGzuD.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/base/sm-create into /tmp/TAKYVKXV1W.dsk...
+Writing command line to /tmp/JR3ssyJBBm.dsk...
+qemu -hda /tmp/JR3ssyJBBm.dsk -hdb /tmp/ggZAsrZaOD.dsk -hdc /tmp/TAKYVKXV1W.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put sm-create run sm-create
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
@@ -16,15 +16,17 @@ Executing 'sm-create':
 (sm-create) begin
 (sm-create) create "blargle"
 (sm-create) open "blargle" for verification
-(sm-create) read of 512 bytes at offset 0 in "blargle" returned 2: FAILED
-sm-create: exit(1)
+(sm-create) verified contents of "blargle"
+(sm-create) close "blargle"
+(sm-create) end
+sm-create: exit(0)
 Execution of 'sm-create' complete.
-Timer: 100 ticks
-Thread: 30 idle ticks, 64 kernel ticks, 6 user ticks
+Timer: 95 ticks
+Thread: 30 idle ticks, 61 kernel ticks, 4 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 88 reads, 224 writes
+hd0:1: 100 reads, 224 writes
 hd1:0: 100 reads, 0 writes
-Console: 930 characters output
+Console: 943 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

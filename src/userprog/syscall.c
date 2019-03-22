@@ -53,8 +53,8 @@ syscall_handler (struct intr_frame *f)
 		{
 			check_address(f->esp+4);
 			char *cmd_line = (char *) *((uint32_t *)(f->esp+4));
-			pid_t exec_pid = process_execute(cmd_line);
-			if (exec_pid < 0) f->eax = -1;
+			pid_t exec_pid = sys_exec(cmd_line);
+			if (exec_pid < 0 ) f->eax = -1;
 			else (f->eax) = exec_pid;
 			//printf("exec pid : %d\n", exec_pid);
 			break;
@@ -109,7 +109,7 @@ syscall_handler (struct intr_frame *f)
 			void *buffer = (void *) *((uint32_t *)(f->esp+8));	
 			unsigned size = (unsigned) *((uint32_t *)(f->esp+12));	
 
-			sys_read(fd, buffer, size);
+			f->eax = sys_read(fd, buffer, size);
 			break;
 		}
 
@@ -127,7 +127,7 @@ syscall_handler (struct intr_frame *f)
 			buffer = (void *) *((uint32_t *)(f->esp+8));
 			size = (unsigned)*((uint32_t *)(f->esp+12));
 
-			sys_write(fd, buffer, size);
+			f->eax = sys_write(fd, buffer, size);
 			break;
 		}
 		case SYS_SEEK:
@@ -178,6 +178,11 @@ int sys_write (int fd, const void *buffer, unsigned size) {
     putbuf(buffer, size);
     return size;
   }
+  else{
+  	struct file *file_for_write = find_file_from_fd(fd);
+	if (file_for_write == NULL) return -1;
+	return file_write(file_for_write, (char *)buffer, size);
+  }
   return -1; 
 }
 
@@ -189,7 +194,7 @@ int sys_exec(char *cmd_line){
 
 
 int sys_wait(pid_t pid){
-	process_wait(pid);
+	return process_wait(pid);
 }
 
 int sys_create(const char *file, unsigned initial_size)
@@ -202,12 +207,14 @@ int sys_create(const char *file, unsigned initial_size)
  }
 
 int sys_remove (const char *file) {
-	//should remove this node
+
+	struct file *open_file = filesys_open(file);
+	remove_file_from_list (open_file);
  	return filesys_remove(file);
 }
 
 int sys_open (const char *file) {
-	if (*file == NULL) return -1;
+	if (file == NULL) return -1;
 	struct file *open_file = filesys_open(file);
 	if (open_file == NULL) return -1;
 
@@ -235,9 +242,20 @@ int sys_filesize(int fd){
 int sys_read(int fd, void *buffer, unsigned size) {
 	if (fd == 0)
 		input_getc();
+
+	else{
+		struct file *file_for_read = find_file_from_fd(fd);
+		if (file_for_read == NULL) return -1;
+		return file_read(file_for_read, buffer, size);
+	}
+
+
 	return 0;
 }
 void sys_seek(int fd, unsigned position) {
+	struct file *file_for_seek = find_file_from_fd(fd);
+	return file_seek(file_for_seek, position);
+
 }
 
 unsigned sys_tell (int fd) {
@@ -246,7 +264,9 @@ unsigned sys_tell (int fd) {
 }
 
 void sys_close(int fd ){
-
+	struct file *file_for_close = find_file_from_fd(fd);
+	remove_file_from_list (file_for_close);
+	return file_close(file_for_close);
 }
 
 //	  SYS_HALT,                   /* Halt the operating system. */

@@ -181,5 +181,7 @@ bool priority_compare (const struct list_elem *a, const struct list_elem *b, voi
 void test_max_priority(void);
 void priority_change(struct thread *, int priority);
 void push_file_fd(struct file_fd *node);
-
+void remove_file_from_list (struct file *file);
+struct thread *find_thread_from_tid(int tid);
+struct file *find_file_from_fd(int fd);
 #endif /* threads/thread.h */

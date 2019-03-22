@@ -1,8 +1,8 @@
-Copying tests/userprog/multi-child-fd into /tmp/bPEceWEUCX.dsk...
-Copying ../../tests/userprog/sample.txt into /tmp/bPEceWEUCX.dsk...
-Copying tests/userprog/child-close into /tmp/bPEceWEUCX.dsk...
-Writing command line to /tmp/Nap884KMog.dsk...
-qemu -hda /tmp/Nap884KMog.dsk -hdb /tmp/FshIbUAfjW.dsk -hdc /tmp/bPEceWEUCX.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/multi-child-fd into /tmp/agEspQywac.dsk...
+Copying ../../tests/userprog/sample.txt into /tmp/agEspQywac.dsk...
+Copying tests/userprog/child-close into /tmp/agEspQywac.dsk...
+Writing command line to /tmp/9WKAZK5xcM.dsk...
+qemu -hda /tmp/9WKAZK5xcM.dsk -hdb /tmp/KFkFafcigX.dsk -hdc /tmp/agEspQywac.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put multi-child-fd put sample.txt put child-close run multi-child-fd
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
@@ -23,15 +23,17 @@ Executing 'multi-child-fd':
 (child-close) end
 child-close: exit(0)
 (multi-child-fd) wait(exec()) = 0
-(multi-child-fd) read of 239 bytes at offset 0 in "sample.txt" returned 2: FAILED
-multi-child-fd: exit(1)
-Execution of 'multi-child-fd' complete.
-Timer: 130 ticks
-Thread: 30 idle ticks, 97 kernel ticks, 3 user ticks
+Kernel PANIC at ../../filesys/file.c:147 in file_length(): assertion `file != NULL' failed.
+Call stack: 0xc0107f29 0xc010c002 0xc010b300 0xc010b5d5 0xc0102247 0xc010237f 0x804a1da 0x8048508 0x8048138 0x8048174 0x80487bc.
+The `backtrace' program can make call stacks useful.
+Read "Backtraces" in the "Debugging Tools" chapter
+of the Pintos documentation for more information.
+Timer: 134 ticks
+Thread: 30 idle ticks, 102 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 174 reads, 426 writes
 hd1:0: 207 reads, 0 writes
-Console: 1152 characters output
+Console: 1382 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
