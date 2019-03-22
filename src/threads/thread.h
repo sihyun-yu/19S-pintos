@@ -123,10 +123,13 @@ struct thread
     uint32_t *pagedir;                  /* Page directory. */
     struct semaphore child_lock;
     struct semaphore sync_lock;
+    struct semaphore init_lock;
     struct list child_list;
     struct list_elem child_elem;
     int exit_status;
     int fd;
+
+    struct file *tmp_file;
 
 #endif
 

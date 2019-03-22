@@ -37,17 +37,23 @@ process_execute (const char *file_name)
   /* Make a copy of FILE_NAME.
      Otherwise there's a race between the caller and load(). */
   fn_copy = palloc_get_page (0);
+  real_file_name = palloc_get_page(0);
   if (fn_copy == NULL)
     return TID_ERROR;
   strlcpy (fn_copy, file_name, PGSIZE);
-
-  real_file_name = strtok_r(file_name, " ", &next_ptr);
+  strlcpy (real_file_name, file_name, PGSIZE); 
+  real_file_name = strtok_r(real_file_name, " ", &next_ptr);
+  //printf("%s : real_file_name", real_file_name);  
+  //printf("real_file_name : %s\n", real_file_name);
 
   if (filesys_open(real_file_name) == NULL) {
     return -1;
   }
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (real_file_name, PRI_DEFAULT, start_process, fn_copy);
+
+  palloc_free_page(real_file_name);
+
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
 
@@ -74,6 +80,7 @@ start_process (void *f_name)
   char *token;
   char *next_ptr;
   int cnt = 1;
+  //printf("f_name at start process : %s\n", f_name);
   const char **cmdline_tokens = (const char**) palloc_get_page(0);
   token = strtok_r(file_name, " ", &next_ptr);
   cmdline_tokens[0] = token;
@@ -93,8 +100,6 @@ start_process (void *f_name)
 
 
 
-
-
   /* Initialize interrupt frame and load executable. */
   memset (&if_, 0, sizeof if_);
   if_.gs = if_.fs = if_.es = if_.ds = if_.ss = SEL_UDSEG;
@@ -110,11 +115,15 @@ start_process (void *f_name)
     //hex_dump(if_.esp, if_.esp, 200, true);
   }
 
+
   palloc_free_page(cmdline_tokens);
 
 
 
-  if (!success) sys_exit(-1);//sys_exit();
+  if (!success){
+    //printf("load failed at %s\n", cmdline_tokens[0]);
+    sys_exit(-1);
+  } //sys_exit();
   /* Start the user process by simulating a return from an
      interrupt, implemented by intr_exit (in
      threads/intr-stubs.S).  Because intr_exit takes all of its
@@ -139,14 +148,19 @@ start_process (void *f_name)
 int
 process_wait (tid_t child_tid) 
 {
+  int i;
+  //printf("wait called ! \n");
+
   struct thread *curr = thread_current();
   struct list_elem *e;
   struct thread *child;
   for(e = list_begin(&curr->child_list); e != list_end(&curr->child_list); e = list_next(e)){
     child = list_entry(e, struct thread, child_elem);
+    //printf("tid of current thread at wait : %d, child tid to be waited : %d\n", child->tid, child_tid);
     if (child->tid == child_tid){
       sema_down(&child->child_lock);
       int status = child->exit_status;
+      //printf("status : %d\n", status);
       list_remove(e);
       sema_up(&child->sync_lock);
       return status;
@@ -178,6 +192,11 @@ process_exit (void)
       pagedir_activate (NULL);
       pagedir_destroy (pd);
     }
+
+  //if (curr->tmp_file) {
+    //file_allow_write(curr->tmp_file);
+    //file_close(curr->tmp_file);
+  //}
   sema_up(&thread_current()->child_lock);
   sema_down(&thread_current()->sync_lock);
 
@@ -375,6 +394,8 @@ load (const char *file_name, void (**eip) (void), void **esp)
   /* Start address. */
   *eip = (void (*) (void)) ehdr.e_entry;
 
+  //file_deny_write(file);
+  //thread_current()->tmp_file = file;
   success = true;
 
  done:
@@ -580,7 +601,10 @@ void push_stack_cmdline(const char **cmdline_tokens, int cnt, void **esp){
 }
 
 void check_address(void *address){
-  if (!is_user_vaddr(address)) sys_exit(-1);
+  if (!is_user_vaddr(address)) {
+    //printf("error from here\n");
+    sys_exit(-1);
+  }
 }
 
 

@@ -612,8 +612,10 @@ init_thread (struct thread *t, const char *name, int priority)
   t->exit_status = 0;
   sema_init (&t->child_lock, 0);
   sema_init (&t->sync_lock, 0);
+  sema_init (&t->init_lock, 0);
   list_push_back(&(running_thread()->child_list), &(t->child_elem));
-  t->fd = 2;
+  t->fd = 3;
+  t->tmp_file = NULL;
 
 #endif 
 

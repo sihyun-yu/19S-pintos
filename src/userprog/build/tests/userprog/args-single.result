@@ -1,1 +1,15 @@
-PASS
+FAIL
+Kernel panic in run: PANIC at ../../filesys/inode.c:335 in inode_allow_write(): assertion `inode->deny_write_cnt > 0' failed.
+Call stack: 0xc0107f49 0xc010c842 0xc010c0eb 0xc0109fec 0xc0101704 0xc010b4d6 0xc010b57b 0xc0102267 0xc010239f 0x804a269a
+Translation of call stack:
+In kernel.o:
+0xc0107f49: debug_panic (.../../lib/kernel/debug.c:34)
+0xc010c842: inode_allow_write (...../../filesys/inode.c:336)
+0xc010c0eb: file_allow_write (.../../../filesys/file.c:141)
+0xc0109fec: process_exit (...../userprog/process.c:198)
+0xc0101704: thread_exit (..../../threads/thread.c:311)
+0xc010b4d6: sys_create (...../userprog/syscall.c:201)
+0xc010b57b: syscall_handler (.../../userprog/syscall.c:50)
+0xc0102267: intr_handler (..../threads/interrupt.c:361)
+0xc010239f: intr_entry (threads/intr-stubs.S:38)
+0x804a269a: (unknown)

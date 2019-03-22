@@ -1,11 +1,11 @@
-Copying tests/filesys/base/lg-random into /tmp/lgWJ7JGDgC.dsk...
-Writing command line to /tmp/2PNmk0Eva2.dsk...
-qemu -hda /tmp/2PNmk0Eva2.dsk -hdb /tmp/jbCZ5aRAHa.dsk -hdc /tmp/lgWJ7JGDgC.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/base/lg-random into /tmp/jhSZN8GGSz.dsk...
+Writing command line to /tmp/IfzO7Z7B5b.dsk...
+qemu -hda /tmp/IfzO7Z7B5b.dsk -hdb /tmp/rSjpyJnpmL.dsk -hdc /tmp/jhSZN8GGSz.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put lg-random run lg-random
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
 374 pages available in user pool.
-Calibrating timer...  107,929,600 loops/s.
+Calibrating timer...  78,540,800 loops/s.
 hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 103 sector (51 kB) disk, model "QEMU HARDDISK", serial "QM00003"
@@ -22,12 +22,12 @@ Executing 'lg-random':
 (lg-random) end
 lg-random: exit(0)
 Execution of 'lg-random' complete.
-Timer: 158 ticks
-Thread: 30 idle ticks, 64 kernel ticks, 64 user ticks
+Timer: 152 ticks
+Thread: 30 idle ticks, 67 kernel ticks, 55 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 239 reads, 518 writes
 hd1:0: 103 reads, 0 writes
-Console: 967 characters output
+Console: 966 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

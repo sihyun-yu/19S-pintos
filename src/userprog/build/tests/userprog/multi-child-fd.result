@@ -1,14 +1,14 @@
 FAIL
 Kernel panic in run: PANIC at ../../filesys/file.c:147 in file_length(): assertion `file != NULL' failed.
-Call stack: 0xc0107f29 0xc010c002 0xc010b300 0xc010b5d5 0xc0102247 0xc010237f 0x804a1da 0x8048508 0x8048138 0x8048174 0x80487bc
+Call stack: 0xc0107f39 0xc010c062 0xc010b360 0xc010b635 0xc0102257 0xc010238f 0x804a1da 0x8048508 0x8048138 0x8048174 0x80487bc
 Translation of call stack:
 In kernel.o:
-0xc0107f29: debug_panic (.../../lib/kernel/debug.c:34)
-0xc010c002: file_length (.../../../filesys/file.c:148)
-0xc010b300: sys_filesize (...../userprog/syscall.c:239)
-0xc010b5d5: syscall_handler (.../../userprog/syscall.c:98)
-0xc0102247: intr_handler (..../threads/interrupt.c:361)
-0xc010237f: intr_entry (threads/intr-stubs.S:38)
+0xc0107f39: debug_panic (.../../lib/kernel/debug.c:34)
+0xc010c062: file_length (.../../../filesys/file.c:148)
+0xc010b360: sys_filesize (...../userprog/syscall.c:240)
+0xc010b635: syscall_handler (.../../userprog/syscall.c:98)
+0xc0102257: intr_handler (..../threads/interrupt.c:361)
+0xc010238f: intr_entry (threads/intr-stubs.S:38)
 In tests/userprog/multi-child-fd:
 0x0804a1da: filesize (...../lib/user/syscall.c:111)
 0x08048508: check_file_handle (...ild/../../tests/lib.c:118)

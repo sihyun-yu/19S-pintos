@@ -200,6 +200,7 @@ int sys_wait(pid_t pid){
 int sys_create(const char *file, unsigned initial_size)
  {
  	if (file == NULL) {
+ 		//printf("error from here\n");
  		sys_exit(-1);
  		return 0; 
  	}

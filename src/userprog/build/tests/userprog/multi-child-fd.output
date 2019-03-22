@@ -1,13 +1,13 @@
-Copying tests/userprog/multi-child-fd into /tmp/agEspQywac.dsk...
-Copying ../../tests/userprog/sample.txt into /tmp/agEspQywac.dsk...
-Copying tests/userprog/child-close into /tmp/agEspQywac.dsk...
-Writing command line to /tmp/9WKAZK5xcM.dsk...
-qemu -hda /tmp/9WKAZK5xcM.dsk -hdb /tmp/KFkFafcigX.dsk -hdc /tmp/agEspQywac.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/multi-child-fd into /tmp/aTHHtKwp94.dsk...
+Copying ../../tests/userprog/sample.txt into /tmp/aTHHtKwp94.dsk...
+Copying tests/userprog/child-close into /tmp/aTHHtKwp94.dsk...
+Writing command line to /tmp/SuDeRgSHe2.dsk...
+qemu -hda /tmp/SuDeRgSHe2.dsk -hdb /tmp/b3DFrw3gA6.dsk -hdc /tmp/aTHHtKwp94.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put multi-child-fd put sample.txt put child-close run multi-child-fd
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
 374 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
+Calibrating timer...  107,929,600 loops/s.
 hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 207 sector (103 kB) disk, model "QEMU HARDDISK", serial "QM00003"
@@ -24,12 +24,12 @@ Executing 'multi-child-fd':
 child-close: exit(0)
 (multi-child-fd) wait(exec()) = 0
 Kernel PANIC at ../../filesys/file.c:147 in file_length(): assertion `file != NULL' failed.
-Call stack: 0xc0107f29 0xc010c002 0xc010b300 0xc010b5d5 0xc0102247 0xc010237f 0x804a1da 0x8048508 0x8048138 0x8048174 0x80487bc.
+Call stack: 0xc0107f39 0xc010c062 0xc010b360 0xc010b635 0xc0102257 0xc010238f 0x804a1da 0x8048508 0x8048138 0x8048174 0x80487bc.
 The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.
-Timer: 134 ticks
-Thread: 30 idle ticks, 102 kernel ticks, 2 user ticks
+Timer: 144 ticks
+Thread: 30 idle ticks, 112 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 174 reads, 426 writes
 hd1:0: 207 reads, 0 writes
