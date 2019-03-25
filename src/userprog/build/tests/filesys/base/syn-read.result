@@ -1,2 +1,2 @@
 FAIL
-run: exec child 5 of 10: "child-syn-read 4": FAILED
+run: wait for child 3 of 10 returned -1 (expected 2): FAILED

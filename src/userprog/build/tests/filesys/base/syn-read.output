@@ -1,13 +1,13 @@
-Copying tests/filesys/base/syn-read into /tmp/ErNXN0b7X8.dsk...
-Copying tests/filesys/base/child-syn-read into /tmp/ErNXN0b7X8.dsk...
-Writing command line to /tmp/sX2V9dNpaj.dsk...
-qemu -hda /tmp/sX2V9dNpaj.dsk -hdb /tmp/u_5xu98RWx.dsk -hdc /tmp/ErNXN0b7X8.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/base/syn-read into /tmp/AxX2yl66oo.dsk...
+Copying tests/filesys/base/child-syn-read into /tmp/AxX2yl66oo.dsk...
+Writing command line to /tmp/osBMHkRV3t.dsk...
+qemu -hda /tmp/osBMHkRV3t.dsk -hdb /tmp/mYQx5V3Et8.dsk -hdc /tmp/AxX2yl66oo.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put syn-read put child-syn-read run syn-read
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
-374 pages available in user pool.
-Calibrating timer...  117,760,000 loops/s.
-hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+373 pages available in user pool.
+Calibrating timer...  107,929,600 loops/s.
+hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 213 sector (106 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 Formatting file system...done.
@@ -54,12 +54,12 @@ child-syn-read: exit(1)
 (syn-read) wait for child 3 of 10 returned -1 (expected 2): FAILED
 syn-read: exit(1)
 Execution of 'syn-read' complete.
-Timer: 161 ticks
-Thread: 30 idle ticks, 98 kernel ticks, 34 user ticks
+Timer: 170 ticks
+Thread: 30 idle ticks, 106 kernel ticks, 34 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 2277 reads, 444 writes
 hd1:0: 213 reads, 0 writes
-Console: 2207 characters output
+Console: 2208 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

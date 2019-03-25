@@ -57,7 +57,7 @@ process_execute (const char *file_name)
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
 
-  struct thread *child_thread = find_thread_from_tid(tid);
+  //struct thread *child_thread = find_thread_from_tid(tid);
 
 
 
@@ -199,7 +199,8 @@ process_exit (void)
   //}
   sema_up(&thread_current()->child_lock);
   sema_down(&thread_current()->sync_lock);
-
+  free_all_page(curr);
+ 
 }
 
 /* Sets up the CPU for running user code in the current

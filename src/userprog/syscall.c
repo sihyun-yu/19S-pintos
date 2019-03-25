@@ -211,6 +211,8 @@ int sys_remove (const char *file) {
 
 	struct file *open_file = filesys_open(file);
 	remove_file_from_list (open_file);
+	if (find_filefd_from_file(open_file) != NULL)
+		palloc_free_page(find_filefd_from_file(open_file));
  	return filesys_remove(file);
 }
 
@@ -220,7 +222,8 @@ int sys_open (const char *file) {
 	if (open_file == NULL) return -1;
 
 	//printf("Pass here ?\n");
-	struct file_fd *node = (struct file_fd *) malloc (sizeof (struct file_fd));
+	struct file_fd *node = palloc_get_page (0);
+	//struct file_fd *node = (struct file_fd *) malloc (sizeof (struct file_fd));
 	//printf("correctly defined?\n");
 	//printf("%d : current thread's fd\n", thread_current()->fd);
 	node->fd = thread_current()->fd;
@@ -230,8 +233,11 @@ int sys_open (const char *file) {
 	thread_current()->fd++;
 	//printf("At here, fd = %d\n", thread_current()->fd);
 	push_file_fd(node);
+	int fd = node->fd;
 	//printf("work!\n");
-	return node->fd;
+	if (!strcmp (file, thread_current()->name))
+		file_deny_write(open_file);
+	return fd;
 }
 
 int sys_filesize(int fd){
@@ -264,9 +270,11 @@ unsigned sys_tell (int fd) {
 	return file_tell(file_for_tell);
 }
 
-void sys_close(int fd ){
+void sys_close(int fd){
 	struct file *file_for_close = find_file_from_fd(fd);
 	remove_file_from_list (file_for_close);
+	if (find_filefd_from_file(file_for_close) != NULL)
+		palloc_free_page(find_filefd_from_file(file_for_close));
 	return file_close(file_for_close);
 }
 

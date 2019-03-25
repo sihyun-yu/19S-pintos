@@ -1,12 +1,12 @@
-Copying tests/userprog/bad-jump into /tmp/qLUmTZuVBw.dsk...
-Writing command line to /tmp/DAkkouCMC7.dsk...
-qemu -hda /tmp/DAkkouCMC7.dsk -hdb /tmp/puuysK9hHg.dsk -hdc /tmp/qLUmTZuVBw.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/bad-jump into /tmp/hhw68OuVhT.dsk...
+Writing command line to /tmp/vvNcQQe8ug.dsk...
+qemu -hda /tmp/vvNcQQe8ug.dsk -hdb /tmp/JjO4McJfss.dsk -hdc /tmp/hhw68OuVhT.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put bad-jump run bad-jump
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
-374 pages available in user pool.
-Calibrating timer...  106,291,200 loops/s.
-hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+373 pages available in user pool.
+Calibrating timer...  111,206,400 loops/s.
+hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 97 sector (48 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 Formatting file system...done.
@@ -14,20 +14,14 @@ Boot complete.
 Putting 'bad-jump' into the file system...
 Executing 'bad-jump':
 (bad-jump) begin
-Page fault at 0: not present error reading page in user context.
-bad-jump: dying due to interrupt 0x0e (#PF Page-Fault Exception).
-Interrupt 0x0e (#PF Page-Fault Exception) at eip=0
- cr2=00000000 error=00000004
- eax=00000000 ebx=00000000 ecx=0804bfee edx=00000027
- esi=00000000 edi=00000000 esp=bfffff7c ebp=bfffff98
- cs=001b ds=0023 es=0023 ss=0023
+bad-jump: exit(-1)
 Execution of 'bad-jump' complete.
-Timer: 103 ticks
-Thread: 30 idle ticks, 71 kernel ticks, 2 user ticks
+Timer: 97 ticks
+Thread: 30 idle ticks, 66 kernel ticks, 1 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 61 reads, 202 writes
 hd1:0: 97 reads, 0 writes
-Console: 1106 characters output
+Console: 774 characters output
 Keyboard: 0 keys pressed
 Exception: 1 page faults
 Powering off...

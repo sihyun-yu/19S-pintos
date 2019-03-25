@@ -39,7 +39,6 @@ static struct thread *initial_thread;
 /* Lock used by allocate_tid(). */
 static struct lock tid_lock;
 
-struct list fd_file_list;
 
 /* Stack frame for kernel_thread(). */
 struct kernel_thread_frame 
@@ -102,7 +101,6 @@ thread_init (void)
   lock_init (&tid_lock);
   list_init (&ready_list);
   list_init (&sleep_list);
-  list_init (&fd_file_list);
 
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
@@ -615,7 +613,8 @@ init_thread (struct thread *t, const char *name, int priority)
   sema_init (&t->init_lock, 0);
   list_push_back(&(running_thread()->child_list), &(t->child_elem));
   t->fd = 3;
-  t->tmp_file = NULL;
+  list_init (&t->fd_file_list);
+  //t->tmp_file = NULL;
 
 #endif 
 
@@ -813,13 +812,13 @@ struct list_elem *sleep_list_end() {
 
 
 void push_file_fd(struct file_fd *node) {
-  list_push_back(&fd_file_list, &node->file_elem);
+  list_push_back(&thread_current()->fd_file_list, &node->file_elem);
 }
 
 struct file* find_file_from_fd(int fd) {
   struct list_elem* e;
   struct file_fd *node;
- for (e=list_begin(&fd_file_list); e!=list_end(&fd_file_list); e=list_next(e)) {
+ for (e=list_begin(&thread_current()->fd_file_list); e!=list_end(&thread_current()->fd_file_list); e=list_next(e)) {
     node = list_entry(e, struct file_fd, file_elem);
     if (node->fd == fd) {
       return node->open_file;
@@ -828,31 +827,46 @@ struct file* find_file_from_fd(int fd) {
   return NULL;
 }
 
+
+struct file_fd* find_filefd_from_file(struct file *file) {
+  struct list_elem* e;
+  struct file_fd *node;
+ for (e=list_begin(&thread_current()->fd_file_list); e!=list_end(&thread_current()->fd_file_list); e=list_next(e)) {
+    node = list_entry(e, struct file_fd, file_elem);
+    if (node->open_file == file) {
+      return node;
+    }
+  }  
+  return NULL;
+}
+
+
 void remove_file_from_list (struct file *file) {
   struct list_elem* e;
   struct file_fd *node;
- for (e=list_begin(&fd_file_list); e!=list_end(&fd_file_list); e=list_next(e)) {
+ for (e=list_begin(&thread_current()->fd_file_list); e!=list_end(&thread_current()->fd_file_list); e=list_next(e)) {
     node = list_entry(e, struct file_fd, file_elem);
     if (node->open_file == file) {
       list_remove(e);
+      //palloc_free_page(node);
     }
   }  
 }
 
-struct thread *find_thread_from_tid(int tid){
+void free_all_page(struct thread* cur) {
   struct list_elem *e;
-  struct thread *tmp;
-
-  for (e=list_begin(&sleep_list); e!=list_end(&sleep_list); e=list_next(e)) {
-    tmp = list_entry(e, struct thread, sleep_elem);
-    if (tmp->tid == tid) return tmp;
+  struct file_fd *node;
+  while (!list_empty(&cur->fd_file_list)) {
+    e = list_begin(&cur->fd_file_list);
+    node = list_entry(e, struct file_fd, file_elem);
+    if (node != NULL)
+    palloc_free_page(node);
+    list_pop_front(&cur->fd_file_list);
   }
-  for (e=list_begin(&ready_list); e!=list_end(&ready_list); e=list_next(e)) {
-    tmp = list_entry(e, struct thread, elem);
-    if (tmp->tid == tid) return tmp;
-  }
-  tmp = thread_current();
-  if (tmp->tid == tid) return tmp;
+/*  for (e=list_begin(&cur->fd_file_list); e!=list_end(&cur->fd_file_list); e=list_next(e)) {
+    node = list_entry(e, struct file_fd, file_elem);
+    palloc_free_page(node);
 
-  return NULL;
+  }*/
 }
+

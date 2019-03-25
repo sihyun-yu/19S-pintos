@@ -1,14 +1,14 @@
-Copying tests/userprog/multi-child-fd into /tmp/aTHHtKwp94.dsk...
-Copying ../../tests/userprog/sample.txt into /tmp/aTHHtKwp94.dsk...
-Copying tests/userprog/child-close into /tmp/aTHHtKwp94.dsk...
-Writing command line to /tmp/SuDeRgSHe2.dsk...
-qemu -hda /tmp/SuDeRgSHe2.dsk -hdb /tmp/b3DFrw3gA6.dsk -hdc /tmp/aTHHtKwp94.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/multi-child-fd into /tmp/pZEICChgC6.dsk...
+Copying ../../tests/userprog/sample.txt into /tmp/pZEICChgC6.dsk...
+Copying tests/userprog/child-close into /tmp/pZEICChgC6.dsk...
+Writing command line to /tmp/OeQexz9zvf.dsk...
+qemu -hda /tmp/OeQexz9zvf.dsk -hdb /tmp/ZD_Zdp77aR.dsk -hdc /tmp/pZEICChgC6.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put multi-child-fd put sample.txt put child-close run multi-child-fd
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
-374 pages available in user pool.
+373 pages available in user pool.
 Calibrating timer...  107,929,600 loops/s.
-hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 207 sector (103 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 Formatting file system...done.
@@ -23,17 +23,16 @@ Executing 'multi-child-fd':
 (child-close) end
 child-close: exit(0)
 (multi-child-fd) wait(exec()) = 0
-Kernel PANIC at ../../filesys/file.c:147 in file_length(): assertion `file != NULL' failed.
-Call stack: 0xc0107f39 0xc010c062 0xc010b360 0xc010b635 0xc0102257 0xc010238f 0x804a1da 0x8048508 0x8048138 0x8048174 0x80487bc.
-The `backtrace' program can make call stacks useful.
-Read "Backtraces" in the "Debugging Tools" chapter
-of the Pintos documentation for more information.
-Timer: 144 ticks
-Thread: 30 idle ticks, 112 kernel ticks, 2 user ticks
+(multi-child-fd) verified contents of "sample.txt"
+(multi-child-fd) end
+multi-child-fd: exit(0)
+Execution of 'multi-child-fd' complete.
+Timer: 140 ticks
+Thread: 30 idle ticks, 108 kernel ticks, 3 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 174 reads, 426 writes
+hd0:1: 175 reads, 426 writes
 hd1:0: 207 reads, 0 writes
-Console: 1382 characters output
+Console: 1143 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

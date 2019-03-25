@@ -1,13 +1,13 @@
-Copying tests/userprog/exec-arg into /tmp/ZAFiHQLAQ4.dsk...
-Copying tests/userprog/child-args into /tmp/ZAFiHQLAQ4.dsk...
-Writing command line to /tmp/BYhV8eh_V5.dsk...
-qemu -hda /tmp/BYhV8eh_V5.dsk -hdb /tmp/GiNB58u9gI.dsk -hdc /tmp/ZAFiHQLAQ4.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/exec-arg into /tmp/NoAs24_jys.dsk...
+Copying tests/userprog/child-args into /tmp/NoAs24_jys.dsk...
+Writing command line to /tmp/xq8QHiRAHe.dsk...
+qemu -hda /tmp/xq8QHiRAHe.dsk -hdb /tmp/iC5SOOuIDv.dsk -hdc /tmp/NoAs24_jys.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put exec-arg put child-args run exec-arg
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
-374 pages available in user pool.
-Calibrating timer...  110,387,200 loops/s.
-hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+373 pages available in user pool.
+Calibrating timer...  111,206,400 loops/s.
+hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 193 sector (96 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 Formatting file system...done.
@@ -26,12 +26,12 @@ child-args: exit(0)
 (exec-arg) end
 exec-arg: exit(0)
 Execution of 'exec-arg' complete.
-Timer: 139 ticks
-Thread: 30 idle ticks, 106 kernel ticks, 3 user ticks
+Timer: 129 ticks
+Thread: 30 idle ticks, 97 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 121 reads, 396 writes
 hd1:0: 193 reads, 0 writes
-Console: 993 characters output
+Console: 992 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

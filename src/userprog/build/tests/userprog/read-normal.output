@@ -1,13 +1,13 @@
-Copying tests/userprog/read-normal into /tmp/MoI26CWUmp.dsk...
-Copying ../../tests/userprog/sample.txt into /tmp/MoI26CWUmp.dsk...
-Writing command line to /tmp/UzLTVa8S_d.dsk...
-qemu -hda /tmp/UzLTVa8S_d.dsk -hdb /tmp/HiJ9zrl6us.dsk -hdc /tmp/MoI26CWUmp.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/read-normal into /tmp/PVnJ7bTIjN.dsk...
+Copying ../../tests/userprog/sample.txt into /tmp/PVnJ7bTIjN.dsk...
+Writing command line to /tmp/_hCUKtMPRw.dsk...
+qemu -hda /tmp/_hCUKtMPRw.dsk -hdb /tmp/K7WDtbohua.dsk -hdc /tmp/PVnJ7bTIjN.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put read-normal put sample.txt run read-normal
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
-374 pages available in user pool.
-Calibrating timer...  27,699,200 loops/s.
-hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+373 pages available in user pool.
+Calibrating timer...  107,929,600 loops/s.
+hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 100 sector (50 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 Formatting file system...done.
@@ -22,12 +22,12 @@ Executing 'read-normal':
 (read-normal) end
 read-normal: exit(0)
 Execution of 'read-normal' complete.
-Timer: 99 ticks
-Thread: 30 idle ticks, 68 kernel ticks, 1 user ticks
+Timer: 97 ticks
+Thread: 30 idle ticks, 65 kernel ticks, 2 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 100 reads, 210 writes
 hd1:0: 100 reads, 0 writes
-Console: 1004 characters output
+Console: 1005 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...

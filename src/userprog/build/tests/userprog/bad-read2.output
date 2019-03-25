@@ -1,12 +1,12 @@
-Copying tests/userprog/bad-read2 into /tmp/ervF7WeIhI.dsk...
-Writing command line to /tmp/4YguFW_mk0.dsk...
-qemu -hda /tmp/4YguFW_mk0.dsk -hdb /tmp/LgFxBgVatb.dsk -hdc /tmp/ervF7WeIhI.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/bad-read2 into /tmp/ykNWKR0S0o.dsk...
+Writing command line to /tmp/zp4P3cHaKj.dsk...
+qemu -hda /tmp/zp4P3cHaKj.dsk -hdb /tmp/rGDahK1Pgr.dsk -hdc /tmp/ykNWKR0S0o.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put bad-read2 run bad-read2
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
-374 pages available in user pool.
+373 pages available in user pool.
 Calibrating timer...  107,929,600 loops/s.
-hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 97 sector (48 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 Formatting file system...done.

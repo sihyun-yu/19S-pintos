@@ -128,8 +128,8 @@ struct thread
     struct list_elem child_elem;
     int exit_status;
     int fd;
-
-    struct file *tmp_file;
+    struct list fd_file_list;
+    //struct file *tmp_file;
 
 #endif
 
@@ -187,4 +187,5 @@ void push_file_fd(struct file_fd *node);
 void remove_file_from_list (struct file *file);
 struct thread *find_thread_from_tid(int tid);
 struct file *find_file_from_fd(int fd);
+struct file_fd* find_filefd_from_file(struct file *file);
 #endif /* threads/thread.h */

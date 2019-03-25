@@ -1,13 +1,13 @@
-Copying tests/userprog/rox-multichild into /tmp/MqJ2B9Q2yI.dsk...
-Copying tests/userprog/child-rox into /tmp/MqJ2B9Q2yI.dsk...
-Writing command line to /tmp/5ZafmtXJxZ.dsk...
-qemu -hda /tmp/5ZafmtXJxZ.dsk -hdb /tmp/7LJaXzN5Nm.dsk -hdc /tmp/MqJ2B9Q2yI.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/rox-multichild into /tmp/v7XhnPwvqW.dsk...
+Copying tests/userprog/child-rox into /tmp/v7XhnPwvqW.dsk...
+Writing command line to /tmp/Ib10J5rN_8.dsk...
+qemu -hda /tmp/Ib10J5rN_8.dsk -hdb /tmp/CETOMLHmzp.dsk -hdc /tmp/v7XhnPwvqW.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put rox-multichild put child-rox run rox-multichild
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
-374 pages available in user pool.
+373 pages available in user pool.
 Calibrating timer...  107,929,600 loops/s.
-hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 207 sector (103 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 Formatting file system...done.
@@ -22,17 +22,43 @@ Executing 'rox-multichild':
 (rox-multichild) exec "child-rox 5"
 (child-rox) begin
 (child-rox) try to write "child-rox"
-(child-rox) try to write "child-rox": FAILED
-child-rox: exit(1)
-(rox-multichild) wait for child: FAILED
-rox-multichild: exit(1)
+(child-rox) exec "child-rox 4"
+(child-rox) begin
+(child-rox) try to write "child-rox"
+(child-rox) exec "child-rox 3"
+(child-rox) begin
+(child-rox) try to write "child-rox"
+(child-rox) exec "child-rox 2"
+(child-rox) begin
+(child-rox) try to write "child-rox"
+(child-rox) exec "child-rox 1"
+(child-rox) begin
+(child-rox) try to write "child-rox"
+(child-rox) try to write "child-rox"
+(child-rox) end
+child-rox: exit(12)
+(child-rox) try to write "child-rox"
+(child-rox) end
+child-rox: exit(12)
+(child-rox) try to write "child-rox"
+(child-rox) end
+child-rox: exit(12)
+(child-rox) try to write "child-rox"
+(child-rox) end
+child-rox: exit(12)
+(child-rox) try to write "child-rox"
+(child-rox) end
+child-rox: exit(12)
+(rox-multichild) write "child-rox"
+(rox-multichild) end
+rox-multichild: exit(0)
 Execution of 'rox-multichild' complete.
-Timer: 143 ticks
-Thread: 30 idle ticks, 109 kernel ticks, 4 user ticks
+Timer: 152 ticks
+Thread: 30 idle ticks, 112 kernel ticks, 10 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 135 reads, 426 writes
+hd0:1: 306 reads, 426 writes
 hd1:0: 207 reads, 0 writes
-Console: 1177 characters output
+Console: 1839 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
