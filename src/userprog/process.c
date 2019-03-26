@@ -33,17 +33,25 @@ process_execute (const char *file_name)
   tid_t tid;
   char *next_ptr;
   char *real_file_name;
-
+  if (file_name == NULL) return TID_ERROR;
+  if (*file_name == NULL) return TID_ERROR;
   /* Make a copy of FILE_NAME.
      Otherwise there's a race between the caller and load(). */
   fn_copy = palloc_get_page (0);
   if (fn_copy == NULL) {
-//    palloc_free_page(real_file_name);
+    palloc_free_page(real_file_name);
     return TID_ERROR;
   }
 
   real_file_name = palloc_get_page(0);
 
+
+
+
+  if (real_file_name == NULL) {
+    palloc_free_page(real_file_name);
+    return TID_ERROR;
+  }
   strlcpy (fn_copy, file_name, PGSIZE);
   strlcpy (real_file_name, file_name, PGSIZE); 
   real_file_name = strtok_r(real_file_name, " ", &next_ptr);
@@ -51,8 +59,9 @@ process_execute (const char *file_name)
   //printf("real_file_name : %s\n", real_file_name);
 
   if (filesys_open(real_file_name) == NULL) {
+    palloc_free_page(fn_copy);
     palloc_free_page(real_file_name);
-    return -1;
+    return TID_ERROR;
   }
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (real_file_name, PRI_DEFAULT, start_process, fn_copy); 
@@ -61,23 +70,20 @@ process_execute (const char *file_name)
   sema_down(&thread_current()->oom_lock);
 
 
+
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
 
   struct list_elem *e;
-  /*struct thread *tmp;
+  struct thread *tmp;
     for (e = list_begin(&thread_current()->child_list); e!=list_end(&thread_current()->child_list); e=list_next(e)) {
       tmp = list_entry(e, struct thread, child_elem);
       if (tmp->flag == 1) {
         return process_wait(tid);
       }
-    }*/
+    }
 
   //struct thread *child_thread = find_thread_from_tid(tid);
-
-
-
-
 
 
   return tid;
@@ -140,7 +146,7 @@ start_process (void *f_name)
 
   sema_up(&thread_current()->parent->oom_lock);
   if (!success){
-    /*thread_current()->flag = 1;*/
+    thread_current()->flag = 1;
     sys_exit(-1);
   } //sys_exit();
   /* Start the user process by simulating a return from an
