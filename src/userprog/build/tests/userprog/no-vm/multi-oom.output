@@ -1,11 +1,11 @@
-Copying tests/userprog/no-vm/multi-oom into /tmp/CVA65IyPxo.dsk...
-Writing command line to /tmp/d8GBB68o3e.dsk...
-qemu -hda /tmp/d8GBB68o3e.dsk -hdb /tmp/0_6da28THM.dsk -hdc /tmp/CVA65IyPxo.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/no-vm/multi-oom into /tmp/uPMVGdrdm2.dsk...
+Writing command line to /tmp/aHXPa4GWFl.dsk...
+qemu -hda /tmp/aHXPa4GWFl.dsk -hdb /tmp/2tqWnp4rUb.dsk -hdc /tmp/uPMVGdrdm2.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put multi-oom run multi-oom
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
 373 pages available in user pool.
-Calibrating timer...  110,387,200 loops/s.
+Calibrating timer...  104,755,200 loops/s.
 hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 112 sector (56 kB) disk, model "QEMU HARDDISK", serial "QM00003"
@@ -18,8 +18,10 @@ multi-oom: exit(-1)
 multi-oom: exit(-1)
 multi-oom: exit(-1)
 multi-oom: exit(-1)
+multi-oom: exit(18)
 multi-oom: exit(-1)
-multi-oom: exit(-1)
+(multi-oom) wait returned -1.: FAILED
+multi-oom: exit(1)
 multi-oom: exit(-1)
 (multi-oom) wait returned -1.: FAILED
 multi-oom: exit(1)
@@ -27,45 +29,30 @@ multi-oom: exit(-1)
 (multi-oom) wait returned -1.: FAILED
 multi-oom: exit(1)
 multi-oom: exit(-1)
+(multi-oom) wait returned -1.: FAILED
+multi-oom: exit(1)
 multi-oom: exit(-1)
 (multi-oom) wait returned -1.: FAILED
 multi-oom: exit(1)
 multi-oom: exit(-1)
+(multi-oom) wait returned -1.: FAILED
+multi-oom: exit(1)
 multi-oom: exit(-1)
 (multi-oom) wait returned -1.: FAILED
 multi-oom: exit(1)
 multi-oom: exit(-1)
-multi-oom: exit(-1)
 (multi-oom) wait returned -1.: FAILED
 multi-oom: exit(1)
 multi-oom: exit(-1)
-multi-oom: exit(-1)
 (multi-oom) wait returned -1.: FAILED
 multi-oom: exit(1)
-multi-oom: exit(-1)
-multi-oom: exit(-1)
-(multi-oom) wait returned -1.: FAILED
-multi-oom: exit(1)
-multi-oom: exit(-1)
-multi-oom: exit(-1)
-(multi-oom) wait returned -1.: FAILED
-multi-oom: exit(1)
-multi-oom: exit(-1)
-multi-oom: exit(-1)
-(multi-oom) wait returned -1.: FAILED
-multi-oom: exit(1)
-multi-oom: exit(-1)
-multi-oom: exit(-1)
-(multi-oom) wait returned -1.: FAILED
-multi-oom: exit(1)
-multi-oom: exit(-1)
 Execution of 'multi-oom' complete.
-Timer: 140 ticks
-Thread: 30 idle ticks, 82 kernel ticks, 28 user ticks
+Timer: 129 ticks
+Thread: 30 idle ticks, 73 kernel ticks, 26 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 1559 reads, 232 writes
 hd1:0: 112 reads, 0 writes
-Console: 1837 characters output
+Console: 1560 characters output
 Keyboard: 0 keys pressed
-Exception: 22 page faults
+Exception: 10 page faults
 Powering off...

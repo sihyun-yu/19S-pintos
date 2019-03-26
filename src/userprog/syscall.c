@@ -20,12 +20,15 @@
 #include "lib/kernel/list.h"
 
 
+struct lock sys_lock;
+
 static void syscall_handler (struct intr_frame *);
 
 void
 syscall_init (void) 
 {
-  intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
+	lock_init(&sys_lock);
+  	intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
 }
 
 static void
@@ -172,18 +175,27 @@ void sys_exit(int status){
 
 
 int sys_write (int fd, const void *buffer, unsigned size) {
+	int val;
 	// check address
-
+	lock_acquire(&sys_lock);
   if (fd == 1) {
     putbuf(buffer, size);
-    return size;
+    val = size;
   }
-  else{
+
+  else {
   	struct file *file_for_write = find_file_from_fd(fd);
-	if (file_for_write == NULL) return -1;
-	return file_write(file_for_write, (char *)buffer, size);
+	if (file_for_write == NULL) {
+		val = -1;
+	}
+
+	else {
+		val = file_write(file_for_write, (char *)buffer, size);
+	}
   }
-  return -1; 
+
+  lock_release(&sys_lock);
+  return val; 
 }
 
 int sys_exec(char *cmd_line){
@@ -210,19 +222,28 @@ int sys_create(const char *file, unsigned initial_size)
 int sys_remove (const char *file) {
 
 	struct file *open_file = filesys_open(file);
-	remove_file_from_list (open_file);
+	/*remove_file_from_list (open_file);
 	if (find_filefd_from_file(open_file) != NULL)
-		palloc_free_page(find_filefd_from_file(open_file));
+		palloc_free_page(find_filefd_from_file(open_file));*/
  	return filesys_remove(file);
 }
 
 int sys_open (const char *file) {
 	if (file == NULL) return -1;
+	lock_acquire(&sys_lock);
+
 	struct file *open_file = filesys_open(file);
-	if (open_file == NULL) return -1;
+
+	lock_release(&sys_lock);
+	
+	if (open_file == NULL) {
+		return -1;
+	}
+
 
 	//printf("Pass here ?\n");
 	struct file_fd *node = palloc_get_page (0);
+	//printf("palloc fd : %d\n", thread_current()->fd);
 	//struct file_fd *node = (struct file_fd *) malloc (sizeof (struct file_fd));
 	//printf("correctly defined?\n");
 	//printf("%d : current thread's fd\n", thread_current()->fd);
@@ -247,17 +268,25 @@ int sys_filesize(int fd){
 
 
 int sys_read(int fd, void *buffer, unsigned size) {
-	if (fd == 0)
+	lock_acquire(&sys_lock);
+	int val;
+	if (fd == 0){
 		input_getc();
+		val = size;
+	}
 
 	else{
 		struct file *file_for_read = find_file_from_fd(fd);
-		if (file_for_read == NULL) return -1;
-		return file_read(file_for_read, buffer, size);
+		if (file_for_read == NULL) 
+		{
+			val = -1;
+		}
+		else {
+			val = file_read(file_for_read, buffer, size);
+		}
 	}
-
-
-	return 0;
+	lock_release(&sys_lock);
+	return val;
 }
 void sys_seek(int fd, unsigned position) {
 	struct file *file_for_seek = find_file_from_fd(fd);

@@ -37,9 +37,13 @@ process_execute (const char *file_name)
   /* Make a copy of FILE_NAME.
      Otherwise there's a race between the caller and load(). */
   fn_copy = palloc_get_page (0);
-  real_file_name = palloc_get_page(0);
-  if (fn_copy == NULL)
+  if (fn_copy == NULL) {
+//    palloc_free_page(real_file_name);
     return TID_ERROR;
+  }
+
+  real_file_name = palloc_get_page(0);
+
   strlcpy (fn_copy, file_name, PGSIZE);
   strlcpy (real_file_name, file_name, PGSIZE); 
   real_file_name = strtok_r(real_file_name, " ", &next_ptr);
@@ -47,15 +51,27 @@ process_execute (const char *file_name)
   //printf("real_file_name : %s\n", real_file_name);
 
   if (filesys_open(real_file_name) == NULL) {
+    palloc_free_page(real_file_name);
     return -1;
   }
   /* Create a new thread to execute FILE_NAME. */
-  tid = thread_create (real_file_name, PRI_DEFAULT, start_process, fn_copy);
-
+  tid = thread_create (real_file_name, PRI_DEFAULT, start_process, fn_copy); 
   palloc_free_page(real_file_name);
+
+  sema_down(&thread_current()->oom_lock);
+
 
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
+
+  struct list_elem *e;
+  /*struct thread *tmp;
+    for (e = list_begin(&thread_current()->child_list); e!=list_end(&thread_current()->child_list); e=list_next(e)) {
+      tmp = list_entry(e, struct thread, child_elem);
+      if (tmp->flag == 1) {
+        return process_wait(tid);
+      }
+    }*/
 
   //struct thread *child_thread = find_thread_from_tid(tid);
 
@@ -110,6 +126,9 @@ start_process (void *f_name)
   /* If load failed, quit. */
   //palloc_free_page (file_name);
 
+
+
+
   if (success) {
     push_stack_cmdline(cmdline_tokens, cnt, &if_.esp);
     //hex_dump(if_.esp, if_.esp, 200, true);
@@ -119,9 +138,9 @@ start_process (void *f_name)
   palloc_free_page(cmdline_tokens);
 
 
-
+  sema_up(&thread_current()->parent->oom_lock);
   if (!success){
-    //printf("load failed at %s\n", cmdline_tokens[0]);
+    /*thread_current()->flag = 1;*/
     sys_exit(-1);
   } //sys_exit();
   /* Start the user process by simulating a return from an
@@ -148,12 +167,12 @@ start_process (void *f_name)
 int
 process_wait (tid_t child_tid) 
 {
-  int i;
   //printf("wait called ! \n");
 
   struct thread *curr = thread_current();
   struct list_elem *e;
   struct thread *child;
+  struct file_fd *for_oom;
   for(e = list_begin(&curr->child_list); e != list_end(&curr->child_list); e = list_next(e)){
     child = list_entry(e, struct thread, child_elem);
     //printf("tid of current thread at wait : %d, child tid to be waited : %d\n", child->tid, child_tid);
@@ -161,11 +180,13 @@ process_wait (tid_t child_tid)
       sema_down(&child->child_lock);
       int status = child->exit_status;
       //printf("status : %d\n", status);
+      //free_all_page(child);
       list_remove(e);
       sema_up(&child->sync_lock);
       return status;
     }
   }
+  //free_all_page(curr);
   return -1;
 }
 
@@ -192,15 +213,10 @@ process_exit (void)
       pagedir_activate (NULL);
       pagedir_destroy (pd);
     }
-
-  //if (curr->tmp_file) {
-    //file_allow_write(curr->tmp_file);
-    //file_close(curr->tmp_file);
-  //}
   sema_up(&thread_current()->child_lock);
   sema_down(&thread_current()->sync_lock);
-  free_all_page(curr);
- 
+  //free_all_page(curr);
+
 }
 
 /* Sets up the CPU for running user code in the current

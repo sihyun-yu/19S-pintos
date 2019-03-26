@@ -1,12 +1,12 @@
-Copying tests/filesys/base/syn-read into /tmp/AxX2yl66oo.dsk...
-Copying tests/filesys/base/child-syn-read into /tmp/AxX2yl66oo.dsk...
-Writing command line to /tmp/osBMHkRV3t.dsk...
-qemu -hda /tmp/osBMHkRV3t.dsk -hdb /tmp/mYQx5V3Et8.dsk -hdc /tmp/AxX2yl66oo.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/base/syn-read into /tmp/vgf6M1rUom.dsk...
+Copying tests/filesys/base/child-syn-read into /tmp/vgf6M1rUom.dsk...
+Writing command line to /tmp/RuJagQD09W.dsk...
+qemu -hda /tmp/RuJagQD09W.dsk -hdb /tmp/KJZyn4xrMw.dsk -hdc /tmp/vgf6M1rUom.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put syn-read put child-syn-read run syn-read
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
 373 pages available in user pool.
-Calibrating timer...  107,929,600 loops/s.
+Calibrating timer...  104,755,200 loops/s.
 hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 213 sector (106 kB) disk, model "QEMU HARDDISK", serial "QM00003"
@@ -21,45 +21,44 @@ Executing 'syn-read':
 (syn-read) write "data"
 (syn-read) close "data"
 (syn-read) exec child 1 of 10: "child-syn-read 0"
-(syn-read) exec child 2 of 10: "child-syn-read 1"
-(syn-read) exec child 3 of 10: "child-syn-read 2"
-(syn-read) exec child 4 of 10: "child-syn-read 3"
-(syn-read) exec child 5 of 10: "child-syn-read 4"
-(syn-read) exec child 6 of 10: "child-syn-read 5"
-(syn-read) exec child 7 of 10: "child-syn-read 6"
-(syn-read) exec child 8 of 10: "child-syn-read 7"
-(syn-read) exec child 9 of 10: "child-syn-read 8"
-(syn-read) exec child 10 of 10: "child-syn-read 9"
-load: child-syn-read: open failed
-child-syn-read: exit(-1)
-load: child-syn-read: open failed
-child-syn-read: exit(-1)
-load: child-syn-read: open failed
-child-syn-read: exit(-1)
-load: child-syn-read: open failed
-child-syn-read: exit(-1)
-load: child-syn-read: open failed
-child-syn-read: exit(-1)
-load: child-syn-read: open failed
-child-syn-read: exit(-1)
-load: child-syn-read: open failed
-child-syn-read: exit(-1)
-load: child-syn-read: open failed
-child-syn-read: exit(-1)
 child-syn-read: exit(0)
-(syn-read) wait for child 1 of 10 returned 0 (expected 0)
+(syn-read) exec child 2 of 10: "child-syn-read 1"
 child-syn-read: exit(1)
+(syn-read) exec child 3 of 10: "child-syn-read 2"
+child-syn-read: exit(2)
+(syn-read) exec child 4 of 10: "child-syn-read 3"
+child-syn-read: exit(3)
+(syn-read) exec child 5 of 10: "child-syn-read 4"
+child-syn-read: exit(4)
+(syn-read) exec child 6 of 10: "child-syn-read 5"
+child-syn-read: exit(5)
+(syn-read) exec child 7 of 10: "child-syn-read 6"
+child-syn-read: exit(6)
+(syn-read) exec child 8 of 10: "child-syn-read 7"
+child-syn-read: exit(7)
+(syn-read) exec child 9 of 10: "child-syn-read 8"
+child-syn-read: exit(8)
+(syn-read) exec child 10 of 10: "child-syn-read 9"
+(syn-read) wait for child 1 of 10 returned 0 (expected 0)
 (syn-read) wait for child 2 of 10 returned 1 (expected 1)
-(syn-read) wait for child 3 of 10 returned -1 (expected 2)
-(syn-read) wait for child 3 of 10 returned -1 (expected 2): FAILED
-syn-read: exit(1)
+(syn-read) wait for child 3 of 10 returned 2 (expected 2)
+(syn-read) wait for child 4 of 10 returned 3 (expected 3)
+(syn-read) wait for child 5 of 10 returned 4 (expected 4)
+(syn-read) wait for child 6 of 10 returned 5 (expected 5)
+(syn-read) wait for child 7 of 10 returned 6 (expected 6)
+(syn-read) wait for child 8 of 10 returned 7 (expected 7)
+(syn-read) wait for child 9 of 10 returned 8 (expected 8)
+child-syn-read: exit(9)
+(syn-read) wait for child 10 of 10 returned 9 (expected 9)
+(syn-read) end
+syn-read: exit(0)
 Execution of 'syn-read' complete.
-Timer: 170 ticks
-Thread: 30 idle ticks, 106 kernel ticks, 34 user ticks
+Timer: 277 ticks
+Thread: 30 idle ticks, 102 kernel ticks, 145 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 2277 reads, 444 writes
+hd0:1: 10789 reads, 444 writes
 hd1:0: 213 reads, 0 writes
-Console: 2208 characters output
+Console: 2284 characters output
 Keyboard: 0 keys pressed
 Exception: 0 page faults
 Powering off...
