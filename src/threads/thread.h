@@ -127,9 +127,11 @@ struct thread
     struct list child_list;
     struct list_elem child_elem;
     int exit_status;
-    int fd;
     struct list fd_file_list;
-    //struct file *tmp_file;
+    struct semaphore oom_lock;
+    struct thread *parent;
+    int flag;
+    struct file* fds[100];
 
 #endif
 

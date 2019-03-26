@@ -1,13 +1,13 @@
-Copying tests/userprog/open-boundary into /tmp/i865G6WUut.dsk...
-Copying ../../tests/userprog/sample.txt into /tmp/i865G6WUut.dsk...
-Writing command line to /tmp/TPGkGdEbQy.dsk...
-qemu -hda /tmp/TPGkGdEbQy.dsk -hdb /tmp/Pnj7gLUpMw.dsk -hdc /tmp/i865G6WUut.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/open-boundary into /tmp/njnOZ4vobm.dsk...
+Copying ../../tests/userprog/sample.txt into /tmp/njnOZ4vobm.dsk...
+Writing command line to /tmp/YCoh030rSc.dsk...
+qemu -hda /tmp/YCoh030rSc.dsk -hdb /tmp/iPunZ7VEFX.dsk -hdc /tmp/njnOZ4vobm.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put open-boundary put sample.txt run open-boundary
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
-373 pages available in user pool.
+374 pages available in user pool.
 Calibrating timer...  104,755,200 loops/s.
-hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 101 sector (50 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 Formatting file system...done.
@@ -20,8 +20,8 @@ Executing 'open-boundary':
 (open-boundary) end
 open-boundary: exit(0)
 Execution of 'open-boundary' complete.
-Timer: 93 ticks
-Thread: 30 idle ticks, 62 kernel ticks, 1 user ticks
+Timer: 97 ticks
+Thread: 30 idle ticks, 66 kernel ticks, 1 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 93 reads, 212 writes
 hd1:0: 101 reads, 0 writes

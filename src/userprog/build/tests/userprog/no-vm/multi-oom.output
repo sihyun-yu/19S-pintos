@@ -1,12 +1,12 @@
-Copying tests/userprog/no-vm/multi-oom into /tmp/uPMVGdrdm2.dsk...
-Writing command line to /tmp/aHXPa4GWFl.dsk...
-qemu -hda /tmp/aHXPa4GWFl.dsk -hdb /tmp/2tqWnp4rUb.dsk -hdc /tmp/uPMVGdrdm2.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/no-vm/multi-oom into /tmp/goU5jjlWWc.dsk...
+Writing command line to /tmp/IMmvDfkb2O.dsk...
+qemu -hda /tmp/IMmvDfkb2O.dsk -hdb /tmp/vbEqhcePXh.dsk -hdc /tmp/goU5jjlWWc.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put multi-oom run multi-oom
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
-373 pages available in user pool.
+374 pages available in user pool.
 Calibrating timer...  104,755,200 loops/s.
-hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 112 sector (56 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 Formatting file system...done.
@@ -18,41 +18,57 @@ multi-oom: exit(-1)
 multi-oom: exit(-1)
 multi-oom: exit(-1)
 multi-oom: exit(-1)
-multi-oom: exit(18)
 multi-oom: exit(-1)
-(multi-oom) wait returned -1.: FAILED
-multi-oom: exit(1)
 multi-oom: exit(-1)
-(multi-oom) wait returned -1.: FAILED
-multi-oom: exit(1)
 multi-oom: exit(-1)
-(multi-oom) wait returned -1.: FAILED
-multi-oom: exit(1)
 multi-oom: exit(-1)
-(multi-oom) wait returned -1.: FAILED
-multi-oom: exit(1)
 multi-oom: exit(-1)
-(multi-oom) wait returned -1.: FAILED
-multi-oom: exit(1)
 multi-oom: exit(-1)
-(multi-oom) wait returned -1.: FAILED
-multi-oom: exit(1)
 multi-oom: exit(-1)
-(multi-oom) wait returned -1.: FAILED
-multi-oom: exit(1)
 multi-oom: exit(-1)
-(multi-oom) wait returned -1.: FAILED
-multi-oom: exit(1)
 multi-oom: exit(-1)
-(multi-oom) wait returned -1.: FAILED
-multi-oom: exit(1)
-Execution of 'multi-oom' complete.
-Timer: 129 ticks
-Thread: 30 idle ticks, 73 kernel ticks, 26 user ticks
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+multi-oom: exit(-1)
+Kernel PANIC at ../../lib/string.c:330 in strlcpy(): assertion `dst != NULL' failed.
+Call stack: 0xc0107e19 0xc0107a63 0xc0109fab 0xc010b3c1 0xc010b543 0xc0102137 0xc010226f 0x804a742 0x80481b9 0x804828a 0x804899c.
+The `backtrace' program can make call stacks useful.
+Read "Backtraces" in the "Debugging Tools" chapter
+of the Pintos documentation for more information.
+Timer: 284 ticks
+Thread: 30 idle ticks, 65 kernel ticks, 189 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 1559 reads, 232 writes
+hd0:1: 12639 reads, 232 writes
 hd1:0: 112 reads, 0 writes
-Console: 1560 characters output
+Console: 1983 characters output
 Keyboard: 0 keys pressed
-Exception: 10 page faults
+Exception: 32 page faults
 Powering off...

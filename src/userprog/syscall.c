@@ -184,7 +184,7 @@ int sys_write (int fd, const void *buffer, unsigned size) {
   }
 
   else {
-  	struct file *file_for_write = find_file_from_fd(fd);
+  	struct file *file_for_write = thread_current()->fds[fd];
 	if (file_for_write == NULL) {
 		val = -1;
 	}
@@ -242,27 +242,28 @@ int sys_open (const char *file) {
 
 
 	//printf("Pass here ?\n");
-	struct file_fd *node = palloc_get_page (0);
 	//printf("palloc fd : %d\n", thread_current()->fd);
 	//struct file_fd *node = (struct file_fd *) malloc (sizeof (struct file_fd));
 	//printf("correctly defined?\n");
 	//printf("%d : current thread's fd\n", thread_current()->fd);
-	node->fd = thread_current()->fd;
-	//printf("correctly defined? 2\n");
 	//printf("At here, fd = %d\n", thread_current()->fd);
-	node->open_file = open_file;
-	thread_current()->fd++;
-	//printf("At here, fd = %d\n", thread_current()->fd);
-	push_file_fd(node);
-	int fd = node->fd;
-	//printf("work!\n");
+	int i;
+	int fd = -1;
+	for (i=3; i<100; i++) {
+		if (thread_current()->fds[i] == NULL) {
+			thread_current()->fds[i] = open_file;
+			fd = i;
+			break;
+		}
+	}
+
 	if (!strcmp (file, thread_current()->name))
 		file_deny_write(open_file);
 	return fd;
 }
 
 int sys_filesize(int fd){
-	struct file *file_for_size = find_file_from_fd(fd);
+	struct file *file_for_size = thread_current()->fds[fd];
 	return file_length(file_for_size);
 }
 
@@ -276,7 +277,7 @@ int sys_read(int fd, void *buffer, unsigned size) {
 	}
 
 	else{
-		struct file *file_for_read = find_file_from_fd(fd);
+		struct file *file_for_read = thread_current()->fds[fd];
 		if (file_for_read == NULL) 
 		{
 			val = -1;
@@ -289,21 +290,19 @@ int sys_read(int fd, void *buffer, unsigned size) {
 	return val;
 }
 void sys_seek(int fd, unsigned position) {
-	struct file *file_for_seek = find_file_from_fd(fd);
+	struct file *file_for_seek = thread_current()->fds[fd];
 	return file_seek(file_for_seek, position);
 
 }
 
 unsigned sys_tell (int fd) {
-	struct file *file_for_tell = find_file_from_fd(fd);
+	struct file *file_for_tell = thread_current()->fds[fd];
 	return file_tell(file_for_tell);
 }
 
 void sys_close(int fd){
-	struct file *file_for_close = find_file_from_fd(fd);
-	remove_file_from_list (file_for_close);
-	if (find_filefd_from_file(file_for_close) != NULL)
-		palloc_free_page(find_filefd_from_file(file_for_close));
+	struct file *file_for_close = thread_current()->fds[fd];
+	thread_current()->fds[fd] = NULL;
 	return file_close(file_for_close);
 }
 

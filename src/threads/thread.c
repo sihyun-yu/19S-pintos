@@ -612,10 +612,11 @@ init_thread (struct thread *t, const char *name, int priority)
   sema_init (&t->sync_lock, 0);
   sema_init (&t->init_lock, 0);
   list_push_back(&(running_thread()->child_list), &(t->child_elem));
-  t->fd = 3;
+  //t->fd = 3;
   list_init (&t->fd_file_list);
-  //t->tmp_file = NULL;
-
+  sema_init(&t->oom_lock, 0);
+  t->parent = running_thread();
+  //t->flag = 0;
 #endif 
 
 
@@ -808,65 +809,5 @@ struct list_elem *sleep_list_begin() {
 
 struct list_elem *sleep_list_end() {
   return list_end(&sleep_list);
-}
-
-
-void push_file_fd(struct file_fd *node) {
-  list_push_back(&thread_current()->fd_file_list, &node->file_elem);
-}
-
-struct file* find_file_from_fd(int fd) {
-  struct list_elem* e;
-  struct file_fd *node;
- for (e=list_begin(&thread_current()->fd_file_list); e!=list_end(&thread_current()->fd_file_list); e=list_next(e)) {
-    node = list_entry(e, struct file_fd, file_elem);
-    if (node->fd == fd) {
-      return node->open_file;
-    }
-  }  
-  return NULL;
-}
-
-
-struct file_fd* find_filefd_from_file(struct file *file) {
-  struct list_elem* e;
-  struct file_fd *node;
- for (e=list_begin(&thread_current()->fd_file_list); e!=list_end(&thread_current()->fd_file_list); e=list_next(e)) {
-    node = list_entry(e, struct file_fd, file_elem);
-    if (node->open_file == file) {
-      return node;
-    }
-  }  
-  return NULL;
-}
-
-
-void remove_file_from_list (struct file *file) {
-  struct list_elem* e;
-  struct file_fd *node;
- for (e=list_begin(&thread_current()->fd_file_list); e!=list_end(&thread_current()->fd_file_list); e=list_next(e)) {
-    node = list_entry(e, struct file_fd, file_elem);
-    if (node->open_file == file) {
-      list_remove(e);
-      //palloc_free_page(node);
-    }
-  }  
-}
-
-void free_all_page(struct thread* cur) {
-  struct list_elem *e;
-  struct file_fd *node;
-  while (!list_empty(&cur->fd_file_list)) {
-    e = list_begin(&cur->fd_file_list);
-    node = list_entry(e, struct file_fd, file_elem);
-    if (node != NULL)
-    palloc_free_page(node);
-    list_pop_front(&cur->fd_file_list);
-  }
-/*  for (e=list_begin(&cur->fd_file_list); e!=list_end(&cur->fd_file_list); e=list_next(e)) {
-    node = list_entry(e, struct file_fd, file_elem);
-    palloc_free_page(node);
-
-  }*/
 }
 

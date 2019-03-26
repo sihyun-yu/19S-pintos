@@ -1,12 +1,12 @@
-Copying tests/filesys/base/lg-seq-random into /tmp/oJceZ5gps3.dsk...
-Writing command line to /tmp/1ReWfDxwwY.dsk...
-qemu -hda /tmp/1ReWfDxwwY.dsk -hdb /tmp/jqz70FQele.dsk -hdc /tmp/oJceZ5gps3.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/base/lg-seq-random into /tmp/3dKz3BToBX.dsk...
+Writing command line to /tmp/H99Sk3wrL2.dsk...
+qemu -hda /tmp/H99Sk3wrL2.dsk -hdb /tmp/qCvaJ27mDy.dsk -hdc /tmp/3dKz3BToBX.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put lg-seq-random run lg-seq-random
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
-373 pages available in user pool.
+374 pages available in user pool.
 Calibrating timer...  104,755,200 loops/s.
-hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 101 sector (50 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 Formatting file system...done.
@@ -24,8 +24,8 @@ Executing 'lg-seq-random':
 (lg-seq-random) end
 lg-seq-random: exit(0)
 Execution of 'lg-seq-random' complete.
-Timer: 192 ticks
-Thread: 30 idle ticks, 67 kernel ticks, 95 user ticks
+Timer: 182 ticks
+Thread: 30 idle ticks, 61 kernel ticks, 91 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 504 reads, 662 writes
 hd1:0: 101 reads, 0 writes

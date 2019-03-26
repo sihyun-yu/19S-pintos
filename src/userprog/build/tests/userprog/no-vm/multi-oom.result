@@ -1,2 +1,20 @@
 FAIL
-run: wait returned -1.: FAILED
+Kernel panic in run: PANIC at ../../lib/string.c:330 in strlcpy(): assertion `dst != NULL' failed.
+Call stack: 0xc0107e19 0xc0107a63 0xc0109fab 0xc010b3c1 0xc010b543 0xc0102137 0xc010226f 0x804a742 0x80481b9 0x804828a 0x804899c
+Translation of call stack:
+In kernel.o:
+0xc0107e19: debug_panic (.../../lib/kernel/debug.c:34)
+0xc0107a63: strlcpy (...ld/../../lib/string.c:331)
+0xc0109fab: process_execute (.../../userprog/process.c:49)
+0xc010b3c1: sys_exec (...../userprog/syscall.c:204)
+0xc010b543: syscall_handler (.../../userprog/syscall.c:60)
+0xc0102137: intr_handler (..../threads/interrupt.c:361)
+0xc010226f: intr_entry (threads/intr-stubs.S:38)
+In tests/userprog/no-vm/multi-oom:
+0x0804a742: exec (.../../lib/user/syscall.c:81)
+0x080481b9: spawn_child (...prog/no-vm/multi-oom.c:43)
+0x0804828a: main (...rog/no-vm/multi-oom.c:135)
+0x0804899c: _start (.../../../lib/user/entry.c:9)
+Translations of user virtual addresses above are based on a guess at
+the binary to use.  If this guess is incorrect, then those
+translations will be misleading.

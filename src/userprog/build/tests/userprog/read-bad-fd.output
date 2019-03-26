@@ -1,12 +1,12 @@
-Copying tests/userprog/read-bad-fd into /tmp/yyO0bdzzpo.dsk...
-Writing command line to /tmp/HrEpq1nda3.dsk...
-qemu -hda /tmp/HrEpq1nda3.dsk -hdb /tmp/MHD5qGCKWi.dsk -hdc /tmp/yyO0bdzzpo.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/read-bad-fd into /tmp/VMBdf0tBDz.dsk...
+Writing command line to /tmp/ANTegNdTw6.dsk...
+qemu -hda /tmp/ANTegNdTw6.dsk -hdb /tmp/P4wNGhjeOj.dsk -hdc /tmp/VMBdf0tBDz.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put read-bad-fd run read-bad-fd
 Pintos booting with 4,096 kB RAM...
 374 pages available in kernel pool.
-373 pages available in user pool.
+374 pages available in user pool.
 Calibrating timer...  104,755,200 loops/s.
-hd0:0: detected 145 sector (72 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:0: detected 137 sector (68 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 97 sector (48 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 Formatting file system...done.
@@ -14,15 +14,14 @@ Boot complete.
 Putting 'read-bad-fd' into the file system...
 Executing 'read-bad-fd':
 (read-bad-fd) begin
-(read-bad-fd) end
-read-bad-fd: exit(0)
+read-bad-fd: exit(-1)
 Execution of 'read-bad-fd' complete.
-Timer: 93 ticks
-Thread: 30 idle ticks, 62 kernel ticks, 1 user ticks
+Timer: 96 ticks
+Thread: 30 idle ticks, 66 kernel ticks, 0 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 61 reads, 202 writes
 hd1:0: 97 reads, 0 writes
-Console: 812 characters output
+Console: 795 characters output
 Keyboard: 0 keys pressed
-Exception: 0 page faults
+Exception: 1 page faults
 Powering off...
