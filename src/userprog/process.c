@@ -31,7 +31,7 @@ process_execute (const char *file_name)
 {
   char *fn_copy;
   tid_t tid;
-  char *next_ptr;
+  //char *next_ptr;
   char f[256];
   /* Make a copy of FILE_NAME.
      Otherwise there's a race between the caller and load(). */
@@ -42,11 +42,11 @@ process_execute (const char *file_name)
 
   strlcpy (fn_copy, file_name, PGSIZE);
   int i = 0;
-  while(fn_copy[i] != ' ' && fn_copy[i] != NULL){
+  while(fn_copy[i] != 32 && fn_copy[i] != 0){
     f[i] = fn_copy[i];
     i++;
   }  
-  f[i] = NULL;
+  f[i] = 0;
   //printf("%s : real_file_name", real_file_name);  
   //printf("real_file_name : %s\n", real_file_name);
 
@@ -162,23 +162,24 @@ process_wait (tid_t child_tid)
 
   struct thread *curr = thread_current();
   struct list_elem *e;
-  struct thread *child;
-  struct file_fd *for_oom;
+  struct thread *child = NULL;
+  //struct file_fd *for_oom;
   for(e = list_begin(&curr->child_list); e != list_end(&curr->child_list); e = list_next(e)){
     child = list_entry(e, struct thread, child_elem);
     //printf("tid of current thread at wait : %d, child tid to be waited : %d\n", child->tid, child_tid);
     if (child->tid == child_tid){
-      sema_down(&child->child_lock);
-      int status = child->exit_status;
-      //printf("status : %d\n", status);
-      //free_all_page(child);
-      list_remove(e);
-      sema_up(&child->sync_lock);
-      return status;
+      break;
     }
   }
-  //free_all_page(curr);
-  return -1;
+  if (child == NULL) return -1;
+  
+  sema_down(&child->child_lock);
+  int status = child->exit_status;
+  //printf("status : %d\n", status);
+  //free_all_page(child);
+  list_remove(e);
+  sema_up(&child->sync_lock);
+  return status;
 }
 
 /* Free the current process's resources. */
@@ -561,14 +562,13 @@ install_page (void *upage, void *kpage, bool writable)
 }
 
 
-void push_stack_cmdline(const char **cmdline_tokens, int cnt, void **esp){
+void push_stack_cmdline(char **cmdline_tokens, int cnt, void **esp){
   //esp : current stack pointer
   int word_align = 0;
   int len, len_sum=0;
   int i;
   cnt--;
   void *argv[cnt];
-  //printf("%d\n", cnt);
     
   for (i = cnt-1; i>=0 ; i--){
     len = strlen(cmdline_tokens[i]) + 1;

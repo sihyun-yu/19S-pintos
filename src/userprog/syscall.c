@@ -3,7 +3,6 @@
 #include <syscall-nr.h>
 #include "threads/interrupt.h"
 #include "threads/thread.h"
-
 #include "threads/init.h"
 #include "userprog/process.h"
 #include "threads/synch.h"
@@ -170,12 +169,7 @@ syscall_handler (struct intr_frame *f)
 void sys_exit(int status){
 	printf ("%s: exit(%d)\n", thread_current()->name, status);
 	thread_current()->exit_status = status;
-	int i;
-	for (i=0; i<200; i++) {
-		if(thread_current()->fds[i] != NULL) {
-			sys_close(i);
-		}
-	}
+	//int i;
 	thread_exit();
 }
 
@@ -227,7 +221,7 @@ int sys_create(const char *file, unsigned initial_size)
 
 int sys_remove (const char *file) {
 
-	struct file *open_file = filesys_open(file);
+	//struct file *open_file = filesys_open(file);
 	/*remove_file_from_list (open_file);
 	if (find_filefd_from_file(open_file) != NULL)
 		palloc_free_page(find_filefd_from_file(open_file));*/

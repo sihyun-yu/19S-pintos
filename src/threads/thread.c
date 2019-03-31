@@ -301,6 +301,12 @@ thread_exit (void)
   ASSERT (!intr_context ());
 
 #ifdef USERPROG
+  int i;
+  for (i=0; i<200; i++) {
+    if(thread_current()->fds[i] != NULL) {
+      sys_close(i);
+    }
+  }
   process_exit ();
 #endif
 
