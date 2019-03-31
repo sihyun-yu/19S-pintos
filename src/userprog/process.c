@@ -89,7 +89,7 @@ start_process (void *f_name)
   char *next_ptr;
   int cnt = 1;
   //printf("f_name at start process : %s\n", f_name);
-  const char **cmdline_tokens = (const char**) palloc_get_page(0);
+  char **cmdline_tokens = (char**) palloc_get_page(0);
   token = strtok_r(file_name, " ", &next_ptr);
   cmdline_tokens[0] = token;
   //printf("string : %s with index %d\n", cmdline_tokens[0], 0);
@@ -125,9 +125,8 @@ start_process (void *f_name)
     push_stack_cmdline(cmdline_tokens, cnt, &if_.esp);
     //hex_dump(if_.esp, if_.esp, 200, true);
   }
-
-
   palloc_free_page(cmdline_tokens);
+  palloc_free_page(file_name);
 
 
   sema_up(&thread_current()->parent->oom_lock);
