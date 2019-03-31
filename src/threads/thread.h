@@ -131,7 +131,7 @@ struct thread
     struct semaphore oom_lock;
     struct thread *parent;
     int flag;
-    struct file* fds[100];
+    struct file* fds[200];
 
 #endif
 

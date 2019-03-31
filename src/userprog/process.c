@@ -32,40 +32,26 @@ process_execute (const char *file_name)
   char *fn_copy;
   tid_t tid;
   char *next_ptr;
-  char *real_file_name;
-  if (file_name == NULL) return TID_ERROR;
-  if (*file_name == NULL) return TID_ERROR;
+  char f[256];
   /* Make a copy of FILE_NAME.
      Otherwise there's a race between the caller and load(). */
   fn_copy = palloc_get_page (0);
   if (fn_copy == NULL) {
-    palloc_free_page(real_file_name);
     return TID_ERROR;
   }
 
-  real_file_name = palloc_get_page(0);
-
-
-
-
-  if (real_file_name == NULL) {
-    palloc_free_page(real_file_name);
-    return TID_ERROR;
-  }
   strlcpy (fn_copy, file_name, PGSIZE);
-  strlcpy (real_file_name, file_name, PGSIZE); 
-  real_file_name = strtok_r(real_file_name, " ", &next_ptr);
+  int i = 0;
+  while(fn_copy[i] != ' ' && fn_copy[i] != NULL){
+    f[i] = fn_copy[i];
+    i++;
+  }  
+  f[i] = NULL;
   //printf("%s : real_file_name", real_file_name);  
   //printf("real_file_name : %s\n", real_file_name);
 
-  if (filesys_open(real_file_name) == NULL) {
-    palloc_free_page(fn_copy);
-    palloc_free_page(real_file_name);
-    return TID_ERROR;
-  }
   /* Create a new thread to execute FILE_NAME. */
-  tid = thread_create (real_file_name, PRI_DEFAULT, start_process, fn_copy); 
-  palloc_free_page(real_file_name);
+  tid = thread_create (f, PRI_DEFAULT, start_process, fn_copy); 
 
   sema_down(&thread_current()->oom_lock);
 
@@ -548,7 +534,7 @@ setup_stack (void **esp)
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
       if (success)
-        *esp = PHYS_BASE -12;
+        *esp = PHYS_BASE;
       else
         palloc_free_page (kpage);
     }

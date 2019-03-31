@@ -170,6 +170,12 @@ syscall_handler (struct intr_frame *f)
 void sys_exit(int status){
 	printf ("%s: exit(%d)\n", thread_current()->name, status);
 	thread_current()->exit_status = status;
+	int i;
+	for (i=0; i<200; i++) {
+		if(thread_current()->fds[i] != NULL) {
+			sys_close(i);
+		}
+	}
 	thread_exit();
 }
 
@@ -249,7 +255,7 @@ int sys_open (const char *file) {
 	//printf("At here, fd = %d\n", thread_current()->fd);
 	int i;
 	int fd = -1;
-	for (i=3; i<100; i++) {
+	for (i=3; i<200; i++) {
 		if (thread_current()->fds[i] == NULL) {
 			thread_current()->fds[i] = open_file;
 			fd = i;
