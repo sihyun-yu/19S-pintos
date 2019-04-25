@@ -1,6 +1,7 @@
 #ifndef VM_PAGE_H
 #define VM_PAGE_H
-
+#include <hash.h>
+#include "vm/frame.h"
 struct sup_page_table_entry 
 {
 	void *k_page;
