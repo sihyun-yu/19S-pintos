@@ -13,6 +13,8 @@ struct frame_table_entry
 	struct sup_page_table_entry* spte;
 	struct list_elem ft_elem;
 	struct hash_elem hs_elem;
+	void *u_page;
+	void *k_page;
 };
 
 void frame_init (void);

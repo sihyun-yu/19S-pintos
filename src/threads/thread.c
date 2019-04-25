@@ -16,7 +16,6 @@
 #include "threads/malloc.h"
 #endif
 
-
 /* Random value for struct thread's `magic' member.
    Used to detect stack overflow.  See the big comment at the top
    of thread.h for details. */
@@ -109,6 +108,7 @@ thread_init (void)
   initial_thread->tid = allocate_tid ();
   initial_thread->wake_up = 0; 
   list_init(&initial_thread->lock_list);
+  //frame_init ();
 
 }
 

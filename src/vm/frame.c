@@ -47,8 +47,8 @@ allocate_frame (enum palloc_flags flag, uint8_t *addr)
 		return NULL;
 	}
 	fte->owner = thread_current();
-	fte->spte->u_page = addr;
-	fte->spte->k_page = fr; // check !
+	fte->u_page = addr;
+	fte->k_page = fr; // check !
 	
 	hash_insert(&f_h, &fte->hs_elem);
 	list_push_back(&f_t, &fte->ft_elem);
@@ -61,7 +61,7 @@ bool free_frame (void *fr) {
 
 	lock_acquire(&f_l);
 	struct frame_table_entry imsi;
-	(imsi.spte)->k_page = fr;
+	imsi.k_page = fr;
 	
 	struct hash_elem *hs_elem = hash_find(&f_h, &(imsi.hs_elem));
 	struct frame_table_entry *fte = hash_entry(hs_elem, struct frame_table_entry, hs_elem);
@@ -72,18 +72,18 @@ bool free_frame (void *fr) {
 
 	list_remove(&fte->ft_elem);
 	hash_delete(&f_h, &fte->hs_elem);
-	palloc_free_page(fr);
+	palloc_free_page(fte->k_page);
 	free(fte);
 	lock_release(&f_l);
 }
 
 unsigned frame_hash_hash(const struct hash_elem *element, void *aux UNUSED) {
 	struct frame_table_entry *fte = hash_entry(element, struct frame_table_entry, hs_elem);
-	return hash_bytes(&fte->spte->k_page, sizeof(fte->spte->k_page)); 
+	return hash_bytes(&fte->k_page, sizeof(fte->k_page)); 
 }
 
 bool frame_hash_less(const struct hash_elem *a, const struct hash_elem *b, void *aux UNUSED) {
 	struct frame_table_entry *x = hash_entry(a, struct frame_table_entry, hs_elem);
 	struct frame_table_entry *y = hash_entry(b, struct frame_table_entry, hs_elem);
-	return  x->spte->k_page <  y->spte->k_page;
+	return  x->k_page <  y->k_page;
 }
