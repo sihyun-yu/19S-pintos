@@ -1,9 +1,12 @@
 #include "vm/swap.h"
 #include "devices/disk.h"
 #include "threads/synch.h"
+#include "threads/vaddr.h"
 #include <bitmap.h>
+
 #define FREE 0
 #define ALLOC 1
+#define FOR_EACH_SECTOR PGSIZE / DISK_SECTOR_SIZE
 
 /* The swap device */
 static struct disk *swap_device;
@@ -20,8 +23,10 @@ static struct lock swap_lock;
 void 
 swap_init (void)
 {
+	swap_device = disk_get(1,1);
+	swap_table = bitmap_create(disk_size(swap_device));
 	lock_init(&swap_lock);
-	bitmap_set_all (swap_table, FREE);
+	bitmap_set_all(swap_table, true);
 }
 
 /*
@@ -37,8 +42,12 @@ swap_init (void)
  * of the disk into the frame. 
  */ 
 int 
-swap_in (void *addr)
+swap_in (void *addr, int index)
 {
+	lock_acquire(&swap_lock);
+	read_from_disk(addr, index);
+	bitmap_set_multiple(swap_table, index, FOR_EACH_SECTOR, 0);
+	lock_release(&swap_lock);
 	return true; 
 }
 
@@ -57,25 +66,43 @@ swap_in (void *addr)
  * of in-use and free swap slots.
  */
 int
-swap_out (void)
+swap_out (void *addr)
 {
+	lock_acquire(&swap_lock);
+	int index = bitmap_scan_and_flip(swap_table, 0, FOR_EACH_SECTOR, 0);
+	if (index == BITMAP_ERROR) {
+		lock_release(&swap_lock);
+		return false; 
+	}
+	write_to_disk(addr, index);
+	lock_release(&swap_lock);
 	return true; 
 }
 
+void swap_free(int index){
+  lock_acquire(&swap_lock);
+  bitmap_set_multiple(swap_table, index, FOR_EACH_SECTOR, 0);
+  lock_release(&swap_lock);
+}
 /* 
  * Read data from swap device to frame. 
  * Look at device/disk.c
  */
-void read_from_disk (uint8_t *frame, int index)
+void read_from_disk (void *frame, int index)
 {
-
+	int i;
+	for (i=0; i<FOR_EACH_SECTOR; i++) {
+		disk_read(swap_device, index+i, frame + i * DISK_SECTOR_SIZE);
+	}
 
 }
 
 /* Write data to swap device from frame */
-void write_to_disk (uint8_t *frame, int index)
+void write_to_disk (void *frame, int index)
 {
-
-
+	int i;
+	for (i=0; i<FOR_EACH_SECTOR; i++) {
+		disk_write(swap_device, index+i, frame + i * DISK_SECTOR_SIZE);
+	}
 }
 

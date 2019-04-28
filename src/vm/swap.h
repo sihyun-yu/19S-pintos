@@ -1,10 +1,10 @@
 #ifndef VM_SWAP_H
 #define VM_SWAP_H
 
-void swap_init (void);
-int swap_in (void *);
-int swap_out (void);
-void read_from_disk (uint8_t *frame, int index);
-void write_to_disk (uint8_t *frame, int index);
+void swap_init ();
+int swap_in (void *addr, int index);
+int swap_out (void *addr);
+void read_from_disk (void *frame, int index);
+void write_to_disk (void *frame, int index);
 
 #endif /* vm/swap.h */

@@ -46,6 +46,7 @@ allocate_frame (enum palloc_flags flag, uint8_t *addr)
 		lock_release(&f_l);
 		return NULL;
 	}
+
 	fte->owner = thread_current();
 	fte->u_page = addr;
 	fte->k_page = fr; // check !
