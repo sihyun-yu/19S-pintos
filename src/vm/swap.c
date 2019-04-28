@@ -2,7 +2,8 @@
 #include "devices/disk.h"
 #include "threads/synch.h"
 #include <bitmap.h>
-
+#define FREE 0
+#define ALLOC 1
 
 /* The swap device */
 static struct disk *swap_device;
@@ -19,7 +20,8 @@ static struct lock swap_lock;
 void 
 swap_init (void)
 {
-
+	lock_init(&swap_lock);
+	bitmap_set_all (swap_table, FREE);
 }
 
 /*
@@ -34,11 +36,10 @@ swap_init (void)
  * 5. Use helper function read_from_disk in order to read the contents
  * of the disk into the frame. 
  */ 
-bool 
+int 
 swap_in (void *addr)
 {
-
-
+	return true; 
 }
 
 /* 
@@ -55,11 +56,10 @@ swap_in (void *addr)
  * 4. Find a free block to write you data. Use swap table to get track
  * of in-use and free swap slots.
  */
-bool
+int
 swap_out (void)
 {
-
-
+	return true; 
 }
 
 /* 

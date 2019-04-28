@@ -7,6 +7,9 @@
 #include "threads/synch.h"
 #include "filesys/filesys.h"
 #include "filesys/file.h"
+#ifdef VM
+#include "vm/page.h"
+#endif
 
 
 #ifdef USERPROG
@@ -16,6 +19,7 @@ struct file_fd {
   struct list_elem file_elem; 
 };
 #endif
+
 
 /* States in a thread's life cycle. */
 enum thread_status
@@ -135,6 +139,9 @@ struct thread
 
 #endif
 
+#ifdef VM
+    struct sup_page_table *supt;   /* Supplemental Page Table. */
+#endif
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
   };

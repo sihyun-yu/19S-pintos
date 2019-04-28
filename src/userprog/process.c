@@ -19,6 +19,7 @@
 #include "threads/vaddr.h"
 #include "userprog/syscall.h"
 #include "vm/frame.h"
+#include "vm/page.h"
 
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
@@ -208,6 +209,8 @@ process_exit (void)
     }
   sema_up(&thread_current()->child_lock);
   sema_down(&thread_current()->sync_lock);
+
+  free_sup_page_table(curr->supt);
   //free_all_page(curr);
 
 }
@@ -313,6 +316,9 @@ load (const char *file_name, void (**eip) (void), void **esp)
 
   /* Allocate and activate page directory. */
   t->pagedir = pagedir_create ();
+  #ifdef VM
+  t->supt = page_init ();
+  #endif
   if (t->pagedir == NULL) 
     goto done;
   process_activate ();
@@ -559,6 +565,11 @@ install_page (void *upage, void *kpage, bool writable)
 
   /* Verify that there's not already a page at that virtual
      address, then map our page there. */
+
+  #ifdef VM
+  allocate_page(t->supt, upage, kpage);
+  #endif
+
   return (pagedir_get_page (t->pagedir, upage) == NULL
           && pagedir_set_page (t->pagedir, upage, kpage, writable));
 }
