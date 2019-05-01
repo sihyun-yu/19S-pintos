@@ -41,7 +41,7 @@ frame_init (void)
  * Make a new frame table entry for addr.
  */
 void *
-allocate_frame (enum palloc_flags flag, uint8_t *addr)
+allocate_frame (enum palloc_flags flag, struct sup_page_table_entry *addr)
 {
 	//우리의 목표 : process가 만들어지고, 걔가 (user)page table entry 생성, 
 	// 그럼 거기에 대응되는 page(fr)과 frame_table_entry 만드는 것
@@ -56,7 +56,7 @@ allocate_frame (enum palloc_flags flag, uint8_t *addr)
 		return NULL;
 	}
 
-	while (fr == NULL) {
+	if (fr == NULL) {
 		if(!evict_frame(thread_current()->pagedir)) {
 			lock_release(&f_l);
 			return NULL;
@@ -66,9 +66,9 @@ allocate_frame (enum palloc_flags flag, uint8_t *addr)
 
 	hash_insert(&f_h, &fte->hs_elem);
 	list_push_back(&f_t, &fte->ft_elem);
-
 	fte->spte = addr;
 	fte->k_page = fr; // check !
+	//printf("%d : swap_index\n", addr->swap_index);
 	fte->owner = thread_current();
 	fte->accessed = true; // for second clock algo. cannot be evicted
 	//printf("frame allocation finished\n");
@@ -86,7 +86,7 @@ bool free_frame (void *fr) {
 	
 	struct hash_elem *hs_elem = hash_find(&f_h, &(imsi.hs_elem));
 	struct frame_table_entry *fte = hash_entry(hs_elem, struct frame_table_entry, hs_elem);
-	//struct list_elem *e;
+	struct list_elem *e;
 
 
 	if (fte == NULL) {
@@ -127,26 +127,38 @@ bool evict_frame(uint32_t *pagedir) {
 
 	/*Determine the algoritm to be evicted*/
 	/*For simplicity, we used FIFO*/
-	//printf("Evict started\n");
+	printf("Evict started\n");
 	struct list_elem *e;
 	struct frame_table_entry *evict_frame_entry = NULL;
 
 	size_t i;
+	printf("%d : list size\n", list_size(&f_t));
 	for (i = 0; i < 2*list_size(&f_t); i++) {
 		e = second_clock_elem();
 		evict_frame_entry = list_entry(e, struct frame_table_entry, ft_elem);
-		if (!evict_frame_entry->accessed) {
-			if (pagedir_is_accessed(pagedir, evict_frame_entry->spte->u_page)) 
+		if (evict_frame_entry->accessed) continue;
+
+		
+		else if (pagedir_is_accessed(pagedir, evict_frame_entry->spte->u_page)) {
 				pagedir_set_accessed(pagedir, evict_frame_entry->spte->u_page, false);
+				continue; 
 		}
 
 		break;
 	}
-
 	if (evict_frame_entry == NULL) return false;
+	printf("Entered here\n");
+	printf("%p : evict_frame_entry address\n", evict_frame_entry);
+	printf("%p : spte address\n", evict_frame_entry->spte);
+	printf("%p : swap index accessible?\n", &evict_frame_entry->spte->swap_index);
+
+	pagedir_clear_page(evict_frame_entry->owner->pagedir, evict_frame_entry->spte->u_page);
 
 	evict_frame_entry->spte->swap_index = swap_out(evict_frame_entry->k_page);
+
+	printf("swap index:%d\n", evict_frame_entry->spte->swap_index);
   	evict_frame_entry->spte->cur_status = ON_SWAP;
+	printf("%d : cur status\n", evict_frame_entry->spte->cur_status);
 
   	list_remove(&evict_frame_entry->ft_elem);
 	hash_delete(&f_h, &evict_frame_entry->hs_elem);
@@ -154,13 +166,13 @@ bool evict_frame(uint32_t *pagedir) {
   	
   	evict_frame_entry->spte->k_page = NULL;
 	free(evict_frame_entry);
-  	
+	printf("Evict finished\n");  	
   	return true;
 }
 
 unsigned frame_hash_hash(const struct hash_elem *element, void *aux UNUSED) {
 	struct frame_table_entry *fte = hash_entry(element, struct frame_table_entry, hs_elem);
-	return hash_bytes(&fte->k_page, sizeof(fte->k_page)); 
+	return hash_bytes(fte->k_page, sizeof(fte->k_page)); 
 }
 
 bool frame_hash_less(const struct hash_elem *a, const struct hash_elem *b, void *aux UNUSED) {

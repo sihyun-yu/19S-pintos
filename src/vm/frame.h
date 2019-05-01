@@ -13,11 +13,11 @@ struct frame_table_entry
 	struct thread* owner;
 	struct list_elem ft_elem;
 	struct hash_elem hs_elem;
-	bool accessed; 
+	bool accessed;
 };
 
 void frame_init (void);
-void* allocate_frame (enum palloc_flags flag, uint8_t *addr);
+void* allocate_frame (enum palloc_flags flag, struct sup_page_table_entry *addr);
 bool free_frame (void *fr);
 bool evict_frame(uint32_t *pagedir);
 unsigned frame_hash_hash(const struct hash_elem *element, void *aux);

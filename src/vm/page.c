@@ -12,30 +12,34 @@
 
 //struct list sup_page_table;
 
-struct sup_page_table *
-page_init (void)
+bool page_init (struct hash *supt)
 {
    //printf("Page init started\n");
-   struct sup_page_table *supt = (struct sup_page_table*) malloc(sizeof(struct sup_page_table));
-   hash_init (&supt->pm, page_hash_hash, page_hash_less, NULL);
+   hash_init (supt, page_hash_hash, page_hash_less, NULL);
    //printf("Page init finished\n");
-  return supt;
+  return true;
 }
 
 /*
  * Make new supplementary page table entry for addr 
  */
 struct sup_page_table_entry *
-allocate_page (struct sup_page_table *supt, void *u_page, void *k_page)
+allocate_page (struct hash *supt, void *u_page)
 {
 	//printf("Page allocation started\n");
 	struct sup_page_table_entry *spte = malloc(sizeof(struct sup_page_table_entry));
-	spte->k_page = k_page;
+	//printf("spte : %p\n", spte);
+	if (spte == NULL) return NULL;
+	//spte->k_page = k_page;
 	spte->u_page = u_page;
 	spte->dirty = false;
+	spte->swap_index = -1;
 	spte->cur_status = ON_FRAME;
 
-	if (hash_insert(&supt->pm, &spte->hs_elem) != NULL) {
+	//printf("reached here\n");
+
+	if (hash_insert(supt, &spte->hs_elem) != NULL) {
+		//printf("Not null\n");
 		free(spte);
 		return NULL;
 	}
@@ -44,16 +48,16 @@ allocate_page (struct sup_page_table *supt, void *u_page, void *k_page)
 	return spte;
 }
 
-bool load_page(struct sup_page_table *supt, uint32_t *pagedir, void *addr) {
+bool load_page(struct hash *supt, uint32_t *pagedir, void *addr) {
 
 	//printf("Page load started\n");
 	struct sup_page_table_entry imsi;
 	imsi.u_page = addr;
 	
- 	struct hash_elem *e = hash_find(&supt->pm, &(imsi.hs_elem)); 
+ 	struct hash_elem *e = hash_find(supt, &(imsi.hs_elem)); 
 	struct sup_page_table_entry *spte = hash_entry(e, struct sup_page_table_entry, hs_elem);
 
-	if (spte = NULL) return false;
+	if (spte == NULL) return false;
 	if (spte->cur_status == ON_FRAME) return true;
 
 	else if (spte->cur_status == ON_SWAP) {
@@ -79,11 +83,12 @@ bool load_page(struct sup_page_table *supt, uint32_t *pagedir, void *addr) {
 	return true;
 }
 
-void free_sup_page_table (struct sup_page_table *supt) {
-	//printf("sup page table free started\n");
-	hash_destroy(&supt->pm, free_all_pages);
-	free(supt);
-	//printf("sup page table free finished\n");
+void free_sup_page_table (struct hash *supt) {
+	if (supt == NULL) return;
+	printf("sup page table free started : supt = %p\n", supt);
+	hash_destroy(supt, free_all_pages);
+	printf("destory done\n");
+	printf("sup page table free finished\n");
 }
 
 void free_all_pages (struct hash_elem *hs_elem, void *aux UNUSED) {
@@ -95,8 +100,8 @@ void free_all_pages (struct hash_elem *hs_elem, void *aux UNUSED) {
 
 /*For hash table management*/
 unsigned page_hash_hash(const struct hash_elem *element, void *aux UNUSED) {
-	struct sup_page_table_entry *fte = hash_entry(element, struct  sup_page_table_entry, hs_elem);
-	return hash_bytes(&fte->u_page, sizeof(fte->u_page)); 
+	struct sup_page_table_entry *spte = hash_entry(element, struct  sup_page_table_entry, hs_elem);
+	return hash_int((int) spte->u_page); 
 }
 
 bool page_hash_less(const struct hash_elem *a, const struct hash_elem *b, void *aux UNUSED) {

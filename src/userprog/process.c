@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "threads/malloc.h"
 #include "userprog/gdt.h"
 #include "userprog/pagedir.h"
 #include "userprog/tss.h"
@@ -20,8 +21,6 @@
 #include "userprog/syscall.h"
 #include "vm/frame.h"
 #include "vm/page.h"
-#include "threads/malloc.h"
-
 
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
@@ -136,6 +135,7 @@ start_process (void *f_name)
   sema_up(&thread_current()->parent->oom_lock);
   if (!success){
     thread_current()->flag = 1;
+    // /printf("exit from here\n");
     sys_exit(-1);
   } //sys_exit();
   /* Start the user process by simulating a return from an
@@ -156,6 +156,7 @@ start_process (void *f_name)
    child of the calling process, or if process_wait() has already
    been successfully called for the given TID, returns -1
    immediately, without waiting.
+
    This function will be implemented in problem 2-2.  For now, it
    does nothing. */
 int
@@ -194,9 +195,11 @@ process_exit (void)
 
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */
+
   #ifdef VM
-  free(curr->supt);
+  free_sup_page_table(&curr->supt);
   #endif
+
   pd = curr->pagedir;
   if (pd != NULL) 
     {
@@ -214,7 +217,6 @@ process_exit (void)
   sema_up(&thread_current()->child_lock);
   sema_down(&thread_current()->sync_lock);
 
-  free_sup_page_table(curr->supt);
   //free_all_page(curr);
 
 }
@@ -321,7 +323,7 @@ load (const char *file_name, void (**eip) (void), void **esp)
   /* Allocate and activate page directory. */
   t->pagedir = pagedir_create ();
   #ifdef VM
-  t->supt = page_init ();
+  page_init(&t->supt);
   #endif
   if (t->pagedir == NULL) 
     goto done;
@@ -476,11 +478,15 @@ validate_segment (const struct Elf32_Phdr *phdr, struct file *file)
 /* Loads a segment starting at offset OFS in FILE at address
    UPAGE.  In total, READ_BYTES + ZERO_BYTES bytes of virtual
    memory are initialized, as follows:
+
         - READ_BYTES bytes at UPAGE must be read from FILE
           starting at offset OFS.
+
         - ZERO_BYTES bytes at UPAGE + READ_BYTES must be zeroed.
+
    The pages initialized by this function must be writable by the
    user process if WRITABLE is true, read-only otherwise.
+
    Return true if successful, false if a memory allocation error
    or disk read error occurs. */
 static bool
@@ -501,7 +507,9 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
       /* Get a page of memory. */
-      uint8_t *kpage = allocate_frame (PAL_USER, upage);
+      struct sup_page_table_entry *spte = allocate_page(&thread_current()->supt, upage);
+      if (spte == NULL) return false;
+      uint8_t *kpage = allocate_frame (PAL_USER, spte);
 
       if (kpage == NULL)
         return false;
@@ -536,15 +544,18 @@ setup_stack (void **esp)
 {
   uint8_t *kpage;
   bool success = false;
-
-  kpage = palloc_get_page (PAL_USER | PAL_ZERO);
+  //printf("page from setupstack\n");
+  struct sup_page_table_entry *spte = allocate_page(&thread_current()->supt, PHYS_BASE - PGSIZE);
+  if (spte == NULL) return false;
+      
+  kpage = allocate_frame (PAL_USER |PAL_ZERO, spte);
   if (kpage != NULL) 
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
       if (success)
         *esp = PHYS_BASE;
       else
-        palloc_free_page (kpage);
+        free_frame (kpage);
     }
   return success;
 }
@@ -558,6 +569,7 @@ setup_stack (void **esp)
    with palloc_get_page().
    Returns true on success, false if UPAGE is already mapped or
    if memory allocation fails. */
+
 static bool
 install_page (void *upage, void *kpage, bool writable)
 {
@@ -565,14 +577,10 @@ install_page (void *upage, void *kpage, bool writable)
 
   /* Verify that there's not already a page at that virtual
      address, then map our page there. */
-
-  #ifdef VM
-  allocate_page(t->supt, upage, kpage);
-  #endif
-
   return (pagedir_get_page (t->pagedir, upage) == NULL
           && pagedir_set_page (t->pagedir, upage, kpage, writable));
-}
+} 
+
 
 
 void push_stack_cmdline(char **cmdline_tokens, int cnt, void **esp){
@@ -627,6 +635,11 @@ void check_address(void *address){
     sys_exit(-1);
   }
 }
+
+
+
+
+
 
 
 

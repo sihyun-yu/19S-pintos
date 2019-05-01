@@ -140,7 +140,7 @@ struct thread
 #endif
 
 #ifdef VM
-    struct sup_page_table *supt;   /* Supplemental Page Table. */
+    struct hash supt;   /* Supplemental Page Table. */
     struct semaphore page_lock;
 #endif
     /* Owned by thread.c. */
