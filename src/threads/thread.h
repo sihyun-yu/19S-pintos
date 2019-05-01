@@ -141,6 +141,7 @@ struct thread
 
 #ifdef VM
     struct sup_page_table *supt;   /* Supplemental Page Table. */
+    struct semaphore page_lock;
 #endif
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */

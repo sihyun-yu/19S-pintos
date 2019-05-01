@@ -14,6 +14,7 @@
 #ifdef USERPROG
 #include "userprog/process.h"
 #include "threads/malloc.h"
+#include "userprog/syscall.h"
 #endif
 
 /* Random value for struct thread's `magic' member.
@@ -623,6 +624,10 @@ init_thread (struct thread *t, const char *name, int priority)
   sema_init(&t->oom_lock, 0);
   t->parent = running_thread();
   //t->flag = 0;
+#endif 
+
+#ifdef VM
+  sema_init(&t->page_lock, 0);
 #endif 
 
 

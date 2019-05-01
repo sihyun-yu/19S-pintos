@@ -8,21 +8,21 @@
 
 struct frame_table_entry
 {
-	uint32_t* frame;
+	void *k_page;
+	struct sup_page_table_entry* spte; /*User page*/
 	struct thread* owner;
-	struct sup_page_table_entry* spte;
 	struct list_elem ft_elem;
 	struct hash_elem hs_elem;
-	void *u_page;
-	void *k_page;
+	bool accessed; 
 };
 
 void frame_init (void);
 void* allocate_frame (enum palloc_flags flag, uint8_t *addr);
 bool free_frame (void *fr);
+bool evict_frame(uint32_t *pagedir);
 unsigned frame_hash_hash(const struct hash_elem *element, void *aux);
-
 bool frame_hash_less(const struct hash_elem *a, const struct hash_elem *b, void *aux);
+struct list_elem* second_clock_elem (void);
 
 
 #endif /* vm/frame.h */

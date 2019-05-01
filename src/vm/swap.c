@@ -3,7 +3,7 @@
 #include "threads/synch.h"
 #include "threads/vaddr.h"
 #include <bitmap.h>
-
+#include <stdio.h>
 #define FREE 0
 #define ALLOC 1
 #define FOR_EACH_SECTOR PGSIZE / DISK_SECTOR_SIZE
@@ -72,11 +72,11 @@ swap_out (void *addr)
 	int index = bitmap_scan_and_flip(swap_table, 0, FOR_EACH_SECTOR, 0);
 	if (index == BITMAP_ERROR) {
 		lock_release(&swap_lock);
-		return false; 
+		return 0; 
 	}
 	write_to_disk(addr, index);
 	lock_release(&swap_lock);
-	return true; 
+	return index; 
 }
 
 void swap_free(int index){

@@ -1,5 +1,6 @@
 #include "vm/frame.h"
 #include "vm/page.h"
+#include "vm/swap.h"
 #include "threads/thread.h"
 #include <debug.h>
 #include <stddef.h>
@@ -14,10 +15,11 @@
 #include "threads/vaddr.h"
 
 
+
 struct list f_t;
 struct lock f_l;
 struct hash f_h;
-
+struct list_elem *clock_elem;
 /*
  * Initialize frame table
  */
@@ -26,9 +28,12 @@ struct hash f_h;
 void 
 frame_init (void)
 {
+	//printf("frame init started\n");
+	clock_elem = NULL;
 	list_init(&f_t);
 	hash_init(&f_h, frame_hash_hash, frame_hash_less, NULL);
 	lock_init(&f_l);
+	//printf("frame init finished\n");
 }
 
 
@@ -38,21 +43,35 @@ frame_init (void)
 void *
 allocate_frame (enum palloc_flags flag, uint8_t *addr)
 {
+	//우리의 목표 : process가 만들어지고, 걔가 (user)page table entry 생성, 
+	// 그럼 거기에 대응되는 page(fr)과 frame_table_entry 만드는 것
 	lock_acquire(&f_l);
-
+	//printf("frame allocation started\n");
+	/*user page load*/
 	void *fr = palloc_get_page(flag | PAL_USER);
+
 	struct frame_table_entry *fte = malloc(sizeof(struct frame_table_entry));
 	if (fte == NULL) {
 		lock_release(&f_l);
 		return NULL;
 	}
 
-	fte->owner = thread_current();
-	fte->u_page = addr;
-	fte->k_page = fr; // check !
-	
+	while (fr == NULL) {
+		if(!evict_frame(thread_current()->pagedir)) {
+			lock_release(&f_l);
+			return NULL;
+		}
+		fr = palloc_get_page(flag | PAL_USER);
+	}
+
 	hash_insert(&f_h, &fte->hs_elem);
 	list_push_back(&f_t, &fte->ft_elem);
+
+	fte->spte = addr;
+	fte->k_page = fr; // check !
+	fte->owner = thread_current();
+	fte->accessed = true; // for second clock algo. cannot be evicted
+	//printf("frame allocation finished\n");
 	lock_release(&f_l);
 
 	return fr;
@@ -61,6 +80,7 @@ allocate_frame (enum palloc_flags flag, uint8_t *addr)
 bool free_frame (void *fr) {
 
 	lock_acquire(&f_l);
+	//printf("frame free started\n");
 	struct frame_table_entry imsi;
 	imsi.k_page = fr;
 	
@@ -69,13 +89,73 @@ bool free_frame (void *fr) {
 	//struct list_elem *e;
 
 
-	if (fte == NULL) return 0; 
+	if (fte == NULL) {
+		lock_release(&f_l);
+		return false; 
+	}
+
 
 	list_remove(&fte->ft_elem);
 	hash_delete(&f_h, &fte->hs_elem);
-	palloc_free_page(fte->k_page);
+
+	palloc_free_page(fr);
 	free(fte);
+	//printf("frame free finished\n");
 	lock_release(&f_l);
+
+	return true;
+}
+
+struct list_elem* second_clock_elem (void) {
+	if (clock_elem == NULL && !list_empty(&f_t)) {
+		clock_elem = list_begin(&f_t);
+	}
+
+	else if (clock_elem == list_end(&f_t)) {
+		clock_elem = list_begin(&f_t);
+	}
+
+	else {
+		clock_elem = list_next(clock_elem);
+	}
+
+	return clock_elem;
+}
+
+bool evict_frame(uint32_t *pagedir) {
+
+
+	/*Determine the algoritm to be evicted*/
+	/*For simplicity, we used FIFO*/
+	//printf("Evict started\n");
+	struct list_elem *e;
+	struct frame_table_entry *evict_frame_entry = NULL;
+
+	size_t i;
+	for (i = 0; i < 2*list_size(&f_t); i++) {
+		e = second_clock_elem();
+		evict_frame_entry = list_entry(e, struct frame_table_entry, ft_elem);
+		if (!evict_frame_entry->accessed) {
+			if (pagedir_is_accessed(pagedir, evict_frame_entry->spte->u_page)) 
+				pagedir_set_accessed(pagedir, evict_frame_entry->spte->u_page, false);
+		}
+
+		break;
+	}
+
+	if (evict_frame_entry == NULL) return false;
+
+	evict_frame_entry->spte->swap_index = swap_out(evict_frame_entry->k_page);
+  	evict_frame_entry->spte->cur_status = ON_SWAP;
+
+  	list_remove(&evict_frame_entry->ft_elem);
+	hash_delete(&f_h, &evict_frame_entry->hs_elem);
+	palloc_free_page(evict_frame_entry->k_page);
+  	
+  	evict_frame_entry->spte->k_page = NULL;
+	free(evict_frame_entry);
+  	
+  	return true;
 }
 
 unsigned frame_hash_hash(const struct hash_elem *element, void *aux UNUSED) {
