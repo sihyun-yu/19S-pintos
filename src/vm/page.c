@@ -80,6 +80,7 @@ bool load_page(struct hash *supt, uint32_t *pagedir, void *addr) {
 
 	    //printf("Page load finished\n");
 	}
+
 	return true;
 }
 

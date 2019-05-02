@@ -18,7 +18,6 @@
 
 struct list f_t;
 struct lock f_l;
-struct hash f_h;
 struct list_elem *clock_elem;
 /*
  * Initialize frame table
@@ -31,7 +30,7 @@ frame_init (void)
 	//printf("frame init started\n");
 	clock_elem = NULL;
 	list_init(&f_t);
-	hash_init(&f_h, frame_hash_hash, frame_hash_less, NULL);
+	//hash_init(&f_h, frame_hash_hash, frame_hash_less, NULL);
 	lock_init(&f_l);
 	//printf("frame init finished\n");
 }
@@ -64,7 +63,6 @@ allocate_frame (enum palloc_flags flag, struct sup_page_table_entry *addr)
 		fr = palloc_get_page(flag | PAL_USER);
 	}
 
-	hash_insert(&f_h, &fte->hs_elem);
 	list_push_back(&f_t, &fte->ft_elem);
 	fte->spte = addr;
 	fte->k_page = fr; // check !
@@ -81,12 +79,14 @@ bool free_frame (void *fr) {
 
 	lock_acquire(&f_l);
 	//printf("frame free started\n");
-	struct frame_table_entry imsi;
-	imsi.k_page = fr;
 	
-	struct hash_elem *hs_elem = hash_find(&f_h, &(imsi.hs_elem));
-	struct frame_table_entry *fte = hash_entry(hs_elem, struct frame_table_entry, hs_elem);
 	struct list_elem *e;
+	struct frame_table_entry *imsi = NULL;
+	for (e=list_begin(&f_t); e!=list_end(&f_t); e=list_next(e)) {
+		imsi = list_entry(e, struct frame_table_entry, ft_elem);
+		if (imsi->k_page == fr) break;
+	}
+	struct frame_table_entry *fte = imsi;
 
 
 	if (fte == NULL) {
@@ -96,7 +96,6 @@ bool free_frame (void *fr) {
 
 
 	list_remove(&fte->ft_elem);
-	hash_delete(&f_h, &fte->hs_elem);
 
 	palloc_free_page(fr);
 	free(fte);
@@ -136,7 +135,10 @@ bool evict_frame(uint32_t *pagedir) {
 	for (i = 0; i < 2*list_size(&f_t); i++) {
 		e = second_clock_elem();
 		evict_frame_entry = list_entry(e, struct frame_table_entry, ft_elem);
-		if (evict_frame_entry->accessed) continue;
+		if (evict_frame_entry->accessed) {
+			printf("at %d, accessed : %d\n", i, evict_frame_entry->accessed);
+			continue;
+		}
 
 		
 		else if (pagedir_is_accessed(pagedir, evict_frame_entry->spte->u_page)) {
@@ -161,7 +163,6 @@ bool evict_frame(uint32_t *pagedir) {
 	printf("%d : cur status\n", evict_frame_entry->spte->cur_status);
 
   	list_remove(&evict_frame_entry->ft_elem);
-	hash_delete(&f_h, &evict_frame_entry->hs_elem);
 	palloc_free_page(evict_frame_entry->k_page);
   	
   	evict_frame_entry->spte->k_page = NULL;
@@ -170,13 +171,3 @@ bool evict_frame(uint32_t *pagedir) {
   	return true;
 }
 
-unsigned frame_hash_hash(const struct hash_elem *element, void *aux UNUSED) {
-	struct frame_table_entry *fte = hash_entry(element, struct frame_table_entry, hs_elem);
-	return hash_bytes(fte->k_page, sizeof(fte->k_page)); 
-}
-
-bool frame_hash_less(const struct hash_elem *a, const struct hash_elem *b, void *aux UNUSED) {
-	struct frame_table_entry *x = hash_entry(a, struct frame_table_entry, hs_elem);
-	struct frame_table_entry *y = hash_entry(b, struct frame_table_entry, hs_elem);
-	return  x->k_page <  y->k_page;
-}
