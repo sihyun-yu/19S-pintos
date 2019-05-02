@@ -1,8 +1,13 @@
+
 #include "vm/swap.h"
 #include "devices/disk.h"
 #include "threads/synch.h"
+#include "threads/vaddr.h"
 #include <bitmap.h>
-
+#include <stdio.h>
+#define FREE 0
+#define ALLOC 1
+#define FOR_EACH_SECTOR PGSIZE / DISK_SECTOR_SIZE
 
 /* The swap device */
 static struct disk *swap_device;
@@ -19,7 +24,10 @@ static struct lock swap_lock;
 void 
 swap_init (void)
 {
-
+	swap_device = disk_get(1,1);
+	swap_table = bitmap_create(disk_size(swap_device));
+	lock_init(&swap_lock);
+	//bitmap_set_all(swap_table, true);
 }
 
 /*
@@ -34,11 +42,14 @@ swap_init (void)
  * 5. Use helper function read_from_disk in order to read the contents
  * of the disk into the frame. 
  */ 
-bool 
-swap_in (void *addr)
+int 
+swap_in (void *addr, int index)
 {
-
-
+	lock_acquire(&swap_lock);
+	read_from_disk(addr, index);
+	bitmap_set_multiple(swap_table, index, FOR_EACH_SECTOR, 0);
+	lock_release(&swap_lock);
+	return true; 
 }
 
 /* 
@@ -55,27 +66,49 @@ swap_in (void *addr)
  * 4. Find a free block to write you data. Use swap table to get track
  * of in-use and free swap slots.
  */
-bool
-swap_out (void)
+int
+swap_out (void *addr)
 {
-
-
+	lock_acquire(&swap_lock);
+	printf("swap out started 1\n");
+	int index = bitmap_scan_and_flip(swap_table, 0, FOR_EACH_SECTOR, 0);
+	printf("swap out started 2\n");
+	if (index == BITMAP_ERROR) {
+		printf("swap out started 3\n");
+		lock_release(&swap_lock);
+		return 0; 
+	}
+	printf("swap out started 4\n");
+	write_to_disk(addr, index);
+	printf("swap out started 5\n");
+	printf("index = %d\n", index);
+	lock_release(&swap_lock);
+	return index; 
 }
 
+void swap_free(int index){
+  lock_acquire(&swap_lock);
+  bitmap_set_multiple(swap_table, index, FOR_EACH_SECTOR, 0);
+  lock_release(&swap_lock);
+}
 /* 
  * Read data from swap device to frame. 
  * Look at device/disk.c
  */
-void read_from_disk (uint8_t *frame, int index)
+void read_from_disk (void *frame, int index)
 {
-
+	int i;
+	for (i=0; i<FOR_EACH_SECTOR; i++) {
+		disk_read(swap_device, index+i, frame + i * DISK_SECTOR_SIZE);
+	}
 
 }
 
 /* Write data to swap device from frame */
-void write_to_disk (uint8_t *frame, int index)
+void write_to_disk (void *frame, int index)
 {
-
-
+	int i;
+	for (i=0; i<FOR_EACH_SECTOR; i++) {
+		disk_write(swap_device, index+i, frame + i * DISK_SECTOR_SIZE);
+	}
 }
-
