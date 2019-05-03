@@ -197,6 +197,7 @@ process_exit (void)
 
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */
+
   pd = curr->pagedir;
   if (pd != NULL) 
     {
@@ -212,11 +213,13 @@ process_exit (void)
       pagedir_destroy (pd);
     }
   sema_up(&thread_current()->child_lock);
-  sema_down(&thread_current()->sync_lock);
 
+  sema_down(&thread_current()->sync_lock);
 #ifdef VM
   destroy_supt (&thread_current ()->supt, NULL);
 #endif
+  
+
   //free_all_page(curr);
 
 }
@@ -507,7 +510,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
       struct sup_page_table_entry *spte = allocate_page(&thread_current()->supt, upage);
-
+      if (spte == NULL) return false;
 
   //printf("inode : %p at 1\n", file_get_inode(file));
   file_seek (file, ofs);
@@ -525,8 +528,6 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       spte->read_bytes =page_read_bytes;
       spte->zero_bytes = page_zero_bytes;
       spte->writable = writable;
-      spte->inode = file_get_inode(file);
-
 #else      
       /* Get a page of memory. */
       void *kpage = allocate_frame (PAL_USER, spte);

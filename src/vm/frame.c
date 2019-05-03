@@ -4,12 +4,15 @@
 #include "threads/malloc.h"
 #include "threads/synch.h"
 #include "threads/thread.h"
+#include "threads/palloc.h"
+#include "userprog/pagedir.h"
 #include <list.h>
 #include <stdio.h>
 
 
 struct list frame_table;
 struct lock frame_lock;
+struct list_elem *clock_elem; 
 /*
  * Initialize frame table
  */
@@ -18,6 +21,7 @@ frame_init (void)
 {
 	list_init(&frame_table);
 	lock_init(&frame_lock);
+	clock_elem = NULL;
 }
 
 
@@ -31,8 +35,11 @@ allocate_frame (enum palloc_flags flag, struct sup_page_table_entry *spte)
 	//printf("frame allocation started\n");
 	void *frame = palloc_get_page(flag);
 	if (frame == NULL) {
-		//must be evicted
-		return NULL;
+		if(!evict_frame(thread_current()->pagedir)) {
+			lock_release(&frame_lock);
+			return NULL;
+		}
+		frame = palloc_get_page(flag | PAL_USER);
 	}
 
 	// make a fte corresponding to palloced frame
@@ -76,6 +83,60 @@ void free_frame(uint8_t *kpage) {
 	lock_release(&frame_lock);
 }
 
-bool evict_frame(void *frame) {
-	return true; 
+struct list_elem* second_clock_elem (void) {
+	if (clock_elem == NULL && !list_empty(&frame_table)) {
+		clock_elem = list_begin(&frame_table);
+	}
+
+	else if (clock_elem == list_end(&frame_table)) {
+		clock_elem = list_begin(&frame_table);
+	}
+
+	else {
+		clock_elem = list_next(clock_elem);
+	}
+
+	return clock_elem;
+}
+
+bool evict_frame(uint32_t *pagedir) {
+	/*Determine the algoritm to be evicted*/
+	/*For simplicity, we used FIFO*/
+	printf("Evict started\n");
+	struct list_elem *e;
+	struct frame_table_entry *evict_frame_entry = NULL;
+
+	size_t i;
+	printf("%d : list size\n", list_size(&frame_table));
+	for (i = 0; i < 2*list_size(&frame_table); i++) {
+		e = second_clock_elem();
+		evict_frame_entry = list_entry(e, struct frame_table_entry, ft_elem);
+		if (evict_frame_entry->spte->accessed) {
+			continue;
+		}
+
+		
+		else if (pagedir_is_accessed(pagedir, evict_frame_entry->spte->user_vaddr)) {
+				pagedir_set_accessed(pagedir, evict_frame_entry->spte->user_vaddr, false);
+				continue; 
+		}
+
+		break;
+	}
+	if (evict_frame_entry == NULL) return false;
+
+	pagedir_clear_page(evict_frame_entry->owner->pagedir, evict_frame_entry->spte->user_vaddr);
+
+	evict_frame_entry->spte->swap_index = swap_out(evict_frame_entry->frame);
+
+	printf("swap index:%d\n", evict_frame_entry->spte->swap_index);
+  	evict_frame_entry->spte->location = ON_SWAP;
+	printf("%d : cur status\n", evict_frame_entry->spte->location);
+
+  	list_remove(&evict_frame_entry->ft_elem);
+	palloc_free_page(evict_frame_entry->frame);
+  	
+  	free(evict_frame_entry);
+	printf("Evict finished\n");  	
+  	return true;
 }

@@ -1,5 +1,6 @@
 #include "vm/page.h"
 #include "vm/frame.h"
+#include "vm/swap.h"
 #include "threads/malloc.h"
 #include "threads/palloc.h"
 #include <stdio.h>
@@ -19,6 +20,7 @@
 #include "threads/thread.h"
 #include <stdlib.h>
 #include <string.h>
+
 /*
  * Initialize supplementary page table
  */
@@ -28,7 +30,7 @@ static bool install_page (void *upage, void *kpage, bool writable);
 void 
 page_init (struct hash *supt)
 {
-	int flag = hash_init(supt, page_hash_hash, page_hash_less, NULL);
+	hash_init(supt, page_hash_hash, page_hash_less, NULL);
 	//printf("hash init success? %d\n", flag);
 }
 
@@ -45,6 +47,7 @@ allocate_page (struct hash *supt, void *addr)
 
 	spte->user_vaddr = pg_round_down(addr);
 	spte->accessed = true;
+	spte->swap_index = -1;
 	//printf("reached here \n");
 	if(hash_insert(supt, &spte->hs_elem) != NULL) {
 		//printf("hash insert failed \n");
@@ -59,6 +62,8 @@ allocate_page (struct hash *supt, void *addr)
 void free_page(struct hash_elem *hs_elem, void *aux UNUSED) {
 	//printf("page free started\n");
 	struct sup_page_table_entry *spte = hash_entry(hs_elem, struct sup_page_table_entry, hs_elem);
+	//if (spte->file != NULL) file_close(spte->file);
+	if(spte->location == ON_SWAP) swap_free(spte->swap_index);
 	free(spte);
 	//printf("page free finished\n");
 
@@ -74,15 +79,20 @@ bool load_page(struct sup_page_table_entry *spte) {
 	void *kpage;
 
 	if (spte->location == ON_FRAME){
+		spte->accessed = false;
+		spte->location = ON_FRAME;
+		return true;
 		//printf("page load start\n");
-		return true;
 	} 
-	else if (spte->location == ON_SWAP) {
-		//printf("page swap start\n");
-		return true;
-	}
 
-	/*do we need to seperate the case zerobytes=0?*/
+	else if (spte->location == ON_SWAP) {
+		kpage = allocate_frame(PAL_USER, spte);
+		
+		if (kpage == NULL) return false;
+		if (spte == NULL) return false;
+		
+		swap_in(kpage, spte->swap_index);
+	}
 
 	else if (spte->location == ON_FILESYS) {
 		//printf("file load start\n");
@@ -110,24 +120,21 @@ bool load_page(struct sup_page_table_entry *spte) {
 	      kpage = allocate_frame(PAL_USER, spte);
 	      if (file_read(spte->file, kpage, spte->read_bytes) != PGSIZE)
 	        {
-	          printf("error 3\n");
 	          free_frame (kpage);
 	          return false;
 	        }
 			memset (kpage + spte->read_bytes, 0, spte->zero_bytes);
 		}
+		//printf("file load finished\n");
+	}
 
-
-      	if (!install_page (spte->user_vaddr, kpage, spte->writable))
+    if (!install_page (spte->user_vaddr, kpage, spte->writable))
         {
           free_frame (kpage);
           return false;
         }
-		//printf("file load finished\n");
-
-		spte->location = ON_FRAME;
-	}
-
+	spte->accessed = false;
+	spte->location = ON_FRAME;
 	return true;
 }
 

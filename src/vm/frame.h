@@ -15,6 +15,6 @@ struct frame_table_entry
 void frame_init (void);
 void* allocate_frame (enum palloc_flags flag, struct sup_page_table_entry* spte);
 void free_frame(uint8_t *kpage);
-bool evict_frame(void *frame);
-
+bool evict_frame(uint32_t *pagedir);
+struct list_elem* second_clock_elem (void);
 #endif /* vm/frame.h */

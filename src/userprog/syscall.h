@@ -1,6 +1,8 @@
 #ifndef USERPROG_SYSCALL_H
 #define USERPROG_SYSCALL_H
 
+struct lock sys_lock;
+
 typedef int pid_t;
 void syscall_init (void);
 void sys_exit(int status);

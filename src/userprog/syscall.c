@@ -18,9 +18,6 @@
 #include "threads/palloc.h"
 #include "lib/kernel/list.h"
 
-
-struct lock sys_lock;
-
 static void syscall_handler (struct intr_frame *);
 
 void

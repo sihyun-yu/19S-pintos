@@ -25,7 +25,7 @@ struct sup_page_table_entry
 	uint64_t access_time;
 
 	struct hash_elem hs_elem;
-
+	int swap_index;
 	bool dirty;
 	bool accessed; /*for swap eviction */
 	enum page_location location;
