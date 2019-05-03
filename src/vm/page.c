@@ -18,6 +18,7 @@
 #include "userprog/syscall.h"
 #include "threads/thread.h"
 #include <stdlib.h>
+#include <string.h>
 /*
  * Initialize supplementary page table
  */
@@ -28,7 +29,7 @@ void
 page_init (struct hash *supt)
 {
 	int flag = hash_init(supt, page_hash_hash, page_hash_less, NULL);
-	printf("hash init success? %d\n", flag);
+	//printf("hash init success? %d\n", flag);
 }
 
 /*
@@ -37,7 +38,7 @@ page_init (struct hash *supt)
 struct sup_page_table_entry *
 allocate_page (struct hash *supt, void *addr)
 {
-	printf("page allocation started\n");
+	//printf("page allocation started\n");
 	struct sup_page_table_entry *spte = malloc(sizeof(struct sup_page_table_entry));
 	//printf("spte %p\n", spte);
 	if (spte == NULL) return NULL;
@@ -50,16 +51,16 @@ allocate_page (struct hash *supt, void *addr)
 		free(spte);
 		return NULL;
 	}
-	printf("hash table size : %d\n", hash_size(supt));
-	printf("page allocation finished");
+	//printf("hash table size : %d\n", hash_size(supt));
+	//printf("page allocation finished");
 	return spte;
 }
 
 void free_page(struct hash_elem *hs_elem, void *aux UNUSED) {
-	printf("page free started\n");
+	//printf("page free started\n");
 	struct sup_page_table_entry *spte = hash_entry(hs_elem, struct sup_page_table_entry, hs_elem);
 	free(spte);
-	printf("page free finished\n");
+	//printf("page free finished\n");
 
 }
 
@@ -68,69 +69,61 @@ void destroy_supt(struct hash *supt, void *aux UNUSED) {
 }
 
 bool load_page(struct sup_page_table_entry *spte) {
-	printf("page load start\n");
+	
+	//printf("page load start\n");
+	void *kpage;
+
 	if (spte->location == ON_FRAME){
-		printf("page load start\n");
+		//printf("page load start\n");
 		return true;
 	} 
 	else if (spte->location == ON_SWAP) {
-		printf("page swap start\n");
+		//printf("page swap start\n");
 		return true;
 	}
 
 	/*do we need to seperate the case zerobytes=0?*/
 
 	else if (spte->location == ON_FILESYS) {
-		struct file *file = spte->file;
-		printf("file load start\n");
-		printf("inode : %p at 3\n", file_get_inode(file));
-
+		//printf("file load start\n");
 		file_seek (spte->file, spte->ofs);
 
-		void *kpage = allocate_frame(PAL_USER, spte);
-		
-		size_t page_read_bytes = spte->read_bytes;
-		size_t page_zero_bytes = spte->zero_bytes;
-		
-		uint8_t * upage = spte->user_vaddr;
-		bool writable = spte->writable;
-		
-		pagedir_get_page (thread_current()->pagedir, spte->user_vaddr);
-		if (kpage == NULL) return false; 
 
-		if (page_zero_bytes == PGSIZE) {
+		if (spte->zero_bytes == PGSIZE) {
 			//printf("memset\n");
+			kpage = allocate_frame(PAL_USER | PAL_ZERO, spte);
+			if (kpage == NULL) return false;
 			memset(kpage,0,PGSIZE);
-			return true;
 		}
-		printf("inode : %p at 4\n", file_get_inode(file));
-
-		printf("file_read %p %p %d\n", spte->file, kpage, spte->read_bytes);
-		int imsi = file_read(spte->file, kpage, spte->read_bytes);
-		if (page_zero_bytes == 0 ){
-	      if (imsi != (int) page_read_bytes)
+		
+		else if (spte->zero_bytes != 0 ){
+	      kpage = allocate_frame(PAL_USER, spte);
+	      if (file_read(spte->file, kpage, spte->read_bytes) != (int) spte->read_bytes)
 	        {
-	        	printf("error !\n");
+	          //printf("error 2!\n");
 	          free_frame (kpage);
 	          return false;
-	        }
+	        }	        
 		}
 
 		else {
-	      if (imsi != PGSIZE)
+	      kpage = allocate_frame(PAL_USER, spte);
+	      if (file_read(spte->file, kpage, spte->read_bytes) != PGSIZE)
 	        {
+	          printf("error 3\n");
 	          free_frame (kpage);
 	          return false;
 	        }
-
 			memset (kpage + spte->read_bytes, 0, spte->zero_bytes);
 		}
-      	if (!install_page (upage, kpage, writable))
+
+
+      	if (!install_page (spte->user_vaddr, kpage, spte->writable))
         {
           free_frame (kpage);
           return false;
         }
-		printf("file load finished\n");
+		//printf("file load finished\n");
 
 		spte->location = ON_FRAME;
 	}

@@ -5,6 +5,7 @@
 #include "filesys/directory.h"
 #include "filesys/file.h"
 #include "filesys/filesys.h"
+#include "filesys/off_t.h"
 
 enum page_location {
 	ON_FRAME,
@@ -13,7 +14,13 @@ enum page_location {
 };
 
 struct sup_page_table_entry 
-{
+{	/*for lazy load*/
+	struct file *file;
+	off_t ofs;
+	uint32_t read_bytes;
+	uint32_t zero_bytes;
+	bool writable;
+	void *inode; 
 	uint32_t* user_vaddr; /*upage*/
 	uint64_t access_time;
 
@@ -23,13 +30,7 @@ struct sup_page_table_entry
 	bool accessed; /*for swap eviction */
 	enum page_location location;
 
-	/*for lazy load*/
-	struct file *file;
-	off_t ofs;
-	uint32_t read_bytes;
-	uint32_t zero_bytes;
-	bool writable;
-	void *inode; 
+
 };
 
 void page_init (struct hash *supt);

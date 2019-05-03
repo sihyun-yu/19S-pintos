@@ -151,7 +151,7 @@ page_fault (struct intr_frame *f)
   /* Count page faults. */
   page_fault_cnt++;
 
-  printf("page fault\n");
+  //printf("page fault\n");
   /* Determine cause. */
   not_present = (f->error_code & PF_P) == 0;
   write = (f->error_code & PF_W) != 0;
@@ -160,10 +160,10 @@ page_fault (struct intr_frame *f)
     if (!not_present)
       sys_exit(-1);
   }
-  printf("page fault passed 1 step\n");
+  //printf("page fault passed 1 step\n");
 
   if (fault_addr == NULL) {
-    printf("reached here2");
+   // printf("reached here2");
 
     sys_exit(-1);
   }
@@ -173,23 +173,27 @@ page_fault (struct intr_frame *f)
 
   struct hash_elem *e = hash_find(&thread_current()->supt, &(imsi.hs_elem));
   if (e == NULL) {
-    printf("reached here3");
+    //printf("reached here3");
 
     sys_exit(-1);
   }
 
   struct sup_page_table_entry *spte = hash_entry(e, struct sup_page_table_entry, hs_elem);
   if (spte == NULL) {
-    printf("reached here5");
+    //printf("reached here5");
 
     sys_exit(-1);
   }
 
-  printf("inode : %p at page fault\n", file_get_inode(spte->file));
+  //printf("inode : %p at page fault\n", file_get_inode(spte->file));
 
   if (!load_page(spte)) {
-    printf("reached here4");
+    //printf("reached here4");
     sys_exit(-1);
+  }
+
+  else {
+    return;
   }
   
   /* To implement virtual memory, delete the rest of the function
@@ -203,6 +207,6 @@ page_fault (struct intr_frame *f)
           user ? "user" : "kernel");*/
 
 
-  kill (f);
+  //kill (f);
 }
 

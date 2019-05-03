@@ -17,6 +17,7 @@
 #include "threads/palloc.h"
 #include "threads/thread.h"
 #include "threads/vaddr.h"
+#include "threads/synch.h"
 #include "userprog/syscall.h"
 #ifdef VM
 #include "vm/frame.h"
@@ -419,10 +420,11 @@ load (const char *file_name, void (**eip) (void), void **esp)
   //file_deny_write(file);
   //thread_current()->tmp_file = file;
   success = true;
+  //sprintf("success!\n");
 
  done:
   /* We arrive here whether the load is successful or not. */
-  file_close (file);
+  //file_close (file);
   return success;
 }
 
@@ -507,9 +509,9 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       struct sup_page_table_entry *spte = allocate_page(&thread_current()->supt, upage);
 
 
-  printf("inode : %p at 1\n", file_get_inode(file));
+  //printf("inode : %p at 1\n", file_get_inode(file));
   file_seek (file, ofs);
-  printf("inode : %p at 2\n", file_get_inode(file));
+  //printf("inode : %p at 2\n", file_get_inode(file));
 
 #ifdef VM
       ASSERT (pagedir_get_page(thread_current()->pagedir, upage) == NULL); 
@@ -528,7 +530,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 #else      
       /* Get a page of memory. */
       void *kpage = allocate_frame (PAL_USER, spte);
-      printf("kpage : %p\n", kpage);
+      //printf("kpage : %p\n", kpage);
       if (kpage == NULL)
         return false;
 
@@ -554,13 +556,10 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       zero_bytes -= page_zero_bytes;
       upage += PGSIZE;
 #ifdef VM
-      printf("current offeset:%d\n", ofs);
-      ofs += PGSIZE;
+      //printf("current offeset:%d\n", ofs);
+      ofs += page_read_bytes;
 #endif
-      printf ("read_bytes : %d\n", page_read_bytes);
-      printf ("zero_bytes : %d\n", page_zero_bytes);
-      printf ("file pointer : %p\n", file);      
-      printf ("one iteration end\n");
+
     }
   return true;
 }
@@ -572,7 +571,7 @@ setup_stack (void **esp)
 {
   uint8_t *kpage;
   bool success = false;
-  printf("setup stack\n");
+  //printf("setup stack\n");
   struct sup_page_table_entry *spte = allocate_page(&thread_current()->supt, PHYS_BASE - PGSIZE);
   spte->location = ON_FRAME;
   spte->writable = true; 
