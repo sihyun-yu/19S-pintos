@@ -29,6 +29,7 @@ struct sup_page_table_entry
 	uint32_t read_bytes;
 	uint32_t zero_bytes;
 	bool writable;
+	void *inode; 
 };
 
 void page_init (struct hash *supt);

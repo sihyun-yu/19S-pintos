@@ -37,8 +37,7 @@ page_init (struct hash *supt)
 struct sup_page_table_entry *
 allocate_page (struct hash *supt, void *addr)
 {
-	//printf("page allocation started\n");
-
+	printf("page allocation started\n");
 	struct sup_page_table_entry *spte = malloc(sizeof(struct sup_page_table_entry));
 	//printf("spte %p\n", spte);
 	if (spte == NULL) return NULL;
@@ -52,15 +51,15 @@ allocate_page (struct hash *supt, void *addr)
 		return NULL;
 	}
 	printf("hash table size : %d\n", hash_size(supt));
-	//printf("page allocation finished");
+	printf("page allocation finished");
 	return spte;
 }
 
 void free_page(struct hash_elem *hs_elem, void *aux UNUSED) {
-	//printf("page free started\n");
+	printf("page free started\n");
 	struct sup_page_table_entry *spte = hash_entry(hs_elem, struct sup_page_table_entry, hs_elem);
 	free(spte);
-	//printf("page free finished\n");
+	printf("page free finished\n");
 
 }
 
@@ -69,32 +68,47 @@ void destroy_supt(struct hash *supt, void *aux UNUSED) {
 }
 
 bool load_page(struct sup_page_table_entry *spte) {
-	if (spte->location == ON_FRAME) return true;
+	printf("page load start\n");
+	if (spte->location == ON_FRAME){
+		printf("page load start\n");
+		return true;
+	} 
 	else if (spte->location == ON_SWAP) {
+		printf("page swap start\n");
 		return true;
 	}
 
 	/*do we need to seperate the case zerobytes=0?*/
 
 	else if (spte->location == ON_FILESYS) {
-
 		struct file *file = spte->file;
-		void *kpage = allocate_frame(PAL_USER | PAL_ZERO, spte);
+		printf("file load start\n");
+		printf("inode : %p at 3\n", file_get_inode(file));
+
+		file_seek (spte->file, spte->ofs);
+
+		void *kpage = allocate_frame(PAL_USER, spte);
+		
 		size_t page_read_bytes = spte->read_bytes;
 		size_t page_zero_bytes = spte->zero_bytes;
+		
 		uint8_t * upage = spte->user_vaddr;
 		bool writable = spte->writable;
-
+		
+		pagedir_get_page (thread_current()->pagedir, spte->user_vaddr);
 		if (kpage == NULL) return false; 
 
 		if (page_zero_bytes == PGSIZE) {
 			//printf("memset\n");
 			memset(kpage,0,PGSIZE);
+			return true;
 		}
-		file_seek (spte->file, spte->ofs);
-		
+		printf("inode : %p at 4\n", file_get_inode(file));
+
+		printf("file_read %p %p %d\n", spte->file, kpage, spte->read_bytes);
+		int imsi = file_read(spte->file, kpage, spte->read_bytes);
 		if (page_zero_bytes == 0 ){
-	      if (file_read (file, kpage, page_read_bytes) != (int) page_read_bytes)
+	      if (imsi != (int) page_read_bytes)
 	        {
 	        	printf("error !\n");
 	          free_frame (kpage);
@@ -103,7 +117,7 @@ bool load_page(struct sup_page_table_entry *spte) {
 		}
 
 		else {
-	      if (file_read (file, kpage, page_read_bytes) != PGSIZE)
+	      if (imsi != PGSIZE)
 	        {
 	          free_frame (kpage);
 	          return false;
@@ -116,15 +130,18 @@ bool load_page(struct sup_page_table_entry *spte) {
           free_frame (kpage);
           return false;
         }
+		printf("file load finished\n");
 
 		spte->location = ON_FRAME;
 	}
+
 	return true;
 }
 
 unsigned page_hash_hash(const struct hash_elem *element, void *aux UNUSED) {
 	struct sup_page_table_entry *spte = hash_entry(element, struct  sup_page_table_entry, hs_elem);
-	return hash_bytes(&spte->user_vaddr, sizeof(spte->user_vaddr)); 
+	return hash_int((int) spte->user_vaddr);
+	//return hash_bytes(&spte->user_vaddr, sizeof(spte->user_vaddr)); 
 }
 
 bool page_hash_less(const struct hash_elem *a, const struct hash_elem *b, void *aux UNUSED) {

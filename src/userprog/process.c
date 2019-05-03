@@ -506,7 +506,14 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 
       struct sup_page_table_entry *spte = allocate_page(&thread_current()->supt, upage);
 
+
+  printf("inode : %p at 1\n", file_get_inode(file));
+  file_seek (file, ofs);
+  printf("inode : %p at 2\n", file_get_inode(file));
+
 #ifdef VM
+      ASSERT (pagedir_get_page(thread_current()->pagedir, upage) == NULL); 
+
       /* Do calculate how to fill this page.
          We will read PAGE_READ_BYTES bytes from FILE
          and zero the final PAGE_ZERO_BYTES bytes. */
@@ -516,6 +523,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       spte->read_bytes =page_read_bytes;
       spte->zero_bytes = page_zero_bytes;
       spte->writable = writable;
+      spte->inode = file_get_inode(file);
 
 #else      
       /* Get a page of memory. */
@@ -525,6 +533,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
         return false;
 
       /* Load this page. */
+      //rintf("filepos : %p", file->pos);
       if (file_read (file, kpage, page_read_bytes) != (int) page_read_bytes)
         {
           free_frame (kpage);
@@ -544,7 +553,10 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       read_bytes -= page_read_bytes;
       zero_bytes -= page_zero_bytes;
       upage += PGSIZE;
-      ofs += page_read_bytes;
+#ifdef VM
+      printf("current offeset:%d\n", ofs);
+      ofs += PGSIZE;
+#endif
       printf ("read_bytes : %d\n", page_read_bytes);
       printf ("zero_bytes : %d\n", page_zero_bytes);
       printf ("file pointer : %p\n", file);      
@@ -560,7 +572,7 @@ setup_stack (void **esp)
 {
   uint8_t *kpage;
   bool success = false;
-
+  printf("setup stack\n");
   struct sup_page_table_entry *spte = allocate_page(&thread_current()->supt, PHYS_BASE - PGSIZE);
   spte->location = ON_FRAME;
   spte->writable = true; 

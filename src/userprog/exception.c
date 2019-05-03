@@ -151,6 +151,7 @@ page_fault (struct intr_frame *f)
   /* Count page faults. */
   page_fault_cnt++;
 
+  printf("page fault\n");
   /* Determine cause. */
   not_present = (f->error_code & PF_P) == 0;
   write = (f->error_code & PF_W) != 0;
@@ -159,6 +160,7 @@ page_fault (struct intr_frame *f)
     if (!not_present)
       sys_exit(-1);
   }
+  printf("page fault passed 1 step\n");
 
   if (fault_addr == NULL) {
     printf("reached here2");
@@ -182,6 +184,9 @@ page_fault (struct intr_frame *f)
 
     sys_exit(-1);
   }
+
+  printf("inode : %p at page fault\n", file_get_inode(spte->file));
+
   if (!load_page(spte)) {
     printf("reached here4");
     sys_exit(-1);

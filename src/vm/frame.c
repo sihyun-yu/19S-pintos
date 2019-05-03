@@ -28,7 +28,7 @@ void *
 allocate_frame (enum palloc_flags flag, struct sup_page_table_entry *spte)
 {
 	lock_acquire(&frame_lock);
-	//printf("frame allocation started\n");
+	printf("frame allocation started\n");
 	void *frame = palloc_get_page(flag);
 	if (frame == NULL) {
 		//must be evicted
@@ -45,14 +45,15 @@ allocate_frame (enum palloc_flags flag, struct sup_page_table_entry *spte)
 	fte->spte = spte;
 	list_push_back(&frame_table, &fte->ft_elem);
 
-	//printf("frame allocation finished\n");
+	printf("frame allocation finished\n");
 	lock_release(&frame_lock);
+	printf("kpage : %p\n", frame);
 	return frame;
 }
 
 void free_frame(uint8_t *kpage) {
 	lock_acquire(&frame_lock);
-	//printf("frame free started\n");
+	printf("frame free started\n");
 
 	struct list_elem *e;
 	struct frame_table_entry *fte = NULL;
@@ -70,7 +71,7 @@ void free_frame(uint8_t *kpage) {
 	palloc_free_page(fte->frame);
 	list_remove(&fte->ft_elem);
 	free(fte);
-	//printf("frame free finished\n");
+	printf("frame free finished\n");
 
 	lock_release(&frame_lock);
 }
