@@ -3,6 +3,7 @@
 
 #include <debug.h>
 #include <list.h>
+#include <hash.h>
 #include <stdint.h>
 #include "threads/synch.h"
 #include "filesys/filesys.h"
@@ -133,6 +134,10 @@ struct thread
     int flag;
     struct file* fds[200];
 
+#endif
+
+#ifdef VM
+    struct hash supt;
 #endif
 
     /* Owned by thread.c. */

@@ -5,7 +5,14 @@
 #include "threads/interrupt.h"
 #include "threads/thread.h"
 #include "threads/vaddr.h"
+#include "userprog/syscall.h"
+#include <hash.h>
 
+#ifdef VM
+#include "vm/page.h"
+#include "vm/frame.h"
+#include "vm/swap.h"
+#endif
 /* Number of page faults processed. */
 static long long page_fault_cnt;
 
@@ -148,24 +155,49 @@ page_fault (struct intr_frame *f)
   not_present = (f->error_code & PF_P) == 0;
   write = (f->error_code & PF_W) != 0;
   user = (f->error_code & PF_U) != 0;
-  if (!user || is_kernel_vaddr(fault_addr)) {
-    //printf("%s is fault_addr string", fault_addr);
-    //printf("from here\n");
-    sys_exit(-1);
+  if (write) {
+    if (!not_present)
+      sys_exit(-1);
   }
 
   if (fault_addr == NULL) {
+    printf("reached here2");
+
     sys_exit(-1);
   }
 
+  struct sup_page_table_entry imsi;
+  imsi.user_vaddr = pg_round_down(fault_addr);
+
+  struct hash_elem *e = hash_find(&thread_current()->supt, &(imsi.hs_elem));
+  if (e == NULL) {
+    printf("reached here3");
+
+    sys_exit(-1);
+  }
+
+  struct sup_page_table_entry *spte = hash_entry(e, struct sup_page_table_entry, hs_elem);
+  if (spte == NULL) {
+    printf("reached here5");
+
+    sys_exit(-1);
+  }
+  if (!load_page(spte)) {
+    printf("reached here4");
+    sys_exit(-1);
+  }
+  
   /* To implement virtual memory, delete the rest of the function
      body, and replace it with code that brings in the page to
      which fault_addr refers. */
-  printf ("Page fault at %p: %s error %s page in %s context.\n",
+  
+  /*printf ("Page fault at %p: %s error %s page in %s context.\n",
           fault_addr,
           not_present ? "not present" : "rights violation",
           write ? "writing" : "reading",
-          user ? "user" : "kernel");
+          user ? "user" : "kernel");*/
+
+
   kill (f);
 }
 

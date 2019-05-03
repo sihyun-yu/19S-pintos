@@ -18,6 +18,11 @@
 #include "threads/thread.h"
 #include "threads/vaddr.h"
 #include "userprog/syscall.h"
+#ifdef VM
+#include "vm/frame.h"
+#include "vm/page.h"
+#include "vm/swap.h"
+#endif
 
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
@@ -207,6 +212,10 @@ process_exit (void)
     }
   sema_up(&thread_current()->child_lock);
   sema_down(&thread_current()->sync_lock);
+
+#ifdef VM
+  destroy_supt (&thread_current ()->supt, NULL);
+#endif
   //free_all_page(curr);
 
 }
@@ -312,6 +321,10 @@ load (const char *file_name, void (**eip) (void), void **esp)
 
   /* Allocate and activate page directory. */
   t->pagedir = pagedir_create ();
+#ifdef VM
+  page_init(&t->supt);
+#endif
+
   if (t->pagedir == NULL) 
     goto done;
   process_activate ();
@@ -480,6 +493,7 @@ static bool
 load_segment (struct file *file, off_t ofs, uint8_t *upage,
               uint32_t read_bytes, uint32_t zero_bytes, bool writable) 
 {
+
   ASSERT ((read_bytes + zero_bytes) % PGSIZE == 0);
   ASSERT (pg_ofs (upage) == 0);
   ASSERT (ofs % PGSIZE == 0);
@@ -487,36 +501,54 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
   file_seek (file, ofs);
   while (read_bytes > 0 || zero_bytes > 0) 
     {
-      /* Do calculate how to fill this page.
-         We will read PAGE_READ_BYTES bytes from FILE
-         and zero the final PAGE_ZERO_BYTES bytes. */
       size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
       size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
+      struct sup_page_table_entry *spte = allocate_page(&thread_current()->supt, upage);
+
+#ifdef VM
+      /* Do calculate how to fill this page.
+         We will read PAGE_READ_BYTES bytes from FILE
+         and zero the final PAGE_ZERO_BYTES bytes. */
+      spte->location = ON_FILESYS;
+      spte->file = file;
+      spte->ofs = ofs;
+      spte->read_bytes =page_read_bytes;
+      spte->zero_bytes = page_zero_bytes;
+      spte->writable = writable;
+
+#else      
       /* Get a page of memory. */
-      uint8_t *kpage = palloc_get_page (PAL_USER);
+      void *kpage = allocate_frame (PAL_USER, spte);
+      printf("kpage : %p\n", kpage);
       if (kpage == NULL)
         return false;
 
       /* Load this page. */
       if (file_read (file, kpage, page_read_bytes) != (int) page_read_bytes)
         {
-          palloc_free_page (kpage);
-          return false; 
+          free_frame (kpage);
+          return false;
         }
       memset (kpage + page_read_bytes, 0, page_zero_bytes);
 
       /* Add the page to the process's address space. */
-      if (!install_page (upage, kpage, writable)) 
+      if (!install_page (upage, kpage, writable))
         {
-          palloc_free_page (kpage);
-          return false; 
+          free_frame (kpage);
+          return false;
         }
+#endif
 
       /* Advance. */
       read_bytes -= page_read_bytes;
       zero_bytes -= page_zero_bytes;
       upage += PGSIZE;
+      ofs += page_read_bytes;
+      printf ("read_bytes : %d\n", page_read_bytes);
+      printf ("zero_bytes : %d\n", page_zero_bytes);
+      printf ("file pointer : %p\n", file);      
+      printf ("one iteration end\n");
     }
   return true;
 }
@@ -529,14 +561,17 @@ setup_stack (void **esp)
   uint8_t *kpage;
   bool success = false;
 
-  kpage = palloc_get_page (PAL_USER | PAL_ZERO);
+  struct sup_page_table_entry *spte = allocate_page(&thread_current()->supt, PHYS_BASE - PGSIZE);
+  spte->location = ON_FRAME;
+  spte->writable = true; 
+  kpage = allocate_frame (PAL_USER, spte);
   if (kpage != NULL) 
     {
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
       if (success)
         *esp = PHYS_BASE;
       else
-        palloc_free_page (kpage);
+       free_frame (kpage);
     }
   return success;
 }

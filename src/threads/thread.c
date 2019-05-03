@@ -16,6 +16,11 @@
 #include "threads/malloc.h"
 #endif
 
+#ifdef VM
+#include "vm/swap.h"
+#include "vm/page.h"
+#include "vm/frame.h"
+#endif
 
 /* Random value for struct thread's `magic' member.
    Used to detect stack overflow.  See the big comment at the top
@@ -109,6 +114,7 @@ thread_init (void)
   initial_thread->tid = allocate_tid ();
   initial_thread->wake_up = 0; 
   list_init(&initial_thread->lock_list);
+
 
 }
 
@@ -624,9 +630,6 @@ init_thread (struct thread *t, const char *name, int priority)
   t->parent = running_thread();
   //t->flag = 0;
 #endif 
-
-
-
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
