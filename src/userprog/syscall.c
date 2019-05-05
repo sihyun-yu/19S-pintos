@@ -31,6 +31,7 @@ static void
 syscall_handler (struct intr_frame *f) 
 {	
 	uint32_t n = *((uint32_t *)(f->esp));
+	thread_current()->esp = f->esp;
 	switch(n) {
 		case SYS_HALT:
 		{

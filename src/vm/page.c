@@ -170,7 +170,7 @@ bool stack_growth(struct hash *supt, void *addr){
 
 	uint8_t *kpage = allocate_frame(PAL_USER | PAL_ZERO, spte);
 	if (kpage == NULL){
-		free_page(spte);
+		free_page(spte, 0);
 		return false;
 	}
 	//if (/*hash_find(supt, spte->hs_elem) != NULL || */!hash_insert(supt, spte->hs_elem)){
