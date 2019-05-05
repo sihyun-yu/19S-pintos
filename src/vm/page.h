@@ -40,5 +40,8 @@ void destroy_supt(struct hash *supt, void *aux);
 bool load_page(struct sup_page_table_entry *spte);
 unsigned page_hash_hash(const struct hash_elem *element, void *aux );
 bool page_hash_less(const struct hash_elem *a, const struct hash_elem *b, void *aux);
+bool stack_growth(struct hash *supt, void *addr){
+
+
 
 #endif /* vm/page.h */

@@ -630,7 +630,11 @@ init_thread (struct thread *t, const char *name, int priority)
   sema_init(&t->oom_lock, 0);
   t->parent = running_thread();
   //t->flag = 0;
-#endif 
+#endif
+
+#ifdef VM
+  //t->esp = 0;
+#endif
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and

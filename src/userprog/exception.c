@@ -12,6 +12,7 @@
 #include "vm/page.h"
 #include "vm/frame.h"
 #include "vm/swap.h"
+#define STACK_MAX_SIZE 8388608
 #endif
 /* Number of page faults processed. */
 static long long page_fault_cnt;
@@ -185,12 +186,25 @@ page_fault (struct intr_frame *f)
     sys_exit(-1);
   }
 
-  //printf("inode : %p at page fault\n", file_get_inode(spte->file));
 
-  if (!load_page(spte)) {
+  if (user){
+    thread_current()->esp = f->esp;
+  }
+  //printf("inode : %p at page fault\n", file_get_inode(spte->file));
+  if(is_user_vaddr(fault_addr) && not_present){
+    if (load_page(spte))
+      return;
+    if(PHYS_BASE - STACK_MAX_SIZE <= fault_addr && fault_addr < PHYS_BASE ){
+      if (thread_current()->esp <= fault_addr || fault_addr == thread_current()->esp - 32
+           || fault_addr == thread_current()->esp - 4){
+        stack_growth(thread_current()->supt, imsi.user_vaddr);
+      }
+    }
+  }
+  /*if (!load_page(spte)) {
     //printf("reached here4");
     sys_exit(-1);
-  }
+  }*/
 
   else {
     return;

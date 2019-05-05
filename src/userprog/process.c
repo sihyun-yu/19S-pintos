@@ -45,7 +45,7 @@ process_execute (const char *file_name)
   if (fn_copy == NULL) {
     return TID_ERROR;
   }
-
+  //printf("Reached here 3\n");
   strlcpy (fn_copy, file_name, PGSIZE);
   int i = 0;
   while(fn_copy[i] != 32 && fn_copy[i] != 0){
@@ -53,24 +53,26 @@ process_execute (const char *file_name)
     i++;
   }  
   f[i] = 0;
+  //printf("Reached here 4\n");
   //printf("%s : real_file_name", real_file_name);  
   //printf("real_file_name : %s\n", real_file_name);
 
   /* Create a new thread to execute FILE_NAME. */
   tid = thread_create (f, PRI_DEFAULT, start_process, fn_copy); 
-
+  //printf("Reached here 5\n");
   sema_down(&thread_current()->oom_lock);
-
+  //printf("Reached here 6\n");
 
 
   if (tid == TID_ERROR)
     palloc_free_page (fn_copy); 
-
+  //printf("Reached here 7\n");
   struct list_elem *e;
   struct thread *tmp;
     for (e = list_begin(&thread_current()->child_list); e!=list_end(&thread_current()->child_list); e=list_next(e)) {
       tmp = list_entry(e, struct thread, child_elem);
       if (tmp->flag == 1) {
+        //printf("Reached here 8\n");
         return process_wait(tid);
       }
     }

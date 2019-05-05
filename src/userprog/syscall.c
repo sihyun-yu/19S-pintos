@@ -53,8 +53,10 @@ syscall_handler (struct intr_frame *f)
 			check_address(f->esp+4);
 			char *cmd_line = (char *) *((uint32_t *)(f->esp+4));
 			pid_t exec_pid = sys_exec(cmd_line);
+			//printf("Reached here 1");
 			if (exec_pid < 0 ) f->eax = -1;
 			else (f->eax) = exec_pid;
+			//printf("Reached here 2");
 			//printf("exec pid : %d\n", exec_pid);
 			break;
 		}
