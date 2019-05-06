@@ -36,6 +36,7 @@
 #endif
 #include "vm/page.h"
 #include "vm/frame.h"
+#include "vm/swap.h"
 /* Amount of physical memory, in 4 kB pages. */
 size_t ram_pages;
 
@@ -117,6 +118,10 @@ main (void)
   /* Initialize file system. */
   disk_init ();
   filesys_init (format_filesys);
+#endif
+
+#ifdef VM
+  swap_init();
 #endif
 
   printf ("Boot complete.\n");

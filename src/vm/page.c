@@ -48,6 +48,7 @@ allocate_page (struct hash *supt, void *addr)
 	spte->user_vaddr = pg_round_down(addr);
 	spte->accessed = true;
 	spte->swap_index = -1;
+	spte->writable = true;
 	//printf("reached here \n");
 	if(hash_insert(supt, &spte->hs_elem) != NULL) {
 		//printf("hash insert failed \n");
@@ -64,7 +65,9 @@ void free_page(struct hash_elem *hs_elem, void *aux UNUSED) {
 	struct sup_page_table_entry *spte = hash_entry(hs_elem, struct sup_page_table_entry, hs_elem);
 	//if (spte->file != NULL) file_close(spte->file);
 	if(spte->location == ON_SWAP) swap_free(spte->swap_index);
+	//find_and_free_frame(spte);
 	free(spte);
+	//need to free the frame 
 	//printf("page free finished\n");
 
 }
@@ -76,7 +79,7 @@ void destroy_supt(struct hash *supt, void *aux UNUSED) {
 bool load_page(struct sup_page_table_entry *spte) {
 	
 	//printf("page load start\n");
-	void *kpage;
+	void *kpage = NULL;
 
 	if (spte->location == ON_FRAME){
 		spte->accessed = false;
@@ -86,12 +89,16 @@ bool load_page(struct sup_page_table_entry *spte) {
 	} 
 
 	else if (spte->location == ON_SWAP) {
+		printf("load with swap index = %d\n", spte->swap_index);
 		kpage = allocate_frame(PAL_USER, spte);
 		
 		if (kpage == NULL) return false;
 		if (spte == NULL) return false;
 		
 		swap_in(kpage, spte->swap_index);
+		spte->accessed = false;
+		spte->location = ON_FRAME;
+
 	}
 
 	else if (spte->location == ON_FILESYS) {
@@ -131,7 +138,7 @@ bool load_page(struct sup_page_table_entry *spte) {
     if (!install_page (spte->user_vaddr, kpage, spte->writable))
         {
           free_frame (kpage);
-          return false;
+          //return false;
         }
 	spte->accessed = false;
 	spte->location = ON_FRAME;
@@ -159,6 +166,7 @@ install_page (void *upage, void *kpage, bool writable)
      address, then map our page there. */
   return (pagedir_get_page (t->pagedir, upage) == NULL
           && pagedir_set_page (t->pagedir, upage, kpage, writable));
+
 }
 
 
@@ -169,10 +177,10 @@ bool stack_growth(struct hash *supt, void *addr){
 		return false;
 
 	uint8_t *kpage = allocate_frame(PAL_USER | PAL_ZERO, spte);
-	if (kpage == NULL){
+	/*if (kpage == NULL){
 		free_page(spte, 0);
 		return false;
-	}
+	} 지호야 이 부분 argument가 이상하게 가지는 거 같은데 */
 	//if (/*hash_find(supt, spte->hs_elem) != NULL || */!hash_insert(supt, spte->hs_elem)){
 	//if supt has the spte, return NULL. if supt doesn't have the spte, returns modified supt.
 	//	free_page(spte);

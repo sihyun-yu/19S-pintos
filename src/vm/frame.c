@@ -35,7 +35,7 @@ allocate_frame (enum palloc_flags flag, struct sup_page_table_entry *spte)
 	//printf("frame allocation started\n");
 	void *frame = palloc_get_page(flag);
 	if (frame == NULL) {
-		if(!evict_frame(thread_current()->pagedir)) {
+		if(!evict_frame()) {
 			lock_release(&frame_lock);
 			return NULL;
 		}
@@ -83,7 +83,24 @@ void free_frame(uint8_t *kpage) {
 	lock_release(&frame_lock);
 }
 
-struct list_elem* second_clock_elem (void) {
+void find_and_free_frame(struct sup_page_table_entry *spte) {
+	struct frame_table_entry *fte = NULL;
+	struct list_elem *e;
+	for (e=list_begin(&frame_table); e!=list_end(&frame_table); e=list_next(e)) {
+		if (list_entry(e, struct frame_table_entry, ft_elem)->spte == spte) {
+			fte = list_entry(e, struct frame_table_entry, ft_elem);
+			break;
+		}
+	}
+
+	if (fte == NULL) {
+		return; 
+	}
+
+	free_frame(fte->frame);
+}
+
+struct list_elem* find_clock_elem (void) {
 	if (clock_elem == NULL && !list_empty(&frame_table)) {
 		clock_elem = list_begin(&frame_table);
 	}
@@ -99,44 +116,59 @@ struct list_elem* second_clock_elem (void) {
 	return clock_elem;
 }
 
-bool evict_frame(uint32_t *pagedir) {
+bool evict_frame(void) {
 	/*Determine the algoritm to be evicted*/
 	/*For simplicity, we used FIFO*/
-	printf("Evict started\n");
+	//printf("Evict started\n");
 	struct list_elem *e;
 	struct frame_table_entry *evict_frame_entry = NULL;
 
-	size_t i;
-	printf("%d : list size\n", list_size(&frame_table));
-	for (i = 0; i < 2*list_size(&frame_table); i++) {
-		e = second_clock_elem();
-		evict_frame_entry = list_entry(e, struct frame_table_entry, ft_elem);
-		if (evict_frame_entry->spte->accessed) {
-			continue;
-		}
+	int i;
+	int n;
+	n = list_size(&frame_table);
+	//printf("length : %d\n", list_size(&frame_table));
+	for (i=0; i<n; i++) {
+		e = find_clock_elem();
+		evict_frame_entry = list_entry(e, struct frame_table_entry, ft_elem);	    
 
-		
-		else if (pagedir_is_accessed(pagedir, evict_frame_entry->spte->user_vaddr)) {
-				pagedir_set_accessed(pagedir, evict_frame_entry->spte->user_vaddr, false);
-				continue; 
-		}
+		if(evict_frame_entry->spte->accessed == false ){
 
-		break;
+
+			if (evict_frame_entry->owner->pagedir != NULL &&  evict_frame_entry->spte->user_vaddr != NULL)
+				pagedir_clear_page(evict_frame_entry->owner->pagedir, evict_frame_entry->spte->user_vaddr);
+			//printf("default passing\n");
+			//printf("default passed\n");
+			if(evict_frame_entry->spte->file == NULL)
+			{
+				//printf("1 passing\n");
+				evict_frame_entry->spte->location = ON_SWAP;
+				evict_frame_entry->spte->swap_index = swap_out(evict_frame_entry->frame);	        
+				//printf("1 passed\n");
+			}
+			else if (evict_frame_entry->spte->writable) 
+			{
+				//printf("2 passing\n");
+				evict_frame_entry->spte->location = ON_SWAP;
+				evict_frame_entry->spte->swap_index = swap_out(evict_frame_entry->frame);	        				
+			//	printf("2 passed\n");
+			}
+			else {
+				//printf("3 passing\n");
+				evict_frame_entry->spte->location = ON_FILESYS;
+				//printf("3 passed\n");
+			}
+
+
+		clock_elem = e; 
+		palloc_free_page(evict_frame_entry->frame);
+		list_remove(&evict_frame_entry->ft_elem);
+		free(evict_frame_entry);
+		//printf("evict finished\n");
+		return true;
+		}
+		e = find_clock_elem();
+
 	}
-	if (evict_frame_entry == NULL) return false;
-
-	pagedir_clear_page(evict_frame_entry->owner->pagedir, evict_frame_entry->spte->user_vaddr);
-
-	evict_frame_entry->spte->swap_index = swap_out(evict_frame_entry->frame);
-
-	printf("swap index:%d\n", evict_frame_entry->spte->swap_index);
-  	evict_frame_entry->spte->location = ON_SWAP;
-	printf("%d : cur status\n", evict_frame_entry->spte->location);
-
-  	list_remove(&evict_frame_entry->ft_elem);
-	palloc_free_page(evict_frame_entry->frame);
-  	
-  	free(evict_frame_entry);
-	printf("Evict finished\n");  	
-  	return true;
+	//printf("evict failed\n");
+	return false; 	    
 }

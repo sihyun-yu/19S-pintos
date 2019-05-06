@@ -217,8 +217,10 @@ process_exit (void)
   sema_up(&thread_current()->child_lock);
 
   sema_down(&thread_current()->sync_lock);
+
 #ifdef VM
   destroy_supt (&thread_current ()->supt, NULL);
+  
 #endif
   
 

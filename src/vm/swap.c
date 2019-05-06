@@ -24,6 +24,7 @@ static struct lock swap_lock;
 void 
 swap_init (void)
 {
+	//printf("swap init\n");
 	swap_device = disk_get(1,1);
 	swap_table = bitmap_create(disk_size(swap_device));
 	lock_init(&swap_lock);
@@ -46,8 +47,10 @@ int
 swap_in (void *addr, int index)
 {
 	lock_acquire(&swap_lock);
+	//printf("swap in started\n");
 	read_from_disk(addr, index);
 	bitmap_set_multiple(swap_table, index, FOR_EACH_SECTOR, 0);
+	//printf("swap in finished\n");
 	lock_release(&swap_lock);
 	return true; 
 }
@@ -70,19 +73,20 @@ int
 swap_out (void *addr)
 {
 	lock_acquire(&swap_lock);
-	printf("swap out started 1\n");
+	//printf("swap out started \n");
 	int index = bitmap_scan_and_flip(swap_table, 0, FOR_EACH_SECTOR, 0);
-	printf("swap out started 2\n");
+	//printf("swap out started 2\n");
 	if (index == BITMAP_ERROR) {
-		printf("swap out started 3\n");
+		//printf("swap out started 3\n");
 		lock_release(&swap_lock);
 		return 0; 
 	}
-	printf("swap out started 4\n");
+	//printf("swap out started 4\n");
 	write_to_disk(addr, index);
-	printf("swap out started 5\n");
-	printf("index = %d\n", index);
+	//printf("swap out started 5\n");
+	//printf("index = %d\n", index);
 	lock_release(&swap_lock);
+	//printf("swap out finished\n");
 	return index; 
 }
 
