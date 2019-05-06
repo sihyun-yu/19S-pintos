@@ -220,7 +220,6 @@ process_exit (void)
 
 #ifdef VM
   destroy_supt (&thread_current ()->supt, NULL);
-  
 #endif
   
 

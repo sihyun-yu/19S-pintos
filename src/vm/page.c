@@ -80,24 +80,31 @@ bool load_page(struct sup_page_table_entry *spte) {
 	
 	//printf("page load start\n");
 	void *kpage = NULL;
-
 	if (spte->location == ON_FRAME){
-		spte->accessed = false;
+		//spte->accessed = false;
 		spte->location = ON_FRAME;
 		return true;
 		//printf("page load start\n");
 	} 
 
 	else if (spte->location == ON_SWAP) {
-		printf("load with swap index = %d\n", spte->swap_index);
+		//printf("load with swap index = %d\n", spte->swap_index);
 		kpage = allocate_frame(PAL_USER, spte);
 		
 		if (kpage == NULL) return false;
 		if (spte == NULL) return false;
 		
 		swap_in(kpage, spte->swap_index);
+		if (!install_page (spte->user_vaddr, kpage, spte->writable))
+        {
+          //spte->accessed = false;
+		  //spte->location = ON_FRAME;
+          free_frame (kpage);
+          return false;
+        }
 		spte->accessed = false;
 		spte->location = ON_FRAME;
+		//printf("swap load success!\n");
 
 	}
 
@@ -132,14 +139,19 @@ bool load_page(struct sup_page_table_entry *spte) {
 	        }
 			memset (kpage + spte->read_bytes, 0, spte->zero_bytes);
 		}
+
+
+		if (!install_page (spte->user_vaddr, kpage, spte->writable))
+        {
+          //spte->accessed = false;
+		  //spte->location = ON_FRAME;
+          free_frame (kpage);
+          return false;
+        }
 		//printf("file load finished\n");
 	}
 
-    if (!install_page (spte->user_vaddr, kpage, spte->writable))
-        {
-          free_frame (kpage);
-          //return false;
-        }
+    //printf("totally load success!\n");
 	spte->accessed = false;
 	spte->location = ON_FRAME;
 	return true;
@@ -171,6 +183,7 @@ install_page (void *upage, void *kpage, bool writable)
 
 
 bool stack_growth(struct hash *supt, void *addr){
+	return true; //for swap testing, can delete if we want to debug stack growth
 	struct sup_page_table_entry *spte = allocate_page(supt, addr);
 	
 	if (spte == NULL)

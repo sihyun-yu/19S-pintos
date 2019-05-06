@@ -123,19 +123,23 @@ bool evict_frame(void) {
 	struct list_elem *e;
 	struct frame_table_entry *evict_frame_entry = NULL;
 
-	int i;
-	int n;
+	int cnt = 0;
+	int n, i;
 	n = list_size(&frame_table);
 	//printf("length : %d\n", list_size(&frame_table));
-	for (i=0; i<n; i++) {
-		e = find_clock_elem();
+	for (i=0; i<2 * n + 1; i++) {
+		e=find_clock_elem();
+		cnt++;
+		//e = find_clock_elem();
 		evict_frame_entry = list_entry(e, struct frame_table_entry, ft_elem);	    
+		if (evict_frame_entry->spte->accessed == false && pagedir_is_accessed(thread_current()->pagedir, evict_frame_entry->spte->user_vaddr)) {
+			pagedir_set_accessed(thread_current()->pagedir, evict_frame_entry->spte->user_vaddr, false);
+			continue;
+		}
 
-		if(evict_frame_entry->spte->accessed == false ){
+		else if(evict_frame_entry->spte->accessed == false ){
 
-
-			if (evict_frame_entry->owner->pagedir != NULL &&  evict_frame_entry->spte->user_vaddr != NULL)
-				pagedir_clear_page(evict_frame_entry->owner->pagedir, evict_frame_entry->spte->user_vaddr);
+      		//printf("itered : %d times\n", cnt);
 			//printf("default passing\n");
 			//printf("default passed\n");
 			if(evict_frame_entry->spte->file == NULL)
@@ -157,18 +161,24 @@ bool evict_frame(void) {
 				evict_frame_entry->spte->location = ON_FILESYS;
 				//printf("3 passed\n");
 			}
+		//printf("evict finished\n");
+		break;
+		}
+	}
 
-
-		clock_elem = e; 
+	if (evict_frame_entry != NULL) {
+	 if (evict_frame_entry->owner->pagedir != NULL) 
+	 {
+	 pagedir_clear_page(evict_frame_entry->owner->pagedir, evict_frame_entry->spte->user_vaddr);
+	 }
 		palloc_free_page(evict_frame_entry->frame);
 		list_remove(&evict_frame_entry->ft_elem);
 		free(evict_frame_entry);
-		//printf("evict finished\n");
 		return true;
-		}
-		e = find_clock_elem();
-
 	}
+
+		
+
 	//printf("evict failed\n");
 	return false; 	    
 }
