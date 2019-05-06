@@ -25,7 +25,7 @@
  * Initialize supplementary page table
  */
 
-static bool install_page (void *upage, void *kpage, bool writable);
+//static bool install_page (void *upage, void *kpage, bool writable);
 
 void 
 page_init (struct hash *supt)
@@ -55,7 +55,7 @@ allocate_page (struct hash *supt, void *addr)
 		free(spte);
 		return NULL;
 	}
-	//printf("hash table size : %d\n", hash_size(supt));
+	printf("hash table size : %d\n", hash_size(supt));
 	//printf("page allocation finished");
 	return spte;
 }
@@ -65,7 +65,8 @@ void free_page(struct hash_elem *hs_elem, void *aux UNUSED) {
 	struct sup_page_table_entry *spte = hash_entry(hs_elem, struct sup_page_table_entry, hs_elem);
 	//if (spte->file != NULL) file_close(spte->file);
 	if(spte->location == ON_SWAP) swap_free(spte->swap_index);
-	//find_and_free_frame(spte);
+	//if (spte->location != ON_FRAME) find_and_free_frame(spte);
+	printf("free spte %p\n", spte);
 	free(spte);
 	//need to free the frame 
 	//printf("page free finished\n");
@@ -77,7 +78,6 @@ void destroy_supt(struct hash *supt, void *aux UNUSED) {
 }
 
 bool load_page(struct sup_page_table_entry *spte) {
-	
 	//printf("page load start\n");
 	void *kpage = NULL;
 	if (spte->location == ON_FRAME){
@@ -95,8 +95,8 @@ bool load_page(struct sup_page_table_entry *spte) {
 		if (spte == NULL) return false;
 		
 		swap_in(kpage, spte->swap_index);
-		if (!install_page (spte->user_vaddr, kpage, spte->writable))
-        {
+		if(pagedir_get_page(thread_current()->pagedir, spte->user_vaddr)!=NULL || !pagedir_set_page(thread_current()->pagedir, spte->user_vaddr, kpage, spte->writable))
+		{
           //spte->accessed = false;
 		  //spte->location = ON_FRAME;
           free_frame (kpage);
@@ -110,9 +110,11 @@ bool load_page(struct sup_page_table_entry *spte) {
 
 	else if (spte->location == ON_FILESYS) {
 		//printf("file load start\n");
+		printf("spte address : %p\n", spte);
+		printf("file position before seek : %d\n", file_tell(spte->file));
+
 		file_seek (spte->file, spte->ofs);
-
-
+		printf("file position after seek : %d\n", file_tell(spte->file));
 		if (spte->zero_bytes == PGSIZE) {
 			//printf("memset\n");
 			kpage = allocate_frame(PAL_USER | PAL_ZERO, spte);
@@ -141,9 +143,8 @@ bool load_page(struct sup_page_table_entry *spte) {
 		}
 
 
-		if (!install_page (spte->user_vaddr, kpage, spte->writable))
-        {
-          //spte->accessed = false;
+		if(pagedir_get_page(thread_current()->pagedir, spte->user_vaddr)!=NULL || !pagedir_set_page(thread_current()->pagedir, spte->user_vaddr, kpage, spte->writable))
+		{          //spte->accessed = false;
 		  //spte->location = ON_FRAME;
           free_frame (kpage);
           return false;
@@ -151,6 +152,7 @@ bool load_page(struct sup_page_table_entry *spte) {
 		//printf("file load finished\n");
 	}
 
+	print_all_frame();
     //printf("totally load success!\n");
 	spte->accessed = false;
 	spte->location = ON_FRAME;
@@ -159,8 +161,8 @@ bool load_page(struct sup_page_table_entry *spte) {
 
 unsigned page_hash_hash(const struct hash_elem *element, void *aux UNUSED) {
 	struct sup_page_table_entry *spte = hash_entry(element, struct  sup_page_table_entry, hs_elem);
-	return hash_int((int) spte->user_vaddr);
-	//return hash_bytes(&spte->user_vaddr, sizeof(spte->user_vaddr)); 
+	//return hash_int((int) spte->user_vaddr);
+	return hash_bytes(&spte->user_vaddr, sizeof(spte->user_vaddr)); 
 }
 
 bool page_hash_less(const struct hash_elem *a, const struct hash_elem *b, void *aux UNUSED) {
@@ -169,17 +171,6 @@ bool page_hash_less(const struct hash_elem *a, const struct hash_elem *b, void *
 	return  x->user_vaddr <  y->user_vaddr;
 }
 
-static bool
-install_page (void *upage, void *kpage, bool writable)
-{
-  struct thread *t = thread_current ();
-
-  /* Verify that there's not already a page at that virtual
-     address, then map our page there. */
-  return (pagedir_get_page (t->pagedir, upage) == NULL
-          && pagedir_set_page (t->pagedir, upage, kpage, writable));
-
-}
 
 
 bool stack_growth(struct hash *supt, void *addr){

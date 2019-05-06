@@ -13,6 +13,7 @@ struct frame_table_entry
 };
 
 void frame_init (void);
+void print_all_frame(void);
 void* allocate_frame (enum palloc_flags flag, struct sup_page_table_entry* spte);
 void free_frame(uint8_t *kpage);
 //bool evict_frame(uint32_t *pagedir);

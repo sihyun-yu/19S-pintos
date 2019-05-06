@@ -32,7 +32,7 @@ void *
 allocate_frame (enum palloc_flags flag, struct sup_page_table_entry *spte)
 {
 	lock_acquire(&frame_lock);
-	//printf("frame allocation started\n");
+	printf("frame allocation started\n");
 	void *frame = palloc_get_page(flag);
 	if (frame == NULL) {
 		if(!evict_frame()) {
@@ -52,7 +52,7 @@ allocate_frame (enum palloc_flags flag, struct sup_page_table_entry *spte)
 	fte->spte = spte;
 	list_push_back(&frame_table, &fte->ft_elem);
 
-	//printf("frame allocation finished\n");
+	printf("frame allocation finished with user address %p\n", spte->user_vaddr);
 	lock_release(&frame_lock);
 	//printf("kpage : %p\n", frame);
 	return frame;
@@ -60,7 +60,6 @@ allocate_frame (enum palloc_flags flag, struct sup_page_table_entry *spte)
 
 void free_frame(uint8_t *kpage) {
 	lock_acquire(&frame_lock);
-	//printf("frame free started\n");
 
 	struct list_elem *e;
 	struct frame_table_entry *fte = NULL;
@@ -74,15 +73,22 @@ void free_frame(uint8_t *kpage) {
 	if (fte == NULL) {
 		return;
 	}
+	printf("frame free started with %p\n", fte->spte);
 
 	palloc_free_page(fte->frame);
 	list_remove(&fte->ft_elem);
 	free(fte);
-	//printf("frame free finished\n");
+	printf("frame free finished\n");
 
 	lock_release(&frame_lock);
 }
 
+void print_all_frame() {
+	struct list_elem *e;
+	for (e=list_begin(&frame_table); e!=list_end(&frame_table); e=list_next(e)) {
+		printf("%p : current list entry\n", list_entry(e, struct frame_table_entry, ft_elem)->spte->user_vaddr);
+	}
+}
 void find_and_free_frame(struct sup_page_table_entry *spte) {
 	struct frame_table_entry *fte = NULL;
 	struct list_elem *e;
@@ -96,8 +102,11 @@ void find_and_free_frame(struct sup_page_table_entry *spte) {
 	if (fte == NULL) {
 		return; 
 	}
-
-	free_frame(fte->frame);
+	printf("frame %p corresponded to %p\n", fte, spte);
+	palloc_free_page(fte->frame);
+	list_remove(&fte->ft_elem);
+	free(fte);
+	printf("deleted\n");
 }
 
 struct list_elem* find_clock_elem (void) {

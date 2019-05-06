@@ -173,7 +173,7 @@ page_fault (struct intr_frame *f)
 
   struct sup_page_table_entry imsi;
   imsi.user_vaddr = pg_round_down(fault_addr);
-
+  printf("page fault user address : %p\n", pg_round_down(fault_addr));
   struct hash_elem *e = hash_find(&thread_current()->supt, &(imsi.hs_elem));
   if (e == NULL) {
     //printf("reached here3");
