@@ -36,7 +36,7 @@ static bool load (const char *cmdline, void (**eip) (void), void **esp);
 tid_t
 process_execute (const char *file_name) 
 {
-  printf("process execute\n");
+  //printf("process execute\n");
   char *fn_copy;
   tid_t tid;
   //char *next_ptr;
@@ -90,7 +90,7 @@ process_execute (const char *file_name)
 static void
 start_process (void *f_name)
 {
-  printf("starting process\n");
+  //printf("starting process\n");
   char *file_name = f_name;
   struct intr_frame if_;
   bool success;
@@ -169,7 +169,7 @@ start_process (void *f_name)
 int
 process_wait (tid_t child_tid) 
 {
-  printf("wait called ! \n");
+  //printf("wait called ! \n");
 
   struct thread *curr = thread_current();
   struct list_elem *e;
@@ -197,7 +197,7 @@ process_wait (tid_t child_tid)
 void
 process_exit (void)
 {
-  printf("process exit\n");
+ //printf("process exit\n");
   struct thread *curr = thread_current ();
   uint32_t *pd;
 
@@ -520,7 +520,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
       struct sup_page_table_entry *spte = allocate_page(&thread_current()->supt, upage);
-      printf("allocated with spte = %p, upage was %p\n", spte, pg_round_down(upage));
+      //printf("allocated with spte = %p, upage was %p\n", spte, pg_round_down(upage));
       find_and_free_frame(spte);
       if (spte == NULL) {
        
@@ -533,7 +533,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 #ifdef VM
       ASSERT (pagedir_get_page(thread_current()->pagedir, upage) == NULL); 
 
-      printf("load offset : %d\n", ofs);
+      //printf("load offset : %d\n", ofs);
       spte->location = ON_FILESYS;
       spte->file = file;
       spte->ofs = ofs;
@@ -583,7 +583,7 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 static bool
 setup_stack (void **esp) 
 {
-  printf("setup stack\n");
+  //printf("setup stack\n");
   uint8_t *kpage;
   bool success = false;
   //printf("setup stack\n");
@@ -597,10 +597,10 @@ setup_stack (void **esp)
       if (success)
         *esp = PHYS_BASE;
       else {
-        printf("!!!!!!!!!!\n");
+       // printf("!!!!!!!!!!\n");
       struct sup_page_table_entry imsi;
       imsi.user_vaddr = pg_round_down(spte->user_vaddr);
-      printf("page fault user address : %p\n", pg_round_down(spte->user_vaddr));
+      //printf("page fault user address : %p\n", pg_round_down(spte->user_vaddr));
       struct hash_elem *e = hash_find(&thread_current()->supt, &(imsi.hs_elem));
       hash_delete(&thread_current()->supt, e);
        free_frame (kpage);

@@ -55,7 +55,7 @@ allocate_page (struct hash *supt, void *addr)
 		free(spte);
 		return NULL;
 	}
-	printf("hash table size : %d\n", hash_size(supt));
+	//printf("hash table size : %d\n", hash_size(supt));
 	//printf("page allocation finished");
 	return spte;
 }
@@ -66,7 +66,7 @@ void free_page(struct hash_elem *hs_elem, void *aux UNUSED) {
 	//if (spte->file != NULL) file_close(spte->file);
 	if(spte->location == ON_SWAP) swap_free(spte->swap_index);
 	//if (spte->location != ON_FRAME) find_and_free_frame(spte);
-	printf("free spte %p\n", spte);
+	//printf("free spte %p\n", spte);
 	free(spte);
 	//need to free the frame 
 	//printf("page free finished\n");
@@ -88,7 +88,7 @@ bool load_page(struct sup_page_table_entry *spte) {
 	} 
 
 	else if (spte->location == ON_SWAP) {
-		//printf("load with swap index = %d\n", spte->swap_index);
+		printf("load with swap index = %d\n", spte->swap_index);
 		kpage = allocate_frame(PAL_USER, spte);
 		
 		if (kpage == NULL) return false;
@@ -104,17 +104,17 @@ bool load_page(struct sup_page_table_entry *spte) {
         }
 		spte->accessed = false;
 		spte->location = ON_FRAME;
-		//printf("swap load success!\n");
+		printf("swap load success!\n");
 
 	}
 
 	else if (spte->location == ON_FILESYS) {
 		//printf("file load start\n");
-		printf("spte address : %p\n", spte);
-		printf("file position before seek : %d\n", file_tell(spte->file));
+		//printf("spte address : %p\n", spte);
+		//printf("file position before seek : %d\n", file_tell(spte->file));
 
 		file_seek (spte->file, spte->ofs);
-		printf("file position after seek : %d\n", file_tell(spte->file));
+		//printf("file position after seek : %d\n", file_tell(spte->file));
 		if (spte->zero_bytes == PGSIZE) {
 			//printf("memset\n");
 			kpage = allocate_frame(PAL_USER | PAL_ZERO, spte);
@@ -130,6 +130,7 @@ bool load_page(struct sup_page_table_entry *spte) {
 	          free_frame (kpage);
 	          return false;
 	        }	        
+ 			memset (kpage + spte->read_bytes, 0, spte->zero_bytes);
 		}
 
 		else {
@@ -139,7 +140,6 @@ bool load_page(struct sup_page_table_entry *spte) {
 	          free_frame (kpage);
 	          return false;
 	        }
-			memset (kpage + spte->read_bytes, 0, spte->zero_bytes);
 		}
 
 
