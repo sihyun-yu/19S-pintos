@@ -10,7 +10,8 @@
 enum page_location {
 	ON_FRAME,
 	ON_SWAP,
-	ON_FILESYS
+	ON_FILESYS,
+	ON_MMAP
 };
 
 struct sup_page_table_entry 

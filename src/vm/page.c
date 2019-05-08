@@ -49,6 +49,7 @@ allocate_page (struct hash *supt, void *addr)
 	spte->accessed = true;
 	spte->swap_index = -1;
 	spte->writable = true;
+	spte->file = NULL;
 	//printf("reached here \n");
 	if(hash_insert(supt, &spte->hs_elem) != NULL) {
 		//printf("hash insert failed \n");
@@ -142,7 +143,6 @@ bool load_page(struct sup_page_table_entry *spte) {
 	        }
 		}
 
-
 		if(pagedir_get_page(thread_current()->pagedir, spte->user_vaddr)!=NULL || !pagedir_set_page(thread_current()->pagedir, spte->user_vaddr, kpage, spte->writable))
 		{          //spte->accessed = false;
 		  //spte->location = ON_FRAME;
@@ -150,6 +150,44 @@ bool load_page(struct sup_page_table_entry *spte) {
           return false;
         }
 		//printf("file load finished\n");
+	}
+
+	else if (spte->location == ON_MMAP) {
+		file_seek (spte->file, spte->ofs);
+		//printf("file position after seek : %d\n", file_tell(spte->file));
+		if (spte->zero_bytes == PGSIZE) {
+			//printf("memset\n");
+			kpage = allocate_frame(PAL_USER | PAL_ZERO, spte);
+			if (kpage == NULL) return false;
+			memset(kpage,0,PGSIZE);
+		}
+		
+		else if (spte->zero_bytes != 0 ){
+	      kpage = allocate_frame(PAL_USER, spte);
+	      if (file_read(spte->file, kpage, spte->read_bytes) != (int) spte->read_bytes)
+	        {
+	          //printf("error 2!\n");
+	          free_frame (kpage);
+	          return false;
+	        }	        
+ 			memset (kpage + spte->read_bytes, 0, spte->zero_bytes);
+		}
+
+		else {
+	      kpage = allocate_frame(PAL_USER, spte);
+	      if (file_read(spte->file, kpage, spte->read_bytes) != PGSIZE)
+	        {
+	          free_frame (kpage);
+	          return false;
+	        }
+		}
+
+		if(pagedir_get_page(thread_current()->pagedir, spte->user_vaddr)!=NULL || !pagedir_set_page(thread_current()->pagedir, spte->user_vaddr, kpage, spte->writable))
+		{          //spte->accessed = false;
+		  //spte->location = ON_FRAME;
+          free_frame (kpage);
+          return false;
+        }
 	}
 
 	print_all_frame();

@@ -10,5 +10,15 @@ void process_activate (void);
 void push_stack_cmdline(char **cmdline_tokens, int cnt, void **esp);
 void check_address(void *address);
 
+#ifdef VM
+struct mmap_entry {
+	int mm_id;
+	struct file *file;
+	void *mm_addr;
+	int size; 
+	struct list_elem mm_elem;
+};
+#endif
+
 
 #endif /* userprog/process.h */

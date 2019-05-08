@@ -17,6 +17,8 @@
 #include "filesys/directory.h"
 #include "threads/palloc.h"
 #include "lib/kernel/list.h"
+#include "vm/frame.h"
+#include "vm/page.h"
 
 static void syscall_handler (struct intr_frame *);
 
@@ -24,7 +26,7 @@ void
 syscall_init (void) 
 {
 	lock_init(&sys_lock);
-  	intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
+	intr_register_int (0x30, 3, INTR_ON, syscall_handler, "syscall");
 }
 
 static void
@@ -157,7 +159,23 @@ syscall_handler (struct intr_frame *f)
 			sys_close(fd);
 			break;
 		}
+		case SYS_MMAP:
+		{
+			check_address(f->esp+4);
+			check_address(f->esp+8);
+			int fd = (int) *((uint32_t *)(f->esp+4));
+			void *addr = (void *) *((uint32_t *)(f->esp+8));
+			f->eax = sys_mmap(fd, addr);
+			break;
+		}
 
+		case SYS_MUNMAP:
+		{
+			check_address(f->esp+4);
+			mapid_t mapping = (mapid_t) *((uint32_t *)(f->esp+4));
+			sys_munmap(mapping);
+			break;
+		}
 
 	}
 	//printf("%d : system number, %p : esp pointer\n", n, (f->esp) );
@@ -178,24 +196,24 @@ int sys_write (int fd, const void *buffer, unsigned size) {
 	int val;
 	// check address
 	lock_acquire(&sys_lock);
-  if (fd == 1) {
-    putbuf(buffer, size);
-    val = size;
-  }
-
-  else {
-  	struct file *file_for_write = thread_current()->fds[fd];
-	if (file_for_write == NULL) {
-		val = -1;
+	if (fd == 1) {
+		putbuf(buffer, size);
+		val = size;
 	}
 
 	else {
-		val = file_write(file_for_write, (char *)buffer, size);
-	}
-  }
+		struct file *file_for_write = thread_current()->fds[fd];
+		if (file_for_write == NULL) {
+			val = -1;
+		}
 
-  lock_release(&sys_lock);
-  return val; 
+		else {
+			val = file_write(file_for_write, (char *)buffer, size);
+		}
+	}
+
+	lock_release(&sys_lock);
+	return val; 
 }
 
 int sys_exec(char *cmd_line){
@@ -210,14 +228,14 @@ int sys_wait(pid_t pid){
 }
 
 int sys_create(const char *file, unsigned initial_size)
- {
- 	if (file == NULL) {
+{
+	if (file == NULL) {
  		//printf("error from here\n");
- 		sys_exit(-1);
- 		return 0; 
- 	}
- 	return filesys_create(file, initial_size);
- }
+		sys_exit(-1);
+		return 0; 
+	}
+	return filesys_create(file, initial_size);
+}
 
 int sys_remove (const char *file) {
 
@@ -225,7 +243,7 @@ int sys_remove (const char *file) {
 	/*remove_file_from_list (open_file);
 	if (find_filefd_from_file(open_file) != NULL)
 		palloc_free_page(find_filefd_from_file(open_file));*/
- 	return filesys_remove(file);
+	return filesys_remove(file);
 }
 
 int sys_open (const char *file) {
@@ -304,6 +322,96 @@ void sys_close(int fd){
 	struct file *file_for_close = thread_current()->fds[fd];
 	thread_current()->fds[fd] = NULL;
 	return file_close(file_for_close);
+}
+
+mapid_t sys_mmap(int fd, void *addr) {
+
+	lock_acquire(&sys_lock);
+	struct file *file = thread_current()->fds[fd];
+	file = file_reopen(file);
+	uint32_t read_bytes = file_length(file);
+	off_t ofs = 0;
+	if (read_bytes == 0) return -1;
+	lock_release(&sys_lock);
+
+	void *mm_addr = addr;
+	int size = read_bytes;
+	while (read_bytes > 0) 
+	{
+		size_t page_read_bytes = read_bytes < PGSIZE ? read_bytes : PGSIZE;
+		size_t page_zero_bytes = PGSIZE - page_read_bytes;
+		struct sup_page_table_entry *spte = allocate_page(&thread_current()->supt, addr);
+      //printf("allocated with spte = %p, upage was %p\n", spte, pg_round_down(upage));
+      //find_and_free_frame(spte);
+		if (spte == NULL) {
+
+			return false;
+		}
+#ifdef VM
+		spte->location = ON_MMAP;
+		spte->file = file;
+		spte->ofs = ofs;
+		spte->read_bytes =page_read_bytes;
+		spte->zero_bytes = page_zero_bytes;
+		spte->writable = true;
+#endif
+      /* Advance. */
+		read_bytes -= page_read_bytes;
+		addr += PGSIZE;
+		ofs += page_read_bytes;
+	}
+
+	struct mmap_entry *mm = malloc(sizeof(struct mmap_entry));
+	mm->mm_id = (thread_current()->mm_id)++;
+	mm->file = file;
+	mm->mm_addr = mm_addr;
+	mm->size = size;
+	list_push_back(&thread_current()->mm_list, &mm->mm_elem);
+
+}
+
+void sys_munmap(mapid_t mapping) {
+	struct list_elem *e;
+	off_t ofs = 0;
+	struct mmap_entry *mm = NULL;
+	lock_acquire(&sys_lock);
+	for(e = list_begin(&thread_current()->mm_list); e != list_end(&thread_current()->mm_list); e = list_next(e)){
+		if(list_entry(e, struct mmap_entry, mm_elem)->mm_id == mapping) {
+			mm = list_entry(e, struct mmap_entry, mm_elem);
+			list_remove(e);
+			break;
+		}
+	}
+	if (mm == NULL) return;
+	//mm is not null
+
+	while (mm->size > 0) {
+		struct sup_page_table_entry imsi;
+		imsi.user_vaddr = pg_round_down(mm->mm_addr);
+		struct hash_elem *e = hash_find(&thread_current()->supt, &(imsi.hs_elem));
+		struct sup_page_table_entry *spte = hash_entry(e, struct sup_page_table_entry, hs_elem);
+
+		if(spte->location == ON_FRAME) {
+			if(pagedir_is_dirty(thread_current()->pagedir, spte->user_vaddr)) {
+				file_write_at(mm->file, spte->user_vaddr, spte->read_bytes, ofs);
+			}
+			find_and_free_frame(spte);
+			pagedir_clear_page(thread_current()->pagedir, spte->user_vaddr);
+		}
+
+		hash_delete(&thread_current()->supt, &spte->hs_elem);
+		free(spte);
+
+		if(mm->size <= PGSIZE) break;
+
+		ofs+= PGSIZE;
+		mm->mm_addr += PGSIZE;
+		mm->size -= PGSIZE;
+	}
+
+	file_close(mm->file);
+	free(mm);
+	lock_release(&sys_lock);
 }
 
 //	  SYS_HALT,                   /* Halt the operating system. */

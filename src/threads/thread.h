@@ -139,6 +139,8 @@ struct thread
 #ifdef VM
     struct hash supt;
     int *esp;
+    struct list mm_list;
+    int mm_id;
 #endif
 
     /* Owned by thread.c. */

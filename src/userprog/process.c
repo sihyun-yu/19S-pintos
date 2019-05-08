@@ -19,7 +19,6 @@
 #include "threads/vaddr.h"
 #include "threads/synch.h"
 #include "userprog/syscall.h"
-#include "threads/malloc.h"
 #ifdef VM
 #include "vm/frame.h"
 #include "vm/page.h"
@@ -36,7 +35,6 @@ static bool load (const char *cmdline, void (**eip) (void), void **esp);
 tid_t
 process_execute (const char *file_name) 
 {
-  //printf("process execute\n");
   char *fn_copy;
   tid_t tid;
   //char *next_ptr;
@@ -90,7 +88,6 @@ process_execute (const char *file_name)
 static void
 start_process (void *f_name)
 {
-  //printf("starting process\n");
   char *file_name = f_name;
   struct intr_frame if_;
   bool success;
@@ -163,7 +160,6 @@ start_process (void *f_name)
    child of the calling process, or if process_wait() has already
    been successfully called for the given TID, returns -1
    immediately, without waiting.
-
    This function will be implemented in problem 2-2.  For now, it
    does nothing. */
 int
@@ -197,16 +193,11 @@ process_wait (tid_t child_tid)
 void
 process_exit (void)
 {
- //printf("process exit\n");
   struct thread *curr = thread_current ();
   uint32_t *pd;
 
   /* Destroy the current process's page directory and switch back
      to the kernel-only page directory. */
-
-#ifdef VM
-  destroy_supt (&thread_current ()->supt, NULL);
-#endif
 
   pd = curr->pagedir;
   if (pd != NULL) 
@@ -226,7 +217,10 @@ process_exit (void)
 
   sema_down(&thread_current()->sync_lock);
 
-
+#ifdef VM
+  destroy_supt (&thread_current ()->supt, NULL);
+  
+#endif
   
 
   //free_all_page(curr);
@@ -492,26 +486,21 @@ validate_segment (const struct Elf32_Phdr *phdr, struct file *file)
 /* Loads a segment starting at offset OFS in FILE at address
    UPAGE.  In total, READ_BYTES + ZERO_BYTES bytes of virtual
    memory are initialized, as follows:
-
         - READ_BYTES bytes at UPAGE must be read from FILE
           starting at offset OFS.
-
         - ZERO_BYTES bytes at UPAGE + READ_BYTES must be zeroed.
-
    The pages initialized by this function must be writable by the
    user process if WRITABLE is true, read-only otherwise.
-
    Return true if successful, false if a memory allocation error
    or disk read error occurs. */
 static bool
 load_segment (struct file *file, off_t ofs, uint8_t *upage,
               uint32_t read_bytes, uint32_t zero_bytes, bool writable) 
 {
+
   ASSERT ((read_bytes + zero_bytes) % PGSIZE == 0);
   ASSERT (pg_ofs (upage) == 0);
   ASSERT (ofs % PGSIZE == 0);
-
-  int multi = read_bytes;
 
   file_seek (file, ofs);
   while (read_bytes > 0 || zero_bytes > 0) 
@@ -520,20 +509,18 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       size_t page_zero_bytes = PGSIZE - page_read_bytes;
 
       struct sup_page_table_entry *spte = allocate_page(&thread_current()->supt, upage);
-      //printf("allocated with spte = %p, upage was %p\n", spte, pg_round_down(upage));
-      find_and_free_frame(spte);
-      if (spte == NULL) {
-       
-        return false;
-      }
+      if (spte == NULL) return false;
 
   //printf("inode : %p at 1\n", file_get_inode(file));
+  file_seek (file, ofs);
   //printf("inode : %p at 2\n", file_get_inode(file));
 
 #ifdef VM
       ASSERT (pagedir_get_page(thread_current()->pagedir, upage) == NULL); 
 
-      //printf("load offset : %d\n", ofs);
+      /* Do calculate how to fill this page.
+         We will read PAGE_READ_BYTES bytes from FILE
+         and zero the final PAGE_ZERO_BYTES bytes. */
       spte->location = ON_FILESYS;
       spte->file = file;
       spte->ofs = ofs;
@@ -568,7 +555,6 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
       read_bytes -= page_read_bytes;
       zero_bytes -= page_zero_bytes;
       upage += PGSIZE;
-
 #ifdef VM
       //printf("current offeset:%d\n", ofs);
       ofs += page_read_bytes;
@@ -583,7 +569,6 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
 static bool
 setup_stack (void **esp) 
 {
-  //printf("setup stack\n");
   uint8_t *kpage;
   bool success = false;
   //printf("setup stack\n");
@@ -596,15 +581,8 @@ setup_stack (void **esp)
       success = install_page (((uint8_t *) PHYS_BASE) - PGSIZE, kpage, true);
       if (success)
         *esp = PHYS_BASE;
-      else {
-       // printf("!!!!!!!!!!\n");
-      struct sup_page_table_entry imsi;
-      imsi.user_vaddr = pg_round_down(spte->user_vaddr);
-      //printf("page fault user address : %p\n", pg_round_down(spte->user_vaddr));
-      struct hash_elem *e = hash_find(&thread_current()->supt, &(imsi.hs_elem));
-      hash_delete(&thread_current()->supt, e);
+      else
        free_frame (kpage);
-      }
     }
   return success;
 }
@@ -682,12 +660,6 @@ void check_address(void *address){
     sys_exit(-1);
   }
 }
-
-
-
-
-
-
 
 
 

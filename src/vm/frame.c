@@ -47,6 +47,7 @@ allocate_frame (enum palloc_flags flag, struct sup_page_table_entry *spte)
 	if (fte == NULL) return NULL;
 
 	//put info into fte
+	spte->accessed = true;
 	fte->frame = frame;
 	fte->owner = thread_current();
 	fte->spte = spte;
@@ -176,4 +177,6 @@ bool evict_frame(void) {
 		printf("Evict finished");
 		return true;
 	}
+
+	return false;
 }
