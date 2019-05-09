@@ -129,7 +129,7 @@ struct list_elem* find_clock_elem (void) {
 bool evict_frame(void) {
 	/*Determine the algoritm to be evicted*/
 	/*For simplicity, we used FIFO*/
-	printf("Evict started\n");
+	//printf("Evict started\n");
 	struct list_elem *e;
 	struct frame_table_entry *evict_frame_entry = NULL;
 
@@ -174,7 +174,7 @@ bool evict_frame(void) {
 		palloc_free_page(evict_frame_entry->frame);
 		list_remove(&evict_frame_entry->ft_elem);
 		free(evict_frame_entry);
-		printf("Evict finished");
+		//printf("Evict finished");
 		return true;
 	}
 

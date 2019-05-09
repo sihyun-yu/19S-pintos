@@ -22,6 +22,7 @@
 #include "vm/frame.h"
 #include "vm/page.h"
 #include "vm/swap.h"
+#define STACK_MAX_SIZE 8388608
 
 static thread_func start_process NO_RETURN;
 static bool load (const char *cmdline, void (**eip) (void), void **esp);
@@ -214,7 +215,6 @@ process_exit (void)
   sema_down(&thread_current()->sync_lock);
 #ifdef VM
   destroy_supt (&thread_current ()->supt, NULL);
-  struct list_elem *e;
   while(!list_empty(&curr->mm_list)) {
     sys_munmap(list_entry(list_front(&curr->mm_list), struct mmap_entry, mm_elem)->mm_id);
   }
@@ -652,11 +652,29 @@ void push_stack_cmdline(char **cmdline_tokens, int cnt, void **esp){
 
 }
 
-void check_address(void *address){
+struct sup_page_table_entry* check_address(void *address){
   if (!is_user_vaddr(address)) {
     //printf("error from here\n");
     sys_exit(-1);
+    return NULL;
   }
+
+/* struct sup_page_table_entry imsi;
+  imsi.user_vaddr = pg_round_down(address);
+  struct hash_elem *e = hash_find(&thread_current()->supt, &(imsi.hs_elem));
+  if (e != NULL) {
+    struct sup_page_table_entry *spte = hash_entry(e, struct sup_page_table_entry, hs_elem);
+    if (load_page(spte)) return spte; 
+  }
+
+  if (thread_current()->esp - 32 <= address && PHYS_BASE - STACK_MAX_SIZE <=address) {
+    if(stack_growth(&thread_current()->supt, pg_round_down(address))){
+      struct hash_elem *e = hash_find(&thread_current()->supt, &(imsi.hs_elem));
+      if (e != NULL) return hash_entry(e, struct sup_page_table_entry, hs_elem);
+    }
+  }
+*/
+  return NULL;
 }
 
 

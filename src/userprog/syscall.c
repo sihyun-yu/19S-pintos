@@ -193,6 +193,8 @@ void sys_exit(int status){
 
 
 int sys_write (int fd, const void *buffer, unsigned size) {
+
+
 	int val;
 	// check address
 	if (fd == 1) {
@@ -288,6 +290,9 @@ int sys_filesize(int fd){
 
 
 int sys_read(int fd, void *buffer, unsigned size) {
+
+	unsigned i;
+
 	int val;
 	if (fd == 0){
 		input_getc();

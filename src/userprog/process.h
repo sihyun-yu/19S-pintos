@@ -8,7 +8,7 @@ int process_wait (tid_t);
 void process_exit (void);
 void process_activate (void);
 void push_stack_cmdline(char **cmdline_tokens, int cnt, void **esp);
-void check_address(void *address);
+struct sup_page_table_entry* check_address(void *address);
 
 #ifdef VM
 struct mmap_entry {

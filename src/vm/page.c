@@ -89,7 +89,7 @@ bool load_page(struct sup_page_table_entry *spte) {
 	} 
 
 	else if (spte->location == ON_SWAP) {
-		printf("load with swap index = %d\n", spte->swap_index);
+		//printf("load with swap index = %d\n", spte->swap_index);
 		kpage = allocate_frame(PAL_USER, spte);
 		
 		if (kpage == NULL) return false;
@@ -105,7 +105,7 @@ bool load_page(struct sup_page_table_entry *spte) {
         }
 		spte->accessed = false;
 		spte->location = ON_FRAME;
-		printf("swap load success!\n");
+		//printf("swap load success!\n");
 
 	}
 
