@@ -157,86 +157,75 @@ page_fault (struct intr_frame *f)
      be assured of reading CR2 before it changed). */
   intr_enable ();
 
+  printf("page fault\n");
   /* Count page faults. */
   page_fault_cnt++;
 
-  //printf("page fault\n");
   /* Determine cause. */
   not_present = (f->error_code & PF_P) == 0;
   write = (f->error_code & PF_W) != 0;
   user = (f->error_code & PF_U) != 0;
-  if (write) {
-    if (!not_present)
-      //printf("here1\n");
-      sys_exit(-1);
-  }
-  //printf("page fault passed 1 step\n");
 
-  if (fault_addr == NULL) {
-   // printf("reached here2");
-    //printf("here2\n");
-    sys_exit(-1);
-  }
 
   struct sup_page_table_entry imsi;
   imsi.user_vaddr = pg_round_down(fault_addr);
-  //printf("page fault user address : %p\n", pg_round_down(fault_addr));
-  struct hash_elem *e = hash_find(&thread_current()->supt, &(imsi.hs_elem));
-  if (e == NULL) {
-    //printf("reached here3");
-    //printf("here3\n");
-    sys_exit(-1);
-  }
-  //printf("reached here 2\n");
-  struct sup_page_table_entry *spte = hash_entry(e, struct sup_page_table_entry, hs_elem);
-  if (spte == NULL) {
-    //printf("reached here5");
-    //printf("here4\n");
-    sys_exit(-1);
-  }
 
-  //printf("reached here 3\n");
+//if 문에 write 추가할지?
+  if (!not_present)
+      sys_exit(-1);
+
+
+  if (fault_addr == NULL) {
+   // printf("reached here2");
+    sys_exit(-1);
+  }
+  //printf("not lazy loading case\n");
+
+  //if user, get the stack address
   if (user){
     thread_current()->esp = f->esp;
   }
-  //printf("inode : %p at page fault\n", file_get_inode(spte->file));
 
+  int flag = 0;
   if(is_user_vaddr(fault_addr) && not_present){
-    //printf("reached here 4\n");
-    //printf("fault_addr : %p\n", fault_addr);
-    //printf("PHYS_BASE : %p\n", PHYS_BASE);
-    //printf("PHYS_BASE - STACK_MAX_SIZE %p\n", PHYS_BASE - STACK_MAX_SIZE);
-    //printf("esp : %p\n", f->esp);
-    //printf("F_ADDR %p\n", F_ADDR);
-    //printf("esp - F_ADDR : %p\n", f->esp - F_ADDR);
     if(PHYS_BASE - STACK_MAX_SIZE <= fault_addr){
-      //printf("reached here 5\n");
 
-      if (thread_current()->esp <= fault_addr || fault_addr == f->esp - 32
-           || fault_addr == f->esp - 4){
-        //printf("reached here 6\n");
+      if (thread_current()->esp <= fault_addr || fault_addr == f->esp - 32 || fault_addr == f->esp - 4){
         if(!stack_growth(&thread_current()->supt, imsi.user_vaddr)){
           sys_exit(-1);
+          return;
         }
+        flag = 1;
       }
       /*if (load_page(spte)){
         printf("reached here 4\n");
         return;}*/
-    }
-    
-  }
-  //printf("reached here 8\n");
-  if (!load_page(spte)) {
-    //printf("reached here4");
-    //printf("reached here 7\n");
-    //printf("here6\n");
-    sys_exit(-1);
+    }    
   }
 
-  
+  if(flag == 1) printf("after allocation...\n");
+  //printf("page fault user address : %p\n", pg_round_down(fault_addr));
+  struct hash_elem *e = hash_find(&thread_current()->supt, &(imsi.hs_elem));
+  //lazy loading 
+  if (e != NULL) {
+      struct sup_page_table_entry *spte = hash_entry(e, struct sup_page_table_entry, hs_elem);
+      if (flag == 1)printf("spte : %p\n", spte);
+      if (spte == NULL) {
+        sys_exit(-1);
+        return;
+      }
+      else { 
+        if (!load_page(spte)) {
+          sys_exit(-1);
+          return;
+        }
+        return;
+      }
+  }
+
+  //printf("reached here 8\n"); 
+  //sys_exit(-1); 
   return;
-  
-  
   /* To implement virtual memory, delete the rest of the function
      body, and replace it with code that brings in the page to
      which fault_addr refers. */

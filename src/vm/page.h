@@ -11,7 +11,8 @@ enum page_location {
 	ON_FRAME,
 	ON_SWAP,
 	ON_FILESYS,
-	ON_MMAP
+	ON_MMAP,
+	IMSI_EXTENDED
 };
 
 struct sup_page_table_entry 

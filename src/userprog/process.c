@@ -1,3 +1,4 @@
+
 #include "userprog/process.h"
 #include <debug.h>
 #include <inttypes.h>
@@ -33,6 +34,7 @@ static bool load (const char *cmdline, void (**eip) (void), void **esp);
 tid_t
 process_execute (const char *file_name) 
 {
+  //printf("process execute\n");
   char *fn_copy;
   tid_t tid;
   //char *next_ptr;
@@ -119,6 +121,7 @@ start_process (void *f_name)
   if_.eflags = FLAG_IF | FLAG_MBS;
   success = load (file_name, &if_.eip, &if_.esp);
 
+  //printf("here\n");
   /* If load failed, quit. */
   //palloc_free_page (file_name);
 
@@ -189,6 +192,7 @@ process_wait (tid_t child_tid)
 void
 process_exit (void)
 {
+  //printf("process exitm\n");
   struct thread *curr = thread_current ();
   uint32_t *pd;
 
@@ -319,6 +323,8 @@ static bool load_segment (struct file *file, off_t ofs, uint8_t *upage,
 bool
 load (const char *file_name, void (**eip) (void), void **esp) 
 {
+
+  //printf("load\n");
   struct thread *t = thread_current ();
   struct Elf32_Ehdr ehdr;
   struct file *file = NULL;
@@ -498,6 +504,8 @@ load_segment (struct file *file, off_t ofs, uint8_t *upage,
               uint32_t read_bytes, uint32_t zero_bytes, bool writable) 
 {
 
+  //printf("load segment\n");
+
   ASSERT ((read_bytes + zero_bytes) % PGSIZE == 0);
   ASSERT (pg_ofs (upage) == 0);
   ASSERT (ofs % PGSIZE == 0);
@@ -571,7 +579,7 @@ setup_stack (void **esp)
 {
   uint8_t *kpage;
   bool success = false;
-  //printf("setup stack\n");
+  printf("setup stack\n");
   struct sup_page_table_entry *spte = allocate_page(&thread_current()->supt, PHYS_BASE - PGSIZE);
   spte->location = ON_FRAME;
   spte->writable = true; 
@@ -660,12 +668,3 @@ void check_address(void *address){
     sys_exit(-1);
   }
 }
-
-
-
-
-
-
-
-
-

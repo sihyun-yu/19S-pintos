@@ -32,6 +32,7 @@ syscall_init (void)
 static void
 syscall_handler (struct intr_frame *f) 
 {	
+	check_address(f->esp);
 	uint32_t n = *((uint32_t *)(f->esp));
 	thread_current()->esp = f->esp;
 	switch(n) {
