@@ -188,18 +188,17 @@ page_fault (struct intr_frame *f)
   }
 
   int flag = 0;
+
   if(is_user_vaddr(fault_addr) && not_present){
-    //printf("here1\n");
 
     struct hash_elem *e = hash_find(&thread_current()->supt, &(imsi.hs_elem));
     //lazy loading 
     if (e != NULL) {
-      //printf("here2\n");
       struct sup_page_table_entry *spte = hash_entry(e, struct sup_page_table_entry, hs_elem);
       if (spte != NULL) {
       //printf("here3\n");
         if (load_page(spte)) {
-          //maprintf("here4\n");
+          //printf("here4\n");
           return;
         }
       }
@@ -207,7 +206,6 @@ page_fault (struct intr_frame *f)
 
     //stack
     else if(PHYS_BASE - STACK_MAX_SIZE <= fault_addr && fault_addr < PHYS_BASE){
-            //printf("here5\n");
       if (thread_current()->esp <= fault_addr || fault_addr == f->esp - 32 || fault_addr == f->esp - 4){
             //printf("here6\n");
         if(stack_growth(&thread_current()->supt, imsi.user_vaddr)){
@@ -217,7 +215,7 @@ page_fault (struct intr_frame *f)
       }
     }    
   }
-
+  //printf("here8\n");
   sys_exit(-1);
 
   //printf("page fault user address : %p\n", pg_round_down(fault_addr));

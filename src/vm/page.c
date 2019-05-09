@@ -89,7 +89,7 @@ bool load_page(struct sup_page_table_entry *spte) {
 	} 
 
 	else if (spte->location == ON_SWAP) {
-		//printf("load with swap index = %d\n", spte->swap_index);
+		printf("load with swap index = %d\n", spte->swap_index);
 		kpage = allocate_frame(PAL_USER, spte);
 		
 		if (kpage == NULL) return false;
@@ -110,7 +110,7 @@ bool load_page(struct sup_page_table_entry *spte) {
 	}
 
 	else if (spte->location == ON_FILESYS) {
-		//printf("file load start\n");
+		printf("file load start\n");
 		//printf("spte address : %p\n", spte);
 		//printf("file position before seek : %d\n", file_tell(spte->file));
 
@@ -154,7 +154,7 @@ bool load_page(struct sup_page_table_entry *spte) {
 
 	else if (spte->location == ON_MMAP) {
 		file_seek (spte->file, spte->ofs);
-		//printf("file position after seek : %d\n", file_tell(spte->file));
+		printf("file mmap\n");
 		if (spte->zero_bytes == PGSIZE) {
 			//printf("memset\n");
 			kpage = allocate_frame(PAL_USER | PAL_ZERO, spte);
@@ -217,6 +217,7 @@ bool page_hash_less(const struct hash_elem *a, const struct hash_elem *b, void *
 
 
 bool stack_growth(struct hash *supt, void *addr){
+	printf("stack growth\n");
 	//return true; //for swap testing, can delete if we want to debug stack growth
 	struct sup_page_table_entry *spte = allocate_page(supt, addr);
 	//printf("spte address : %p\n", spte);

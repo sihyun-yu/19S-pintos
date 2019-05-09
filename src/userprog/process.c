@@ -209,6 +209,7 @@ process_exit (void)
   pd = curr->pagedir;
   if (pd != NULL) 
     {
+      //printf("delete frame by process_exit\n");m
       /* Correct ordering here is crucial.  We must set
          cur->pagedir to NULL before switching page directories,
          so that a timer interrupt can't switch back to the
