@@ -669,5 +669,23 @@ struct sup_page_table_entry* check_address(void *address){
     sys_exit(-1);
     return NULL;
   }
+
+  struct sup_page_table_entry imsi;  
+  imsi.user_vaddr = pg_round_down(address); 
+  struct hash_elem *e = hash_find(&thread_current()->supt, &(imsi.hs_elem));  
+
+  if (e != NULL) {  
+    struct sup_page_table_entry *spte = hash_entry(e, struct sup_page_table_entry, hs_elem);  
+    if (load_page(spte)) return spte;   
+  } 
+
+   if (thread_current()->esp - 32 <= address && PHYS_BASE - STACK_MAX_SIZE <=address) { 
+    if(stack_growth(&thread_current()->supt, pg_round_down(address))){  
+      struct hash_elem *e = hash_find(&thread_current()->supt, &(imsi.hs_elem));  
+      if (e != NULL) return hash_entry(e, struct sup_page_table_entry, hs_elem);  
+    } 
+  }   
   return NULL;
 }
+
+

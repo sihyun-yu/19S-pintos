@@ -170,9 +170,11 @@ page_fault (struct intr_frame *f)
   imsi.user_vaddr = pg_round_down(fault_addr);
 
 //if 문에 write 추가할지?
-  if (!not_present)
-    sys_exit(-1);
-
+  if (write) {
+    if (!not_present) {
+      sys_exit(-1);
+    }
+  }
 
   if (fault_addr == NULL) {
    // printf("reached here2");
@@ -204,7 +206,7 @@ page_fault (struct intr_frame *f)
     }
 
     //stack
-    if(PHYS_BASE - STACK_MAX_SIZE <= fault_addr && fault_addr < PHYS_BASE){
+    else if(PHYS_BASE - STACK_MAX_SIZE <= fault_addr && fault_addr < PHYS_BASE){
             //printf("here5\n");
       if (thread_current()->esp <= fault_addr || fault_addr == f->esp - 32 || fault_addr == f->esp - 4){
             //printf("here6\n");
@@ -213,9 +215,6 @@ page_fault (struct intr_frame *f)
           return;
         }
       }
-      /*if (load_page(spte)){
-        printf("reached here 4\n");
-        return;}*/
     }    
   }
 
