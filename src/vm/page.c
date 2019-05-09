@@ -212,17 +212,18 @@ bool page_hash_less(const struct hash_elem *a, const struct hash_elem *b, void *
 
 
 bool stack_growth(struct hash *supt, void *addr){
-	return true; //for swap testing, can delete if we want to debug stack growth
+	printf("reached here1\n");
+	//return true; //for swap testing, can delete if we want to debug stack growth
 	struct sup_page_table_entry *spte = allocate_page(supt, addr);
 	
 	if (spte == NULL)
 		return false;
 
 	uint8_t *kpage = allocate_frame(PAL_USER | PAL_ZERO, spte);
-	/*if (kpage == NULL){
-		free_page(spte, 0);
+	if (kpage == NULL){
+		free_page(&spte->hs_elem, 0);
 		return false;
-	} 지호야 이 부분 argument가 이상하게 가지는 거 같은데 */
+	} //지호야 이 부분 argument가 이상하게 가지는 거 같은데 */
 	//if (/*hash_find(supt, spte->hs_elem) != NULL || */!hash_insert(supt, spte->hs_elem)){
 	//if supt has the spte, return NULL. if supt doesn't have the spte, returns modified supt.
 	//	free_page(spte);

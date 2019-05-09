@@ -20,4 +20,5 @@ void free_frame(uint8_t *kpage);
 struct list_elem* find_clock_elem (void);
 void find_and_free_frame(struct sup_page_table_entry *spte);
 bool evict_frame(void);
+void free_frame_nolock (uint8_t *kpage);
 #endif /* vm/frame.h */

@@ -635,7 +635,7 @@ init_thread (struct thread *t, const char *name, int priority)
 #ifdef VM
   list_init(&t->mm_list);
   t->mm_id = 1;
-  //t->esp = 0;
+  t->esp = PHYS_BASE;
 #endif
 }
 

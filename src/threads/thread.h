@@ -137,7 +137,7 @@ struct thread
 #endif
 
     struct hash supt;
-    int *esp;
+    void *esp;
     struct list mm_list;
     int mm_id;
 

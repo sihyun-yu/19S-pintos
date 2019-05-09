@@ -195,7 +195,6 @@ void sys_exit(int status){
 int sys_write (int fd, const void *buffer, unsigned size) {
 	int val;
 	// check address
-	lock_acquire(&sys_lock);
 	if (fd == 1) {
 		putbuf(buffer, size);
 		val = size;
@@ -208,11 +207,13 @@ int sys_write (int fd, const void *buffer, unsigned size) {
 		}
 
 		else {
+			lock_acquire(&sys_lock);
 			val = file_write(file_for_write, (char *)buffer, size);
+			lock_release(&sys_lock);
+
 		}
 	}
 
-	lock_release(&sys_lock);
 	return val; 
 }
 
@@ -287,7 +288,6 @@ int sys_filesize(int fd){
 
 
 int sys_read(int fd, void *buffer, unsigned size) {
-	lock_acquire(&sys_lock);
 	int val;
 	if (fd == 0){
 		input_getc();
@@ -301,10 +301,12 @@ int sys_read(int fd, void *buffer, unsigned size) {
 			val = -1;
 		}
 		else {
+			lock_acquire(&sys_lock);
 			val = file_read(file_for_read, buffer, size);
+			lock_release(&sys_lock);
+
 		}
 	}
-	lock_release(&sys_lock);
 	return val;
 }
 void sys_seek(int fd, unsigned position) {
@@ -330,9 +332,15 @@ mapid_t sys_mmap(int fd, void *addr) {
 	struct file *file = thread_current()->fds[fd];
 	file = file_reopen(file);
 	uint32_t read_bytes = file_length(file);
-	off_t ofs = 0;
-	if (read_bytes == 0) return -1;
 	lock_release(&sys_lock);
+	off_t ofs = 0;
+
+	if(pg_ofs(addr) != 0) return -1;
+	if(addr == 0) return -1;
+	if (read_bytes == 0) {
+		//lock_release(&sys_lock);
+		return -1;
+	}
 
 	void *mm_addr = addr;
 	int size = read_bytes;
@@ -344,8 +352,8 @@ mapid_t sys_mmap(int fd, void *addr) {
       //printf("allocated with spte = %p, upage was %p\n", spte, pg_round_down(upage));
       //find_and_free_frame(spte);
 		if (spte == NULL) {
-
-			return false;
+			//lock_release(&sys_lock);
+			return -1;
 		}
 #ifdef VM
 		spte->location = ON_MMAP;
@@ -367,7 +375,7 @@ mapid_t sys_mmap(int fd, void *addr) {
 	mm->mm_addr = mm_addr;
 	mm->size = size;
 	list_push_back(&thread_current()->mm_list, &mm->mm_elem);
-
+	return mm->mm_id;
 }
 
 void sys_munmap(mapid_t mapping) {
@@ -382,7 +390,11 @@ void sys_munmap(mapid_t mapping) {
 			break;
 		}
 	}
-	if (mm == NULL) return;
+	if (mm == NULL) {
+		lock_release(&sys_lock);
+		return;
+	}
+
 	//mm is not null
 
 	while (mm->size > 0) {
@@ -426,4 +438,4 @@ void sys_munmap(mapid_t mapping) {
 //    SYS_WRITE,                  /* Write to a file. */
 //    SYS_SEEK,                   /* Change position in a file. */
 //    SYS_TELL,                   /* Report current position in a file. */
-//    SYS_CLOSE,                  /* Close a file. */ 
+//    SYS_CLOSE,                  /* Close a file. */

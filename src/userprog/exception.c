@@ -15,6 +15,9 @@
 #include "vm/swap.h"
 #define STACK_MAX_SIZE 8388608
 
+//for test stack growth
+//#define F_ADDR 0xbfffffbc
+
 #endif
 /* Number of page faults processed. */
 static long long page_fault_cnt;
@@ -145,8 +148,11 @@ page_fault (struct intr_frame *f)
      See [IA32-v2a] "MOV--Move to/from Control Registers" and
      [IA32-v3a] 5.15 "Interrupt 14--Page Fault Exception
      (#PF)". */
+  //printf("fault_addr1 : %p\n",fault_addr);
+
   asm ("movl %%cr2, %0" : "=r" (fault_addr));
 
+  //printf("fault_addr2: %p\n", fault_addr);
   /* Turn interrupts back on (they were only off so that we could
      be assured of reading CR2 before it changed). */
   intr_enable ();
@@ -161,13 +167,14 @@ page_fault (struct intr_frame *f)
   user = (f->error_code & PF_U) != 0;
   if (write) {
     if (!not_present)
+      //printf("here1\n");
       sys_exit(-1);
   }
   //printf("page fault passed 1 step\n");
 
   if (fault_addr == NULL) {
    // printf("reached here2");
-
+    //printf("here2\n");
     sys_exit(-1);
   }
 
@@ -177,40 +184,58 @@ page_fault (struct intr_frame *f)
   struct hash_elem *e = hash_find(&thread_current()->supt, &(imsi.hs_elem));
   if (e == NULL) {
     //printf("reached here3");
-
+    //printf("here3\n");
     sys_exit(-1);
   }
-
+  //printf("reached here 2\n");
   struct sup_page_table_entry *spte = hash_entry(e, struct sup_page_table_entry, hs_elem);
   if (spte == NULL) {
     //printf("reached here5");
-
+    //printf("here4\n");
     sys_exit(-1);
   }
 
-
+  //printf("reached here 3\n");
   if (user){
     thread_current()->esp = f->esp;
   }
   //printf("inode : %p at page fault\n", file_get_inode(spte->file));
-  if(is_user_vaddr(fault_addr) && not_present){
-    if (load_page(spte))
-      return;
-    if(PHYS_BASE - STACK_MAX_SIZE <= fault_addr && fault_addr < PHYS_BASE ){
-      if (thread_current()->esp <= fault_addr || fault_addr == thread_current()->esp - 32
-           || fault_addr == thread_current()->esp - 4){
-        stack_growth(&thread_current()->supt, imsi.user_vaddr);
-      }
-    }
-  }
-  /*if (!load_page(spte)) {
-    //printf("reached here4");
-    sys_exit(-1);
-  }*/
 
-  else {
-    return;
+  if(is_user_vaddr(fault_addr) && not_present){
+    //printf("reached here 4\n");
+    //printf("fault_addr : %p\n", fault_addr);
+    //printf("PHYS_BASE : %p\n", PHYS_BASE);
+    //printf("PHYS_BASE - STACK_MAX_SIZE %p\n", PHYS_BASE - STACK_MAX_SIZE);
+    //printf("esp : %p\n", f->esp);
+    //printf("F_ADDR %p\n", F_ADDR);
+    //printf("esp - F_ADDR : %p\n", f->esp - F_ADDR);
+    if(PHYS_BASE - STACK_MAX_SIZE <= fault_addr){
+      //printf("reached here 5\n");
+
+      if (thread_current()->esp <= fault_addr || fault_addr == f->esp - 32
+           || fault_addr == f->esp - 4){
+        //printf("reached here 6\n");
+        if(!stack_growth(&thread_current()->supt, imsi.user_vaddr)){
+          sys_exit(-1);
+        }
+      }
+      /*if (load_page(spte)){
+        printf("reached here 4\n");
+        return;}*/
+    }
+    
   }
+  //printf("reached here 8\n");
+  if (!load_page(spte)) {
+    //printf("reached here4");
+    //printf("reached here 7\n");
+    //printf("here6\n");
+    sys_exit(-1);
+  }
+
+  
+  return;
+  
   
   /* To implement virtual memory, delete the rest of the function
      body, and replace it with code that brings in the page to
@@ -220,9 +245,9 @@ page_fault (struct intr_frame *f)
           fault_addr,
           not_present ? "not present" : "rights violation",
           write ? "writing" : "reading",
-          user ? "user" : "kernel");*/
+          user ? "user" : "kernel");
 
 
-  //kill (f);
+  kill (f);*/
 }
 

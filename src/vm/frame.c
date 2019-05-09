@@ -180,3 +180,29 @@ bool evict_frame(void) {
 
 	return false;
 }
+
+
+
+void free_frame_nolock (uint8_t *kpage) {
+	struct list_elem *e;
+	struct frame_table_entry *fte = NULL;
+	for (e=list_begin(&frame_table); e!=list_end(&frame_table); e=list_next(e)) {
+		if (list_entry(e, struct frame_table_entry, ft_elem)->frame == kpage) {
+			fte = list_entry(e, struct frame_table_entry, ft_elem);
+			break;
+		}
+	}
+
+	if (fte == NULL) {
+		return;
+	}
+	//printf("frame free started with %p\n", fte->spte);
+
+	palloc_free_page(fte->frame);
+	list_remove(&fte->ft_elem);
+	free(fte);
+	//printf("frame free finished\n");
+
+}
+
+

@@ -214,8 +214,12 @@ process_exit (void)
   sema_down(&thread_current()->sync_lock);
 #ifdef VM
   destroy_supt (&thread_current ()->supt, NULL);
+  struct list_elem *e;
+  while(!list_empty(&curr->mm_list)) {
+    sys_munmap(list_entry(list_front(&curr->mm_list), struct mmap_entry, mm_elem)->mm_id);
+  }
 #endif
-  
+
 
   //free_all_page(curr);
 
