@@ -13,7 +13,6 @@
 #include "vm/page.h"
 #include "vm/frame.h"
 #include "vm/swap.h"
-#define STACK_MAX_SIZE 8388608
 
 //for test stack growth
 //#define F_ADDR 0xbfffffbc
@@ -50,7 +49,7 @@ exception_init (void)
   intr_register_int (3, 3, INTR_ON, kill, "#BP Breakpoint Exception");
   intr_register_int (4, 3, INTR_ON, kill, "#OF Overflow Exception");
   intr_register_int (5, 3, INTR_ON, kill,
-                     "#BR BOUND Range Exceeded Exception");
+   "#BR BOUND Range Exceeded Exception");
 
   /* These exceptions have DPL==0, preventing user processes from
      invoking them via the INT instruction.  They can still be
@@ -60,13 +59,13 @@ exception_init (void)
   intr_register_int (1, 0, INTR_ON, kill, "#DB Debug Exception");
   intr_register_int (6, 0, INTR_ON, kill, "#UD Invalid Opcode Exception");
   intr_register_int (7, 0, INTR_ON, kill,
-                     "#NM Device Not Available Exception");
+   "#NM Device Not Available Exception");
   intr_register_int (11, 0, INTR_ON, kill, "#NP Segment Not Present");
   intr_register_int (12, 0, INTR_ON, kill, "#SS Stack Fault Exception");
   intr_register_int (13, 0, INTR_ON, kill, "#GP General Protection Exception");
   intr_register_int (16, 0, INTR_ON, kill, "#MF x87 FPU Floating-Point Error");
   intr_register_int (19, 0, INTR_ON, kill,
-                     "#XF SIMD Floating-Point Exception");
+   "#XF SIMD Floating-Point Exception");
 
   /* Most exceptions can be handled with interrupts turned on.
      We need to disable interrupts for page faults because the
@@ -92,34 +91,34 @@ kill (struct intr_frame *f)
      the kernel.  Real Unix-like operating systems pass most
      exceptions back to the process via signals, but we don't
      implement them. */
-     
+
   /* The interrupt frame's code segment value tells us where the
      exception originated. */
   switch (f->cs)
-    {
+  {
     case SEL_UCSEG:
       /* User's code segment, so it's a user exception, as we
          expected.  Kill the user process.  */
-      printf ("%s: dying due to interrupt %#04x (%s).\n",
-              thread_name (), f->vec_no, intr_name (f->vec_no));
-      intr_dump_frame (f);
-      thread_exit (); 
+    printf ("%s: dying due to interrupt %#04x (%s).\n",
+      thread_name (), f->vec_no, intr_name (f->vec_no));
+    intr_dump_frame (f);
+    thread_exit (); 
 
     case SEL_KCSEG:
       /* Kernel's code segment, which indicates a kernel bug.
          Kernel code shouldn't throw exceptions.  (Page faults
          may cause kernel exceptions--but they shouldn't arrive
          here.)  Panic the kernel to make the point.  */
-      intr_dump_frame (f);
-      PANIC ("Kernel bug - unexpected interrupt in kernel"); 
+    intr_dump_frame (f);
+    PANIC ("Kernel bug - unexpected interrupt in kernel"); 
 
     default:
       /* Some other code segment?  Shouldn't happen.  Panic the
          kernel. */
-      printf ("Interrupt %#04x (%s) in unknown segment %04x\n",
-             f->vec_no, intr_name (f->vec_no), f->cs);
-      thread_exit ();
-    }
+    printf ("Interrupt %#04x (%s) in unknown segment %04x\n",
+     f->vec_no, intr_name (f->vec_no), f->cs);
+    thread_exit ();
+  }
 }
 
 /* Page fault handler.  This is a skeleton that must be filled in
@@ -157,7 +156,7 @@ page_fault (struct intr_frame *f)
      be assured of reading CR2 before it changed). */
   intr_enable ();
 
-  printf("page fault\n");
+  //printf("page fault with %p\n", fault_addr);
   /* Count page faults. */
   page_fault_cnt++;
 
@@ -172,7 +171,7 @@ page_fault (struct intr_frame *f)
 
 //if 문에 write 추가할지?
   if (!not_present)
-      sys_exit(-1);
+    sys_exit(-1);
 
 
   if (fault_addr == NULL) {
@@ -188,14 +187,31 @@ page_fault (struct intr_frame *f)
 
   int flag = 0;
   if(is_user_vaddr(fault_addr) && not_present){
-    if(PHYS_BASE - STACK_MAX_SIZE <= fault_addr){
+    //printf("here1\n");
 
-      if (thread_current()->esp <= fault_addr || fault_addr == f->esp - 32 || fault_addr == f->esp - 4){
-        if(!stack_growth(&thread_current()->supt, imsi.user_vaddr)){
-          sys_exit(-1);
+    struct hash_elem *e = hash_find(&thread_current()->supt, &(imsi.hs_elem));
+    //lazy loading 
+    if (e != NULL) {
+      //printf("here2\n");
+      struct sup_page_table_entry *spte = hash_entry(e, struct sup_page_table_entry, hs_elem);
+      if (spte != NULL) {
+      //printf("here3\n");
+        if (load_page(spte)) {
+          //maprintf("here4\n");
           return;
         }
-        flag = 1;
+      }
+    }
+
+    //stack
+    if(PHYS_BASE - STACK_MAX_SIZE <= fault_addr && fault_addr < PHYS_BASE){
+            //printf("here5\n");
+      if (thread_current()->esp <= fault_addr || fault_addr == f->esp - 32 || fault_addr == f->esp - 4){
+            //printf("here6\n");
+        if(stack_growth(&thread_current()->supt, imsi.user_vaddr)){
+            //printf("here7\n");
+          return;
+        }
       }
       /*if (load_page(spte)){
         printf("reached here 4\n");
@@ -203,25 +219,10 @@ page_fault (struct intr_frame *f)
     }    
   }
 
-  if(flag == 1) printf("after allocation...\n");
+  sys_exit(-1);
+
   //printf("page fault user address : %p\n", pg_round_down(fault_addr));
-  struct hash_elem *e = hash_find(&thread_current()->supt, &(imsi.hs_elem));
-  //lazy loading 
-  if (e != NULL) {
-      struct sup_page_table_entry *spte = hash_entry(e, struct sup_page_table_entry, hs_elem);
-      if (flag == 1)printf("spte : %p\n", spte);
-      if (spte == NULL) {
-        sys_exit(-1);
-        return;
-      }
-      else { 
-        if (!load_page(spte)) {
-          sys_exit(-1);
-          return;
-        }
-        return;
-      }
-  }
+
 
   //printf("reached here 8\n"); 
   //sys_exit(-1); 

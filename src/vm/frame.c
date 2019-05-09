@@ -61,7 +61,7 @@ allocate_frame (enum palloc_flags flag, struct sup_page_table_entry *spte)
 
 void free_frame(uint8_t *kpage) {
 	lock_acquire(&frame_lock);
-
+	//printf("frame free started");
 	struct list_elem *e;
 	struct frame_table_entry *fte = NULL;
 	for (e=list_begin(&frame_table); e!=list_end(&frame_table); e=list_next(e)) {

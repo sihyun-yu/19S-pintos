@@ -9,6 +9,7 @@
 #include "userprog/gdt.h"
 #include "userprog/pagedir.h"
 #include "userprog/tss.h"
+#include "userprog/exception.h"
 #include "filesys/directory.h"
 #include "filesys/file.h"
 #include "filesys/filesys.h"
@@ -579,7 +580,7 @@ setup_stack (void **esp)
 {
   uint8_t *kpage;
   bool success = false;
-  printf("setup stack\n");
+  //printf("setup stack\n");
   struct sup_page_table_entry *spte = allocate_page(&thread_current()->supt, PHYS_BASE - PGSIZE);
   spte->location = ON_FRAME;
   spte->writable = true; 
@@ -662,9 +663,11 @@ void push_stack_cmdline(char **cmdline_tokens, int cnt, void **esp){
 
 }
 
-void check_address(void *address){
+struct sup_page_table_entry* check_address(void *address){
   if (!is_user_vaddr(address)) {
     //printf("error from here\n");
     sys_exit(-1);
+    return NULL;
   }
+  return NULL;
 }

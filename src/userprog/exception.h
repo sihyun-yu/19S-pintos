@@ -1,5 +1,6 @@
 #ifndef USERPROG_EXCEPTION_H
 #define USERPROG_EXCEPTION_H
+#define STACK_MAX_SIZE 8388608
 
 /* Page fault error code bits that describe the cause of the exception.  */
 #define PF_P 0x1    /* 0: not-present page. 1: access rights violation. */

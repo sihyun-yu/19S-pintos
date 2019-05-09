@@ -219,14 +219,14 @@ bool page_hash_less(const struct hash_elem *a, const struct hash_elem *b, void *
 bool stack_growth(struct hash *supt, void *addr){
 	//return true; //for swap testing, can delete if we want to debug stack growth
 	struct sup_page_table_entry *spte = allocate_page(supt, addr);
-	printf("spte address : %p\n", spte);
+	//printf("spte address : %p\n", spte);
 	if (spte == NULL)
 		return false;
 
-    spte->location = IMSI_EXTENDED;
+    spte->location = ON_FRAME;
 
 	uint8_t *kpage = allocate_frame(PAL_USER | PAL_ZERO, spte);
-	printf("allocate succeed in stack growth\n");
+	//printf("allocate succeed in stack growth\n");
 	if (kpage == NULL){
   		struct sup_page_table_entry imsi;
 	  	imsi.user_vaddr = pg_round_down(addr);
@@ -235,6 +235,12 @@ bool stack_growth(struct hash *supt, void *addr){
 		free(spte);
 		return false;
 	}
+
+	if(pagedir_get_page(thread_current()->pagedir, spte->user_vaddr)!=NULL || !pagedir_set_page(thread_current()->pagedir, spte->user_vaddr, kpage, true))
+	{
+    	free_frame (kpage);
+        return false;
+    }
 
 	return true;
 }
