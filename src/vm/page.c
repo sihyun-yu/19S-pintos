@@ -46,7 +46,7 @@ allocate_page (struct hash *supt, void *addr)
 	if (spte == NULL) return NULL;
 
 	spte->user_vaddr = pg_round_down(addr);
-	spte->accessed = true;
+	spte->pin = true;
 	spte->swap_index = -1;
 	spte->writable = true;
 	spte->file = NULL;
@@ -89,7 +89,7 @@ bool load_page(struct sup_page_table_entry *spte) {
 	} 
 
 	else if (spte->location == ON_SWAP) {
-		printf("load with swap index = %d\n", spte->swap_index);
+		//printf("load with swap index = %d\n", spte->swap_index);
 		kpage = allocate_frame(PAL_USER, spte);
 		
 		if (kpage == NULL) return false;
@@ -103,14 +103,14 @@ bool load_page(struct sup_page_table_entry *spte) {
           free_frame (kpage);
           return false;
         }
-		spte->accessed = false;
+		spte->pin = false;
 		spte->location = ON_FRAME;
 		//printf("swap load success!\n");
 
 	}
 
 	else if (spte->location == ON_FILESYS) {
-		printf("file load start\n");
+		//printf("file load start\n");
 		//printf("spte address : %p\n", spte);
 		//printf("file position before seek : %d\n", file_tell(spte->file));
 
@@ -154,7 +154,7 @@ bool load_page(struct sup_page_table_entry *spte) {
 
 	else if (spte->location == ON_MMAP) {
 		file_seek (spte->file, spte->ofs);
-		printf("file mmap\n");
+		//printf("file mmap\n");
 		if (spte->zero_bytes == PGSIZE) {
 			//printf("memset\n");
 			kpage = allocate_frame(PAL_USER | PAL_ZERO, spte);
@@ -191,13 +191,13 @@ bool load_page(struct sup_page_table_entry *spte) {
 	}
 
 	else if (spte->location == IMSI_EXTENDED) {
-		printf("here all zero\n");
+		//printf("here all zero\n");
 		memset(kpage,0,PGSIZE);
 	}
 
 	//print_all_frame();
     //printf("totally load success!\n");
-	spte->accessed = false;
+	spte->pin = false;
 	spte->location = ON_FRAME;
 	return true;
 }
@@ -217,7 +217,7 @@ bool page_hash_less(const struct hash_elem *a, const struct hash_elem *b, void *
 
 
 bool stack_growth(struct hash *supt, void *addr){
-	printf("stack growth\n");
+	//printf("stack growth\n");
 	//return true; //for swap testing, can delete if we want to debug stack growth
 	struct sup_page_table_entry *spte = allocate_page(supt, addr);
 	//printf("spte address : %p\n", spte);

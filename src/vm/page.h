@@ -29,7 +29,7 @@ struct sup_page_table_entry
 	struct hash_elem hs_elem;
 	int swap_index;
 	bool dirty;
-	bool accessed; /*for swap eviction */
+	bool pin; /*for swap eviction */
 	enum page_location location;
 
 

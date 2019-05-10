@@ -47,14 +47,14 @@ allocate_frame (enum palloc_flags flag, struct sup_page_table_entry *spte)
 	if (fte == NULL) return NULL;
 
 	//put info into fte
-	spte->accessed = true;
+	spte->pin = true;
 	fte->frame = frame;
 	fte->owner = thread_current();
 	fte->spte = spte;
 	list_push_back(&frame_table, &fte->ft_elem);
 
-	printf("frame allocation finished, length : %d\n", list_size(&frame_table));
-	if (fte->owner == NULL) printf("??????\n");
+	//printf("frame allocation finished, length : %d\n", list_size(&frame_table));
+	//if (fte->owner == NULL) printf("??????\n");
 	lock_release(&frame_lock);
 	//printf("kpage : %p\n", frame);
 	return frame;
@@ -72,7 +72,7 @@ void free_frame(uint8_t *kpage) {
 		}
 
 		if (list_entry(e, struct frame_table_entry, ft_elem)->owner == NULL) {
-			printf("@@@@@@ while free frame\n");
+			//printf("@@@@@@ while free frame\n");
 		}
 
 	}
@@ -84,7 +84,7 @@ void free_frame(uint8_t *kpage) {
 	palloc_free_page(fte->frame);
 	list_remove(&fte->ft_elem);
 	free(fte);
-	printf("frame free finished, length : %d\n", list_size(&frame_table));
+	//printf("frame free finished, length : %d\n", list_size(&frame_table));
 
 	lock_release(&frame_lock);
 }
@@ -135,7 +135,7 @@ struct list_elem* find_clock_elem (void) {
 bool evict_frame(void) {
 	/*Determine the algoritm to be evicted*/
 	/*For simplicity, we used FIFO*/
-	printf("Evict started\n");
+	//printf("Evict started\n");
 	struct list_elem *e;
 	struct frame_table_entry *evict_frame_entry = NULL;
 
@@ -149,13 +149,13 @@ bool evict_frame(void) {
 		cnt++;
 		//e = find_clock_elem();
 		evict_frame_entry = list_entry(e, struct frame_table_entry, ft_elem);	  
-		if(evict_frame_entry->owner == NULL) printf("!!!!!!!!\n");  
-		if (evict_frame_entry->spte->accessed == false && pagedir_is_accessed(thread_current()->pagedir, evict_frame_entry->spte->user_vaddr)) {
+		//if(evict_frame_entry->owner == NULL) printf("!!!!!!!!\n");  
+		if (evict_frame_entry->spte->pin == false && pagedir_is_accessed(thread_current()->pagedir, evict_frame_entry->spte->user_vaddr)) {
 			pagedir_set_accessed(thread_current()->pagedir, evict_frame_entry->spte->user_vaddr, false);
 			continue;
 		}
 
-		else if(evict_frame_entry->spte->accessed == false ){
+		else if(evict_frame_entry->spte->pin == false ){
 
 			if(evict_frame_entry->spte->file == NULL)
 			{
@@ -176,23 +176,18 @@ bool evict_frame(void) {
 	}
 
 	if (flag) {
-		printf("here\n");
-		//여기서 안됨 (parallel)
-		printf("thread current accessible? %p\n", evict_frame_entry->owner);
-
-
 		if (evict_frame_entry->owner->pagedir != NULL) 
 	 	{
 	 		pagedir_clear_page(evict_frame_entry->owner->pagedir, evict_frame_entry->spte->user_vaddr);
-		 	printf("clear page clear\n");
+		 	//printf("clear page clear\n");
 	 	}
-	 	printf("clear page access\n");
+	 	//printf("clear page access\n");
 		palloc_free_page(evict_frame_entry->frame);
-		printf("Palloc success\n");
+		//printf("Palloc success\n");
 		list_remove(&evict_frame_entry->ft_elem);
-		printf("List remove\n");
+		//printf("List remove\n");
 		free(evict_frame_entry);
-		printf("Evict finished\n");
+		//printf("Evict finished\n");
 		return true;
 	}
 
