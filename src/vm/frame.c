@@ -72,6 +72,7 @@ void free_frame(uint8_t *kpage) {
 	}
 
 	if (fte == NULL) {
+		lock_release(&frame_lock);
 		return;
 	}
 	//printf("frame free started with %p\n", fte->spte);
@@ -115,7 +116,7 @@ struct list_elem* find_clock_elem (void) {
 		clock_elem = list_begin(&frame_table);
 	}
 
-	else if (clock_elem == list_end(&frame_table)) {
+	else if (clock_elem->next == list_end(&frame_table)) {
 		clock_elem = list_begin(&frame_table);
 	}
 
@@ -134,6 +135,7 @@ bool evict_frame(void) {
 	struct frame_table_entry *evict_frame_entry = NULL;
 
 	int cnt = 0;
+	int flag = 0;
 	int n, i;
 	n = list_size(&frame_table);
 	//printf("length : %d\n", list_size(&frame_table));
@@ -141,47 +143,39 @@ bool evict_frame(void) {
 		e=find_clock_elem();
 		cnt++;
 		//e = find_clock_elem();
-		evict_frame_entry = list_entry(e, struct frame_table_entry, ft_elem);	    
+		evict_frame_entry = list_entry(e, struct frame_table_entry, ft_elem);	  
+		//if(evict_frame_entry->owner == NULL) printf("!!!!!!!!\n");  
 		if (evict_frame_entry->spte->accessed == false && pagedir_is_accessed(thread_current()->pagedir, evict_frame_entry->spte->user_vaddr)) {
 			pagedir_set_accessed(thread_current()->pagedir, evict_frame_entry->spte->user_vaddr, false);
 			continue;
 		}
 
 		else if(evict_frame_entry->spte->accessed == false ){
-
-			if(evict_frame_entry->spte->file == NULL)
-			{
-				evict_frame_entry->spte->location = ON_SWAP;
-				evict_frame_entry->spte->swap_index = swap_out(evict_frame_entry->frame);	        
-			}
-			else if (evict_frame_entry->spte->writable) 
-			{
-				evict_frame_entry->spte->location = ON_SWAP;
-				evict_frame_entry->spte->swap_index = swap_out(evict_frame_entry->frame);	        				
-			}
-			else {
-				evict_frame_entry->spte->location = ON_FILESYS;
-			}
+			evict_frame_entry->spte->location = ON_SWAP;
+			evict_frame_entry->spte->swap_index = swap_out(evict_frame_entry->frame);	        
+			flag = 1;
 		break;
 		}
 	}
 
-	if (evict_frame_entry != NULL) {
+	if (flag) {
 		if (evict_frame_entry->owner->pagedir != NULL) 
 	 	{
 	 		pagedir_clear_page(evict_frame_entry->owner->pagedir, evict_frame_entry->spte->user_vaddr);
+		 	//printf("clear page clear\n");
 	 	}
+	 	//printf("clear page access\n");
 		palloc_free_page(evict_frame_entry->frame);
+		//printf("Palloc success\n");
 		list_remove(&evict_frame_entry->ft_elem);
+		//printf("List remove\n");
 		free(evict_frame_entry);
-		//printf("Evict finished");
+		//printf("Evict finished\n");
 		return true;
 	}
 
 	return false;
 }
-
-
 
 void free_frame_nolock (uint8_t *kpage) {
 	struct list_elem *e;
