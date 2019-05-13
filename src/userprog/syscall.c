@@ -403,7 +403,8 @@ void sys_munmap(mapid_t mapping) {
 
 	//mm is not null
 
-	while (mm->size > 0) {
+	int i = mm->size;
+	for (i=mm->size; i>0; i -= PGSIZE) {
 		struct sup_page_table_entry imsi;
 		imsi.user_vaddr = pg_round_down(mm->mm_addr);
 		struct hash_elem *e = hash_find(&thread_current()->supt, &(imsi.hs_elem));
@@ -411,20 +412,19 @@ void sys_munmap(mapid_t mapping) {
 
 		if(spte->location == ON_FRAME) {
 			if(pagedir_is_dirty(thread_current()->pagedir, spte->user_vaddr)) {
-				file_write_at(mm->file, spte->user_vaddr, spte->read_bytes, ofs);
+				file_seek(mm->file, ofs);
+				file_write(mm->file, spte->user_vaddr, spte->read_bytes);
 			}
-			find_and_free_frame(spte);
 			pagedir_clear_page(thread_current()->pagedir, spte->user_vaddr);
+			find_and_free_frame(spte);
+
 		}
 
 		hash_delete(&thread_current()->supt, &spte->hs_elem);
 		free(spte);
 
-		if(mm->size <= PGSIZE) break;
-
 		ofs+= PGSIZE;
 		mm->mm_addr += PGSIZE;
-		mm->size -= PGSIZE;
 	}
 
 	file_close(mm->file);
