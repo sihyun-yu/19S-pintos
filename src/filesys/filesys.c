@@ -7,6 +7,7 @@
 #include "filesys/inode.h"
 #include "filesys/directory.h"
 #include "devices/disk.h"
+#include "filesys/cache.h"
 
 /* The disk that contains the file system. */
 struct disk *filesys_disk;
@@ -24,6 +25,7 @@ filesys_init (bool format)
 
   inode_init ();
   free_map_init ();
+  cache_init();
 
   if (format) 
     do_format ();
@@ -37,6 +39,7 @@ void
 filesys_done (void) 
 {
   free_map_close ();
+  cache_close();
 }
 
 /* Creates a file named NAME with the given INITIAL_SIZE.
