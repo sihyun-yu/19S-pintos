@@ -41,10 +41,10 @@ static disk_sector_t convert_sector_from_index(off_t index, const struct inode_d
   /*If not, double indirect block */
   else {
 
-    off_t first_index  = (index - DIRECT_BLOCK_CNT) / DOUBLE_INDIRECT_CNT;
-    off_t second_index = (index - DIRECT_BLOCK_CNT) % DOUBLE_INDIRECT_CNT;
-    
     struct indirect_blocks *indirect_idisk;
+
+    off_t first_index  = (index - DIRECT_BLOCK_CNT) / DOUBLE_INDIRECT_CNT;
+    off_t second_index = (index - DIRECT_BLOCK_CNT) % DOUBLE_INDIRECT_CNT;    
 
     /*To get the second sector number, malloc indirect_idisk for a while*/
 
@@ -101,6 +101,9 @@ static bool inode_allocate (struct inode_disk* inode_disk) {
   size_t length = inode_disk->length;
   off_t sector_cnt = bytes_to_sectors(length);
 
+  char for_init[DISK_SECTOR_SIZE];
+  memset(for_init, 0, DISK_SECTOR_SIZE);
+
   int i;
   int imsi = 0;
 
@@ -108,7 +111,10 @@ static bool inode_allocate (struct inode_disk* inode_disk) {
   if (sector_cnt > 0) {
     imsi = sector_cnt > DIRECT_BLOCK_CNT ? DIRECT_BLOCK_CNT : sector_cnt;
     for (i=0; i<imsi; i++) {
-      free_map_allocate (1, &inode_disk->direct_block[i]);
+      if (inode_disk->direct_block[i] == 0) {
+        free_map_allocate (1, &inode_disk->direct_block[i]);
+        cache_write (inode_disk->direct_block[i], for_init);
+      }
     }
   }
 
@@ -123,15 +129,19 @@ static bool inode_allocate (struct inode_disk* inode_disk) {
     int second_index = 0;
 
     /*First, allocate the base block*/
-    free_map_allocate(1, &inode_disk->double_indirect_block);
+    if (inode_disk->double_indirect_block == 0) {
+      free_map_allocate(1, &inode_disk->double_indirect_block);
+      cache_write (inode_disk->double_indirect_block, for_init);
+    }
 
     /* Then, allocate the first level block */
     struct indirect_blocks* indirect_idisk_first = calloc(1, sizeof(struct indirect_blocks));
     struct indirect_blocks* indirect_idisk_second = calloc(1, sizeof(struct indirect_blocks));
 
+    //printf("imsi : %d\n", imsi);
     /* Finally, allocate the second level block */
     for (i=0; i<imsi; i++) {
-
+      //printf("%d %d \n", first_index, second_index);
       /* If allocation at first level sector finished */
       if (second_index == DOUBLE_INDIRECT_CNT) {
         second_index = 0;
@@ -144,12 +154,18 @@ static bool inode_allocate (struct inode_disk* inode_disk) {
 
       /* Allocate new sector at first level*/
       if (second_index == 0) {
-        free_map_allocate(1, &indirect_idisk_first->sector_block[first_index]); 
-        //printf("first index : %d\n", indirect_idisk_first->sector_block[first_index]);
+        if (indirect_idisk_first->sector_block[first_index] == 0) {
+          free_map_allocate(1, &indirect_idisk_first->sector_block[first_index]); 
+          cache_write(indirect_idisk_first->sector_block[first_index], for_init);
+          //printf("first index : %d\n", indirect_idisk_first->sector_block[first_index]);
+        }
       }
 
       /* Allocate at second level */
-      free_map_allocate(1, &indirect_idisk_second->sector_block[second_index]);
+      if(indirect_idisk_second->sector_block[second_index] == 0) {
+        free_map_allocate(1, &indirect_idisk_second->sector_block[second_index]);
+        cache_write(indirect_idisk_second->sector_block[second_index], for_init);
+      }
       //printf("second index : %d\n", indirect_idisk_second->sector_block[second_index]);
 
       second_index++;
