@@ -107,7 +107,9 @@ static bool inode_allocate (struct inode_disk* inode_disk) {
   int i;
   int imsi = 0;
 
-  /*first, allocate direct blocks*/
+  /*first, allocate direct blocks
+    need to check if already allocated
+    (if (inode_disk->direct_block[i] == 0)) */
   if (sector_cnt > 0) {
     imsi = sector_cnt > DIRECT_BLOCK_CNT ? DIRECT_BLOCK_CNT : sector_cnt;
     for (i=0; i<imsi; i++) {
@@ -121,12 +123,29 @@ static bool inode_allocate (struct inode_disk* inode_disk) {
   sector_cnt -= imsi;
 
   if (sector_cnt == 0) return true;
+
   /*Then, allocate second indirect blocks*/
   if (sector_cnt > 0) {
     imsi = sector_cnt > DOUBLE_INDIRECT_CNT * DOUBLE_INDIRECT_CNT ? DOUBLE_INDIRECT_CNT * DOUBLE_INDIRECT_CNT  : sector_cnt;
     
     int first_index = 0;
     int second_index = 0;
+    struct indirect_blocks* indirect_idisk_first = calloc(1, sizeof(struct indirect_blocks));
+    struct indirect_blocks* indirect_idisk_second = calloc(1, sizeof(struct indirect_blocks));
+
+    /*Load previous allocations*/
+
+    if (inode_disk->double_indirect_block != 0) {
+      cache_read(inode_disk->double_indirect_block, indirect_idisk_first);
+    }
+
+    if (indirect_idisk_first->sector_block[first_index] != 0) {
+      cache_read(indirect_idisk_first->sector_block[first_index], indirect_idisk_second);
+    }
+
+    /* Now, preivous load is done. 
+       Need to do new allocation. */
+
 
     /*First, allocate the base block*/
     if (inode_disk->double_indirect_block == 0) {
@@ -134,12 +153,7 @@ static bool inode_allocate (struct inode_disk* inode_disk) {
       cache_write (inode_disk->double_indirect_block, for_init);
     }
 
-    /* Then, allocate the first level block */
-    struct indirect_blocks* indirect_idisk_first = calloc(1, sizeof(struct indirect_blocks));
-    struct indirect_blocks* indirect_idisk_second = calloc(1, sizeof(struct indirect_blocks));
-
-    //printf("imsi : %d\n", imsi);
-    /* Finally, allocate the second level block */
+    /* Finally, allocate the second level block like recursive steps*/
     for (i=0; i<imsi; i++) {
       //printf("%d %d \n", first_index, second_index);
       /* If allocation at first level sector finished */
