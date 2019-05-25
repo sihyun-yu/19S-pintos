@@ -94,6 +94,7 @@ byte_to_sector (const struct inode *inode, off_t pos)
 }
 
 
+
 static bool inode_allocate (struct inode_disk* inode_disk) {
   size_t length = inode_disk->length;
   off_t sector_cnt = bytes_to_sectors(length);
@@ -199,7 +200,7 @@ static bool inode_disk_release(struct inode *inode) {
 
       /* If allocation at first level sector finished */
       if (second_index == DOUBLE_INDIRECT_CNT) {
-        free_map_release(1, &indirect_idisk_first->sector_block[first_index]); 
+        free_map_release(indirect_idisk_first->sector_block[first_index], 1); 
         memset(indirect_idisk_second, 0, DISK_SECTOR_SIZE);
         first_index++;
         second_index = 0;
@@ -211,11 +212,11 @@ static bool inode_disk_release(struct inode *inode) {
       }
 
       /* Allocate at second level */
-      free_map_release(&indirect_idisk_second->sector_block[second_index], 1);
+      free_map_release(indirect_idisk_second->sector_block[second_index], 1);
       second_index++;
     }
   
-    free_map_release(&indirect_idisk_first->sector_block[first_index], 1);
+    free_map_release(indirect_idisk_first->sector_block[first_index], 1);
     free(indirect_idisk_first);
     free(indirect_idisk_second);
     sector_cnt -= imsi;
@@ -272,21 +273,6 @@ inode_create (disk_sector_t sector, off_t length)
     }
   return success;
 }
-/*
-struct inode_disk
-  {
-    disk_sector_t direct_block[DIRECT_BLOCK_CNT];    
-    disk_sector_t double_indirect_block;
-
-    off_t length;                       
-    unsigned magic;                     
-*/
-
-/*
-struct indirect_blocks {
-  disk_sector_t sector_block[DOUBLE_INDIRECT_CNT];
-};
-*/
 
 /* Reads an inode from SECTOR
    and returns a `struct inode' that contains it.
@@ -436,6 +422,7 @@ inode_read_at (struct inode *inode, void *buffer_, off_t size, off_t offset)
    less than SIZE if end of file is reached or an error occurs.
    (Normally a write at end of file would extend the inode, but
    growth is not yet implemented.) */
+
 off_t
 inode_write_at (struct inode *inode, const void *buffer_, off_t size,
                 off_t offset) 
@@ -446,6 +433,20 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
 
   if (inode->deny_write_cnt)
     return 0;
+
+if (byte_to_sector(inode, size + offset - 1) == -1) {
+  /* Then, need to extend the inode. */
+  inode->data.length = size + offset;
+  bool success = inode_allocate(&inode->data);
+
+  if (success == true) {
+    cache_write(inode->sector, &inode->data);
+  } 
+  else {
+    inode->data.length = offset;
+    return 0;
+  }
+}
 
   while (size > 0) 
     {
