@@ -7,6 +7,7 @@
 #include "filesys/free-map.h"
 #include "threads/malloc.h"
 #include "filesys/cache.h"
+#include <stdio.h>
 
 /* Identifies an inode. */
 #define INODE_MAGIC 0x494e4f44
@@ -96,6 +97,7 @@ byte_to_sector (const struct inode *inode, off_t pos)
 
 
 static bool inode_allocate (struct inode_disk* inode_disk) {
+
   size_t length = inode_disk->length;
   off_t sector_cnt = bytes_to_sectors(length);
 
@@ -109,12 +111,13 @@ static bool inode_allocate (struct inode_disk* inode_disk) {
       free_map_allocate (1, &inode_disk->direct_block[i]);
     }
   }
+
   sector_cnt -= imsi;
 
   if (sector_cnt == 0) return true;
   /*Then, allocate second indirect blocks*/
   if (sector_cnt > 0) {
-    imsi = sector_cnt > DOUBLE_INDIRECT_CNT * DOUBLE_INDIRECT_CNT ? DOUBLE_INDIRECT_CNT : sector_cnt;
+    imsi = sector_cnt > DOUBLE_INDIRECT_CNT * DOUBLE_INDIRECT_CNT ? DOUBLE_INDIRECT_CNT * DOUBLE_INDIRECT_CNT  : sector_cnt;
     
     int first_index = 0;
     int second_index = 0;
@@ -142,14 +145,20 @@ static bool inode_allocate (struct inode_disk* inode_disk) {
       /* Allocate new sector at first level*/
       if (second_index == 0) {
         free_map_allocate(1, &indirect_idisk_first->sector_block[first_index]); 
+        //printf("first index : %d\n", indirect_idisk_first->sector_block[first_index]);
       }
 
       /* Allocate at second level */
       free_map_allocate(1, &indirect_idisk_second->sector_block[second_index]);
+      //printf("second index : %d\n", indirect_idisk_second->sector_block[second_index]);
+
       second_index++;
     }
     /* write to disk (or cache) for the last */
-    cache_write(indirect_idisk_first->sector_block[first_index], indirect_idisk_second);
+    if (second_index != 0) {
+      cache_write(indirect_idisk_first->sector_block[first_index], indirect_idisk_second);
+    }
+
     cache_write(inode_disk->double_indirect_block, indirect_idisk_first);
 
     /*Now, free that we allocated */
@@ -185,7 +194,7 @@ static bool inode_disk_release(struct inode *inode) {
 
   /*Then, allocate second indirect blocks*/
   if (sector_cnt > 0) {
-    imsi = sector_cnt > DOUBLE_INDIRECT_CNT * DOUBLE_INDIRECT_CNT ? DOUBLE_INDIRECT_CNT : sector_cnt;
+    imsi = sector_cnt > DOUBLE_INDIRECT_CNT * DOUBLE_INDIRECT_CNT ? DOUBLE_INDIRECT_CNT * DOUBLE_INDIRECT_CNT : sector_cnt;
     
     int first_index = 0;
     int second_index = 0;
@@ -215,8 +224,13 @@ static bool inode_disk_release(struct inode *inode) {
       free_map_release(indirect_idisk_second->sector_block[second_index], 1);
       second_index++;
     }
-  
-    free_map_release(indirect_idisk_first->sector_block[first_index], 1);
+
+    if (second_index != 0) { 
+      free_map_release(indirect_idisk_first->sector_block[first_index], 1);
+    }
+
+    free_map_release(inode->data.double_indirect_block, 1);
+
     free(indirect_idisk_first);
     free(indirect_idisk_second);
     sector_cnt -= imsi;
@@ -434,7 +448,7 @@ inode_write_at (struct inode *inode, const void *buffer_, off_t size,
   if (inode->deny_write_cnt)
     return 0;
 
-if (byte_to_sector(inode, size + offset - 1) == -1) {
+if (byte_to_sector(inode, size + offset - 1) == (unsigned int) -1) {
   /* Then, need to extend the inode. */
   inode->data.length = size + offset;
   bool success = inode_allocate(&inode->data);
