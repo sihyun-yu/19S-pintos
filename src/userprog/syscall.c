@@ -499,7 +499,7 @@ int sys_isdir (int fd) {
 
 int sys_inumber (int fd) {
 	struct file *file = thread_current()->fds[fd];
-	inode_number(file_get_inode(file));
+	return inode_number(file_get_inode(file));
 }
 //	  SYS_HALT,                   /* Halt the operating system. */
 //    SYS_EXIT,                   /* Terminate this process. */
