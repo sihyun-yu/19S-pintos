@@ -1,0 +1,36 @@
+Copying tests/filesys/extended/dir-rm-tree into /tmp/jXbXbnZMNl.dsk...
+Copying tests/filesys/extended/tar into /tmp/jXbXbnZMNl.dsk...
+Writing command line to /tmp/L2FabbvMgY.dsk...
+qemu -hda /tmp/L2FabbvMgY.dsk -hdb tmp.dsk -hdc /tmp/jXbXbnZMNl.dsk -hdd /tmp/NUqdEZlP86.dsk -m 4 -net none -nographic -monitor null
+Kernel command line: -q -f put dir-rm-tree put tar run dir-rm-tree
+Pintos booting with 4,096 kB RAM...
+373 pages available in kernel pool.
+373 pages available in user pool.
+Calibrating timer...  104,755,200 loops/s.
+hd0:0: detected 153 sector (76 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
+hd1:0: detected 217 sector (108 kB) disk, model "QEMU HARDDISK", serial "QM00003"
+hd1:1: detected 8,064 sector (3 MB) disk, model "QEMU HARDDISK", serial "QM00004"
+Formatting file system...done.
+Boot complete.
+Putting 'dir-rm-tree' into the file system...
+Putting 'tar' into the file system...
+Executing 'dir-rm-tree':
+(dir-rm-tree) begin
+(dir-rm-tree) creating /0/0/0/0 through /3/2/2/3...
+(dir-rm-tree) open "/0/2/0/3"
+(dir-rm-tree) close "/0/2/0/3"
+(dir-rm-tree) removing /0/0/0/0 through /3/2/2/3...
+(dir-rm-tree) remove "/0/0/0": FAILED
+dir-rm-tree: exit(1)
+Execution of 'dir-rm-tree' complete.
+Timer: 247 ticks
+Thread: 30 idle ticks, 123 kernel ticks, 94 user ticks
+hd0:0: 0 reads, 0 writes
+hd0:1: 51 reads, 597 writes
+hd1:0: 217 reads, 0 writes
+hd1:1: 0 reads, 0 writes
+Console: 1156 characters output
+Keyboard: 0 keys pressed
+Exception: 5 page faults
+Powering off...

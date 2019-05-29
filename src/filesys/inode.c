@@ -11,7 +11,7 @@
 
 /* Identifies an inode. */
 #define INODE_MAGIC 0x494e4f44
-#define DIRECT_BLOCK_CNT 125
+#define DIRECT_BLOCK_CNT 124
 #define DOUBLE_INDIRECT_CNT 128
 
 /* On-disk inode.
@@ -20,7 +20,7 @@ struct inode_disk
   {
     disk_sector_t direct_block[DIRECT_BLOCK_CNT];    /* Direct Block sector */
     disk_sector_t double_indirect_block;
-
+    bool is_dir;
     off_t length;                       /* File size in bytes. */
     unsigned magic;                     /* Magic number. */
   };

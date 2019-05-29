@@ -1,0 +1,35 @@
+Copying tests/userprog/args-dbl-space into /tmp/or3GTJS6JR.dsk...
+Writing command line to /tmp/FrFRgpSAoc.dsk...
+qemu -hda /tmp/FrFRgpSAoc.dsk -hdb /tmp/6yGTNCHCK6.dsk -hdc /tmp/or3GTJS6JR.dsk -hdd /tmp/Ie_TBpzM0K.dsk -m 4 -net none -nographic -monitor null
+Kernel command line: -q -f put args-dbl-space run 'args-dbl-space two  spaces!'
+Pintos booting with 4,096 kB RAM...
+373 pages available in kernel pool.
+373 pages available in user pool.
+Calibrating timer...  104,755,200 loops/s.
+hd0:0: detected 153 sector (76 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
+hd1:0: detected 96 sector (48 kB) disk, model "QEMU HARDDISK", serial "QM00003"
+hd1:1: detected 8,064 sector (3 MB) disk, model "QEMU HARDDISK", serial "QM00004"
+Formatting file system...done.
+Boot complete.
+Putting 'args-dbl-space' into the file system...
+Executing 'args-dbl-space two  spaces!':
+(args) begin
+(args) argc = 3
+(args) argv[0] = 'args-dbl-space'
+(args) argv[1] = 'two'
+(args) argv[2] = 'spaces!'
+(args) argv[3] = null
+(args) end
+args-dbl-space: exit(0)
+Execution of 'args-dbl-space two  spaces!' complete.
+Timer: 95 ticks
+Thread: 30 idle ticks, 59 kernel ticks, 6 user ticks
+hd0:0: 0 reads, 0 writes
+hd0:1: 29 reads, 197 writes
+hd1:0: 96 reads, 0 writes
+hd1:1: 0 reads, 0 writes
+Console: 1086 characters output
+Keyboard: 0 keys pressed
+Exception: 5 page faults
+Powering off...

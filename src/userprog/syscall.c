@@ -19,7 +19,7 @@
 #include "lib/kernel/list.h"
 #include "vm/frame.h"
 #include "vm/page.h"
-
+#include "filesys/directory.h"
 static void syscall_handler (struct intr_frame *);
 
 void
@@ -176,6 +176,46 @@ syscall_handler (struct intr_frame *f)
 			mapid_t mapping = (mapid_t) *((uint32_t *)(f->esp+4));
 			sys_munmap(mapping);
 			break;
+		}
+
+		case SYS_CHDIR:
+		{
+			check_address(f->esp+4);
+			const char *dir = (const char*) *((uint32_t *)(f->esp+4));
+			f->eax = (bool) sys_chdir(dir);
+			break;
+		}
+
+		case SYS_MKDIR:
+		{
+			check_address(f->esp+4);
+			const char *dir = (const char*) *((uint32_t *)(f->esp+4));
+			f->eax = (bool) sys_mkdir(dir);
+			break;
+		}
+
+		case SYS_READDIR:
+		{
+			check_address(f->esp+4);
+			check_address(f->esp+8);
+			int fd = (int) *((uint32_t *)(f->esp+4));
+			char *name = (char *) *((uint32_t *)(f->esp+4));
+			f->eax = (bool) sys_readdir(fd, name);
+		}
+
+		case SYS_ISDIR:
+		{
+			check_address(f->esp+4);
+			int fd = (int) *((uint32_t *)(f->esp+4));
+			f->eax = (bool) sys_isdir(fd);
+			break;
+		}
+
+		case SYS_INUMBER:
+		{
+			check_address(f->esp+4);
+			int fd = (int) *((uint32_t *)(f->esp+4));
+			f->eax = sys_inumber(fd);
 		}
 
 	}
@@ -432,6 +472,25 @@ void sys_munmap(mapid_t mapping) {
 	lock_release(&sys_lock);
 }
 
+int sys_chdir (const char *dir) {
+	return 0;
+}
+
+int sys_mkdir (const char *dir) {
+	return 0;
+}
+
+int sys_readdir (int fd, char *name) {
+	return 0;
+}
+
+int sys_isdir (int fd) {
+	return 0;
+}
+
+int sys_inumber (int fd) {
+	return 0;
+}
 //	  SYS_HALT,                   /* Halt the operating system. */
 //    SYS_EXIT,                   /* Terminate this process. */
 //    SYS_EXEC,                   /* Start another process. */

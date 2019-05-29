@@ -117,6 +117,8 @@ struct thread
     int nice;
     int recent_cpu;
 
+    struct dir *dir;
+
 
 
 #ifdef USERPROG

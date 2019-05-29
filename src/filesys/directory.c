@@ -5,6 +5,9 @@
 #include "filesys/filesys.h"
 #include "filesys/inode.h"
 #include "threads/malloc.h"
+#include "threads/thread.h"
+#include "threads/palloc.h"
+
 
 /* A directory. */
 struct dir 
@@ -234,3 +237,55 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1])
     }
   return false;
 }
+
+struct inode *parent_dir_inode(struct dir *dir){
+  return NULL;
+}
+
+struct dir* dir_from_path(char *path){
+  char *token;
+  char *next_ptr;
+  int cnt = 1;
+
+
+  if(path[0] == '/'){ // absolute path
+    dir_close(thread_current()->dir);
+    struct dir *dir = dir_open_root();
+    thread_current()->dir = dir;
+    //path가 가리키는 부분을 / 이후로 만들어야 함.
+  }
+  else{               // relative path
+    struct dir *dir = thread_current()->dir;
+  }
+
+  token = strtok_r(path, "/", &next_ptr);
+  char **dir_tokens = (char**) palloc_get_page(0);
+  dir_tokens[0] = token;
+
+  while(token){
+    if (strcmp(token, "..") == 0){      //goto parent directory
+      dir_close(thread_current()->dir); //dir_close 짤 때 root dir인지 확인하기
+      dir_open(parent_dir_inode(thread_current()->dir)); //dir_open할 때 thread_current()->dir 바꿔주기
+
+    }
+    else if (strcmp(token, ".") == 0){  //maintain current directory
+      continue;
+    }
+    else{ //name에 해당하는 dir_entry 찾아서 열어준다. dir일 때 dir에 넣어준다.
+      struct inode **inode;
+      if (dir_lookup(thread_current()->dir, token, inode)){
+      }
+
+    }
+    
+  }
+
+}
+
+char *filename_from_path(char *path){
+  return NULL;
+}
+
+
+
+
