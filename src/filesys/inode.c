@@ -290,7 +290,7 @@ inode_init (void)
    Returns true if successful.
    Returns false if memory or disk allocation fails. */
 bool
-inode_create (disk_sector_t sector, off_t length)
+inode_create (disk_sector_t sector, off_t length, bool is_dir)
 {
   struct inode_disk *inode_disk = NULL;
   bool success = false;
@@ -307,6 +307,7 @@ inode_create (disk_sector_t sector, off_t length)
       //size_t sectors = bytes_to_sectors (length);
       inode_disk->length = length;
       inode_disk->magic = INODE_MAGIC;
+      inode_disk->is_dir = is_dir;
 
       if (inode_allocate(inode_disk) == true) {
         cache_write(sector, inode_disk);
@@ -569,4 +570,12 @@ off_t
 inode_length (const struct inode *inode)
 {
   return inode->data.length;
+}
+
+bool inode_is_dir(struct inode *inode) {
+  return inode->data.is_dir;
+}
+
+disk_sector_t inode_number(struct inode *inode) {
+  return inode->sector;
 }

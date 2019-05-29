@@ -20,6 +20,7 @@
 #include "vm/frame.h"
 #include "vm/page.h"
 #include "filesys/directory.h"
+#include "filesys/inode.h"
 static void syscall_handler (struct intr_frame *);
 
 void
@@ -481,15 +482,24 @@ int sys_mkdir (const char *dir) {
 }
 
 int sys_readdir (int fd, char *name) {
-	return 0;
+	struct file *file = thread_current()->fds[fd];
 }
 
 int sys_isdir (int fd) {
-	return 0;
+
+	struct file *file = thread_current()->fds[fd];
+	if (inode_is_dir(file_get_inode(file)) == true) {
+		return 1;
+	}
+
+	else {
+		return 0;
+	}
 }
 
 int sys_inumber (int fd) {
-	return 0;
+	struct file *file = thread_current()->fds[fd];
+	inode_number(file_get_inode(file));
 }
 //	  SYS_HALT,                   /* Halt the operating system. */
 //    SYS_EXIT,                   /* Terminate this process. */
