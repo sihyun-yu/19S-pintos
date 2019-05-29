@@ -280,6 +280,8 @@ struct dir* dir_from_path(char *path){
     
   }
 
+  palloc_free_page(dir_tokens);
+
 }
 
 char *filename_from_path(char *path){
