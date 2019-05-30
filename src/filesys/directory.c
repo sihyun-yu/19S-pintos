@@ -6,8 +6,6 @@
 #include "filesys/inode.h"
 #include "threads/malloc.h"
 #include "threads/thread.h"
-#include "threads/palloc.h"
-
 
 /* A directory. */
 struct dir 
@@ -238,56 +236,91 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1])
   return false;
 }
 
-struct inode *parent_dir_inode(struct dir *dir){
-  return NULL;
-}
-
-struct dir* dir_from_path(char *path){
+struct dir* dir_from_path(char *imsi_path){
   char *token;
   char *next_ptr;
-  int cnt = 1;
-
-
+  //int cnt = 1;
+  struct dir *dir;
+  char *path;
+  int n = strlen(imsi_path);
+  memcpy (path, imsi_path, sizeof(char) * (n + 1));  
   if(path[0] == '/'){ // absolute path
     dir_close(thread_current()->dir);
-    struct dir *dir = dir_open_root();
+    dir = dir_open_root();
     thread_current()->dir = dir;
     //path가 가리키는 부분을 / 이후로 만들어야 함.
   }
   else{               // relative path
-    struct dir *dir = thread_current()->dir;
+    dir = thread_current()->dir;
   }
 
   token = strtok_r(path, "/", &next_ptr);
-  char **dir_tokens = (char**) palloc_get_page(0);
-  dir_tokens[0] = token;
+  //char **dir_tokens = (char**) palloc_get_page(0);
+  //dir_tokens[0] = token;
 
   while(token){
     if (strcmp(token, "..") == 0){      //goto parent directory
       dir_close(thread_current()->dir); //dir_close 짤 때 root dir인지 확인하기
-      dir_open(parent_dir_inode(thread_current()->dir)); //dir_open할 때 thread_current()->dir 바꿔주기
+      dir = dir_open(parent_dir_inode(thread_current()->dir)); //dir_open할 때 thread_current()->dir 바꿔주기
 
     }
     else if (strcmp(token, ".") == 0){  //maintain current directory
       continue;
     }
+    else if (token == NULL){ // dir로 아무것도 안 들어왔을 때
+      return NULL;
+    }
     else{ //name에 해당하는 dir_entry 찾아서 열어준다. dir일 때 dir에 넣어준다.
       struct inode **inode;
       if (dir_lookup(thread_current()->dir, token, inode)){
+        if (inode_is_dir(*inode)){ //찾은 애가 dir이면 원래 dir 닫아주고 새로운 dir 연다.
+          dir_close(thread_current()->dir);
+          dir = dir_open(*inode);
+        }
+        else{ //file_name일 것이다.
+          inode_close(*inode);
+          break;
+        }
       }
-
+      else{ //dir 안에 name에 해당하는 애가 없으면 return null
+        return NULL;
+      }
     }
+    token = strtok_r(NULL, "/", &next_ptr);
+    //dir_tokens[cnt++] = token
     
   }
-
-  palloc_free_page(dir_tokens);
+  return dir; //이 dir를 open한 상태로 dir를 return한다.
 
 }
 
-char *filename_from_path(char *path){
+char *filename_from_path(char *imsi_path){
+  char *token;
+  char *next_ptr;
+  //int cnt = 1;
+  char *file = NULL;
+  char *path;
+  int n = strlen(imsi_path);
+  memcpy (path, imsi_path, sizeof(char) * (n + 1));  
+
+
+  token = strtok_r(path, "/", &next_ptr);
+  //printf("string : %s with index %d\n", cmdline_tokens[0], 0);
+
+  while (token){
+    token = strtok_r(NULL, "/", &next_ptr);
+    if (token == NULL)
+      break;
+    memcpy(file, token, strlen(token)+1);
+  }
+  if(strlen(file) > 14){ // file length must be lower than 14
+    return NULL;
+  }
+  return file;
+}
+
+struct inode *parent_dir_inode(struct dir *dir){
+  
   return NULL;
 }
-
-
-
 
