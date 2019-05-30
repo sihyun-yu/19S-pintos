@@ -241,7 +241,7 @@ struct dir* dir_from_path(char *imsi_path){
   char *next_ptr;
   //int cnt = 1;
   struct dir *dir;
-  char *path;
+  char *path = NULL;
   int n = strlen(imsi_path);
   memcpy (path, imsi_path, sizeof(char) * (n + 1));  
   if(path[0] == '/'){ // absolute path
@@ -298,8 +298,10 @@ char *filename_from_path(char *imsi_path){
   char *token;
   char *next_ptr;
   //int cnt = 1;
-  char *file = NULL;
-  char *path;
+  char *file_name = NULL;
+  char *last = NULL;
+
+  char *path = NULL;
   int n = strlen(imsi_path);
   memcpy (path, imsi_path, sizeof(char) * (n + 1));  
 
@@ -311,12 +313,17 @@ char *filename_from_path(char *imsi_path){
     token = strtok_r(NULL, "/", &next_ptr);
     if (token == NULL)
       break;
-    memcpy(file, token, strlen(token)+1);
+    else {
+      last = token;
+    }
   }
-  if(strlen(file) > 14){ // file length must be lower than 14
+
+  memcpy(file_name, last, strlen(last) + 1);
+
+  if(strlen(file_name) > 14){ // file length must be lower than 14
     return NULL;
   }
-  return file;
+  return file_name;
 }
 
 struct inode *parent_dir_inode(struct dir *dir){
