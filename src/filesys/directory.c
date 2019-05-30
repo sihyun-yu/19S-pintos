@@ -196,7 +196,7 @@ dir_remove (struct dir *dir, const char *name)
   struct dir_entry e;
   struct inode *inode = NULL;
   bool success = false;
-  off_t ofs;
+  off_t ofs, offset=0;
 
   ASSERT (dir != NULL);
   ASSERT (name != NULL);
@@ -209,6 +209,20 @@ dir_remove (struct dir *dir, const char *name)
   inode = inode_open (e.inode_sector);
   if (inode == NULL)
     goto done;
+
+  bool flag = true;
+
+  /*여기가 rm-parent (확안)*/
+  while ((sizeof e) != inode_read_at (dir->inode, &e, sizeof e, offset)) {
+    if (e.in_use) {
+      flag = false;
+    }
+    offset += (sizeof e);
+  }
+
+  if (flag == true) {
+    goto done;
+  }
 
   /* Erase directory entry. */
   e.in_use = false;
