@@ -236,17 +236,21 @@ void sys_exit(int status){
 
 
 int sys_write (int fd, const void *buffer, unsigned size) {
-
-
+	//printf("write\n");
 	int val;
 	// check address
 	if (fd == 1) {
+
 		putbuf(buffer, size);
 		val = size;
 	}
 
 	else {
 		struct file *file_for_write = thread_current()->fds[fd];
+
+		if (inode_is_dir(file_get_inode(file_for_write)) == true)
+			return -1;
+
 		if (file_for_write == NULL) {
 			val = -1;
 		}
@@ -280,6 +284,7 @@ int sys_create(const char *file, unsigned initial_size)
 		sys_exit(-1);
 		return 0; 
 	}
+
 	return filesys_create(file, initial_size);
 }
 
@@ -293,6 +298,7 @@ int sys_remove (const char *file) {
 }
 
 int sys_open (const char *file) {
+	//printf("open\n");
 	if (file == NULL) return -1;
 	lock_acquire(&sys_lock);
 
@@ -334,6 +340,9 @@ int sys_open (const char *file) {
 
 int sys_filesize(int fd){
 	struct file *file_for_size = thread_current()->fds[fd];
+	if (inode_is_dir(file_get_inode(file_for_size)) == true)
+		return -1;
+
 	return file_length(file_for_size);
 }
 
@@ -350,6 +359,10 @@ int sys_read(int fd, void *buffer, unsigned size) {
 
 	else{
 		struct file *file_for_read = thread_current()->fds[fd];
+
+		if (inode_is_dir(file_get_inode(file_for_read)) == true)
+			return -1;
+
 		if (file_for_read == NULL) 
 		{
 			val = -1;
@@ -365,12 +378,17 @@ int sys_read(int fd, void *buffer, unsigned size) {
 }
 void sys_seek(int fd, unsigned position) {
 	struct file *file_for_seek = thread_current()->fds[fd];
-	return file_seek(file_for_seek, position);
+	if (inode_is_dir(file_get_inode(file_for_seek)) == true)
+		return;
 
+	file_seek(file_for_seek, position);
+	return;
 }
 
 unsigned sys_tell (int fd) {
 	struct file *file_for_tell = thread_current()->fds[fd];
+	if (inode_is_dir(file_get_inode(file_for_tell)) == true)
+		return -1;
 	return file_tell(file_for_tell);
 }
 
@@ -385,6 +403,8 @@ mapid_t sys_mmap(int fd, void *addr) {
 
 	lock_acquire(&sys_lock);
 	struct file *file = thread_current()->fds[fd];
+	if (inode_is_dir(file_get_inode(file)) == true)
+		return -1;
 	file = file_reopen(file);
 	uint32_t read_bytes = file_length(file);
 	lock_release(&sys_lock);
@@ -484,16 +504,26 @@ void sys_munmap(mapid_t mapping) {
 int sys_chdir (const char *dir) {
   lock_acquire(&sys_lock);
 
-  struct dir *next_dir = dir_from_path(dir);
+  char path[strlen(dir) + 1];
+  memset(path,0, strlen(dir)+1);
+  
+  char* name = filename_from_path(dir, path);
+  struct dir *next_dir = dir_from_path (path);
+
   if(next_dir == NULL)
   {
     lock_release(&sys_lock);
     return 0;
   }
   else {
+  	struct inode *inode = NULL;
+    dir_lookup (next_dir, name, &inode);
+    if(inode == NULL) return 0;
   	if (thread_current()->dir != NULL) {
   		dir_close(thread_current()->dir);
   	}
+
+
   	thread_current()->dir = next_dir;
   	lock_release(&sys_lock);
   	return 1;
