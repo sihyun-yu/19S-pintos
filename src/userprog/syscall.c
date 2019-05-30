@@ -285,7 +285,7 @@ int sys_create(const char *file, unsigned initial_size)
 		return 0; 
 	}
 
-	return filesys_create(file, initial_size);
+	return filesys_create(file, initial_size, false);
 }
 
 int sys_remove (const char *file) {
@@ -506,7 +506,7 @@ int sys_chdir (const char *dir) {
 
   char path[strlen(dir) + 1];
   memset(path,0, strlen(dir)+1);
-  
+
   char* name = filename_from_path(dir, path);
   struct dir *next_dir = dir_from_path (path);
 
@@ -533,7 +533,7 @@ int sys_chdir (const char *dir) {
 int sys_mkdir (const char *dir) {
   
   lock_acquire (&sys_lock);
-  bool ret = filesys_create(dir, 0);
+  bool ret = filesys_create(dir, 0, true);
   lock_release (&sys_lock);
   return (int) ret;
 }

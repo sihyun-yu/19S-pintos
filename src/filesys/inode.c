@@ -308,7 +308,7 @@ inode_create (disk_sector_t sector, off_t length, bool is_dir)
       //size_t sectors = bytes_to_sectors (length);
       inode_disk->length = length;
       inode_disk->magic = INODE_MAGIC;
-      inode_disk->is_dir;
+      inode_disk->is_dir = is_dir;
 
       if (inode_allocate(inode_disk) == true) {
         cache_write(sector, inode_disk);
