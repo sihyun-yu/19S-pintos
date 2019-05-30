@@ -309,13 +309,13 @@ char *filename_from_path(char *imsi_path){
   token = strtok_r(path, "/", &next_ptr);
   //printf("string : %s with index %d\n", cmdline_tokens[0], 0);
 
-  while (token){
-    token = strtok_r(NULL, "/", &next_ptr);
-    if (token == NULL)
+  while (token) {
+     if (token == NULL)
       break;
     else {
       last = token;
     }
+    token = strtok_r(NULL, "/", &next_ptr);
   }
 
   memcpy(file_name, last, strlen(last) + 1);
