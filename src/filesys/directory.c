@@ -40,6 +40,7 @@ dir_open (struct inode *inode)
     {
       dir->inode = inode;
       dir->pos = 0;
+      thread_current()->dir = dir;
       return dir;
     }
   else
@@ -236,7 +237,7 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1])
   return false;
 }
 
-struct dir* dir_from_path(char *imsi_path){
+struct dir* dir_from_path(const char *imsi_path){
   char *token;
   char *next_ptr;
   //int cnt = 1;
@@ -271,7 +272,7 @@ struct dir* dir_from_path(char *imsi_path){
       return NULL;
     }
     else{ //name에 해당하는 dir_entry 찾아서 열어준다. dir일 때 dir에 넣어준다.
-      struct inode **inode;
+      struct inode **inode = NULL;
       if (dir_lookup(thread_current()->dir, token, inode)){
         if (inode_is_dir(*inode)){ //찾은 애가 dir이면 원래 dir 닫아주고 새로운 dir 연다.
           dir_close(thread_current()->dir);
@@ -294,7 +295,7 @@ struct dir* dir_from_path(char *imsi_path){
 
 }
 
-char *filename_from_path(char *imsi_path){
+char *filename_from_path(const char *imsi_path){
   char *token;
   char *next_ptr;
   //int cnt = 1;
