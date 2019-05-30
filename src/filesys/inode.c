@@ -11,13 +11,14 @@
 
 /* Identifies an inode. */
 #define INODE_MAGIC 0x494e4f44
-#define DIRECT_BLOCK_CNT 124
+#define DIRECT_BLOCK_CNT 123
 #define DOUBLE_INDIRECT_CNT 128
 
 /* On-disk inode.
    Must be exactly DISK_SECTOR_SIZE bytes long. */
 struct inode_disk
   {
+    disk_sector_t parent_disk_sector;
     disk_sector_t direct_block[DIRECT_BLOCK_CNT];    /* Direct Block sector */
     disk_sector_t double_indirect_block;
     bool is_dir;
@@ -583,4 +584,14 @@ disk_sector_t inode_number(struct inode *inode) {
 
 bool inode_is_removed(struct inode *inode) {
   return inode->removed;
+}
+
+bool inode_equip_parent(disk_sector_t parent, struct inode *inode) {
+  inode->data.parent_disk_sector = parent;
+  cache_write(inode->sector, &inode->data);
+  return true;
+}
+
+disk_sector_t inode_parent_sector(struct inode* inode) {
+  return inode->data.parent_disk_sector; 
 }

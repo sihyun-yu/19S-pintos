@@ -22,4 +22,6 @@ off_t inode_length (const struct inode *);
 disk_sector_t inode_number(struct inode *inode);
 bool inode_is_dir(struct inode *inode);
 bool inode_is_removed(struct inode *inode);
+bool inode_equip_parent(disk_sector_t parent, struct inode *inode);
+disk_sector_t inode_parent_sector(struct inode* inode);
 #endif /* filesys/inode.h */

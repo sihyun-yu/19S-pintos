@@ -25,9 +25,13 @@ struct dir_entry
 /* Creates a directory with space for ENTRY_CNT entries in the
    given SECTOR.  Returns true if successful, false on failure. */
 bool
-dir_create (disk_sector_t sector, size_t entry_cnt) 
+dir_create (disk_sector_t sector, size_t entry_cnt, disk_sector_t parent_disk_sector) 
 {
-  return inode_create (sector, entry_cnt * sizeof (struct dir_entry), true);
+  bool success = inode_create (sector, entry_cnt * sizeof (struct dir_entry), true);
+  struct inode* inode = inode_open(sector);
+  inode_equip_parent(parent_disk_sector, inode);
+  inode_close(inode);
+  return success; 
 }
 
 /* Opens and returns the directory for the given INODE, of which
@@ -242,7 +246,6 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1])
 
 struct dir* dir_from_path(const char *imsi_path){
 
-  struct dir_entry dir_entry;
   char *token;
   char *next_ptr;
   struct dir *dir;
@@ -283,7 +286,15 @@ struct dir* dir_from_path(const char *imsi_path){
     struct inode *inode = NULL;
     if (strcmp(token, ".") == 0) continue;
     else if (strcmp(token, "..")) {
-
+      inode = inode_open(inode_parent_sector(dir_get_inode(dir)));
+      struct dir* next_dir = dir_open(inode);
+      if (next_dir == NULL) {
+        dir_close(dir);
+        free(path);
+        return NULL;
+      }
+      dir_close(dir);
+      dir = next_dir;
     }
     else{ 
       if (dir_lookup((const struct dir *) dir, (const char *) token, &inode)) {

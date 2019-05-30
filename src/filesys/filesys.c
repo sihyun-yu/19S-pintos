@@ -97,7 +97,7 @@ filesys_open (const char *name)
   if (dir != NULL)
     dir_lookup (dir, file_name, &inode);
   dir_close (dir);
-  
+
   free(file_name);
   return file_open (inode);
 }
@@ -126,7 +126,7 @@ do_format (void)
 {
   printf ("Formatting file system...");
   free_map_create ();
-  if (!dir_create (ROOT_DIR_SECTOR, 16))
+  if (!dir_create (ROOT_DIR_SECTOR, 16, ROOT_DIR_SECTOR))
     PANIC ("root directory creation failed");
   free_map_close ();
   printf ("done.\n");
