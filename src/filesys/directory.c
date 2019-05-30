@@ -238,79 +238,50 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1])
 }
 
 struct dir* dir_from_path(const char *imsi_path){
+
   char *token;
   char *next_ptr;
-  //int cnt = 1;
   struct dir *dir;
-  char *path = NULL;
-  int n = strlen(imsi_path);
-  memcpy (path, imsi_path, sizeof(char) * (n + 1));  
-  if(path[0] == '/'){ // absolute path
-    dir_close(thread_current()->dir);
-    dir = dir_open_root();
-    thread_current()->dir = dir;
-    //path가 가리키는 부분을 / 이후로 만들어야 함.
-  }
-  else{               // relative path
-    dir = thread_current()->dir;
-  }
+
+  unsigned int n = strlen(imsi_path);
+  char *path = malloc(n + 1);
+  memcpy (path, imsi_path, (n + 1));  
+
+  dir = dir_open_root();
+
+  if (path == NULL) return dir;
 
   token = strtok_r(path, "/", &next_ptr);
-  //char **dir_tokens = (char**) palloc_get_page(0);
-  //dir_tokens[0] = token;
 
-  while(token){
-    if (strcmp(token, "..") == 0){      //goto parent directory
-      dir_close(thread_current()->dir); //dir_close 짤 때 root dir인지 확인하기
-      dir = dir_open(parent_dir_inode(thread_current()->dir)); //dir_open할 때 thread_current()->dir 바꿔주기
-
-    }
-    else if (strcmp(token, ".") == 0){  //maintain current directory
-      continue;
-    }
-    else if (token == NULL){ // dir로 아무것도 안 들어왔을 때
-      return NULL;
-    }
-    else{ //name에 해당하는 dir_entry 찾아서 열어준다. dir일 때 dir에 넣어준다.
-      struct inode **inode = NULL;
-      if (dir_lookup(thread_current()->dir, token, inode)){
-        if (inode_is_dir(*inode)){ //찾은 애가 dir이면 원래 dir 닫아주고 새로운 dir 연다.
-          dir_close(thread_current()->dir);
-          dir = dir_open(*inode);
-        }
-        else{ //file_name일 것이다.
-          inode_close(*inode);
-          break;
-        }
-      }
-      else{ //dir 안에 name에 해당하는 애가 없으면 return null
-        return NULL;
-      }
-    }
+  while (token != NULL) {
     token = strtok_r(NULL, "/", &next_ptr);
-    //dir_tokens[cnt++] = token
-    
   }
-  return dir; //이 dir를 open한 상태로 dir를 return한다.
 
+  return dir; 
 }
 
 char *filename_from_path(const char *imsi_path){
+
   char *token;
   char *next_ptr;
   //int cnt = 1;
-  char *file_name = NULL;
+  unsigned int n = strlen(imsi_path);
+
+  char *path = malloc(n + 1);
+  char *file_name = malloc(n + 1);
   char *last = NULL;
 
-  char *path = NULL;
-  int n = strlen(imsi_path);
-  memcpy (path, imsi_path, sizeof(char) * (n + 1));  
 
+  memcpy (path, imsi_path, (n + 1));  
 
   token = strtok_r(path, "/", &next_ptr);
-  //printf("string : %s with index %d\n", cmdline_tokens[0], 0);
 
-  while (token) {
+  if (token == NULL) {
+    memcpy(file_name, imsi_path, n + 1);
+    return file_name;
+  }
+
+  while (token != NULL) {
      if (token == NULL)
       break;
     else {
@@ -319,11 +290,20 @@ char *filename_from_path(const char *imsi_path){
     token = strtok_r(NULL, "/", &next_ptr);
   }
 
+  if (last == NULL) {
+    *file_name = '\0';
+    free(path);
+    return file_name;
+  }
+
   memcpy(file_name, last, strlen(last) + 1);
 
   if(strlen(file_name) > 14){ // file length must be lower than 14
+    free(path);
     return NULL;
   }
+
+  free(path);
   return file_name;
 }
 

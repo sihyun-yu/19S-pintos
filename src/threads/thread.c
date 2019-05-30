@@ -23,6 +23,8 @@
 #include "vm/frame.h"
 #endif
 
+#include "filesys/directory.h"
+
 /* Random value for struct thread's `magic' member.
    Used to detect stack overflow.  See the big comment at the top
    of thread.h for details. */
@@ -116,7 +118,6 @@ thread_init (void)
   initial_thread->wake_up = 0; 
   list_init(&initial_thread->lock_list);
 
-
 }
 
 /* Starts preemptive thread scheduling by enabling interrupts.
@@ -205,6 +206,11 @@ thread_create (const char *name, int priority,
   /* Initialize thread. */
   init_thread (t, name, priority);
   tid = t->tid = allocate_tid ();
+
+  if(thread_current()->dir != NULL)
+    t->dir = dir_reopen(thread_current()->dir);
+  else
+    t->dir = NULL;
 
   /* Stack frame for kernel_thread(). */
   kf = alloc_frame (t, sizeof *kf);
