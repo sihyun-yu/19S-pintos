@@ -21,6 +21,7 @@
 #include "vm/page.h"
 #include "filesys/directory.h"
 #include "filesys/inode.h"
+#include "filesys/filesys.h"
 static void syscall_handler (struct intr_frame *);
 
 void
@@ -315,6 +316,12 @@ int sys_open (const char *file) {
 	for (i=3; i<200; i++) {
 		if (thread_current()->fds[i] == NULL) {
 			thread_current()->fds[i] = open_file;
+			if (inode_is_dir(file_get_inode(open_file))) {
+				thread_current()->fds_dir[i] = dir_open(inode_reopen(file_get_inode(open_file)));
+			}
+			else {
+				thread_current()->fds_dir[i] = NULL;
+			}
 			fd = i;
 			break;
 		}
@@ -370,6 +377,7 @@ unsigned sys_tell (int fd) {
 void sys_close(int fd){
 	struct file *file_for_close = thread_current()->fds[fd];
 	thread_current()->fds[fd] = NULL;
+	dir_close(thread_current()->fds_dir[fd]);
 	return file_close(file_for_close);
 }
 
@@ -474,15 +482,59 @@ void sys_munmap(mapid_t mapping) {
 }
 
 int sys_chdir (const char *dir) {
-	return 0;
+  lock_acquire(&sys_lock);
+
+  struct dir *next_dir = dir_from_path(dir);
+  if(next_dir == NULL)
+  {
+    lock_release(&sys_lock);
+    return 0;
+  }
+  else {
+  	if (thread_current()->dir != NULL) {
+  		dir_close(thread_current()->dir);
+  	}
+  	thread_current()->dir = next_dir;
+  	lock_release(&sys_lock);
+  	return 1;
+  }
 }
 
 int sys_mkdir (const char *dir) {
-	return 0;
+  
+  lock_acquire (&sys_lock);
+  bool ret = filesys_create(dir, 0);
+  lock_release (&sys_lock);
+  return (int) ret;
 }
 
 int sys_readdir (int fd, char *name) {
+	lock_acquire(&sys_lock);
 	struct file *file = thread_current()->fds[fd];
+	if (file == NULL) {
+		lock_release(&sys_lock);
+		return 0;
+	}
+	struct inode *inode = file_get_inode(file);
+	if (inode == NULL) {
+		lock_release(&sys_lock);
+		return 0;
+	}
+
+	if (inode_is_dir(inode) == false) {
+		lock_release(&sys_lock);
+		return 0;
+	}
+
+	if (thread_current()->fds_dir[fd] == NULL) {
+		lock_release(&sys_lock);
+		return 0;
+	}
+
+  	bool ret = dir_readdir(thread_current()->fds_dir[fd], name);
+
+	lock_release(&sys_lock);
+  	return (int) ret;
 }
 
 int sys_isdir (int fd) {

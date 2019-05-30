@@ -135,6 +135,7 @@ struct thread
     struct thread *parent;
     int flag;
     struct file* fds[200];
+    struct dir* fds_dir[200];
 
 #endif
 

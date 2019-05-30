@@ -8,6 +8,7 @@
 #include "filesys/directory.h"
 #include "devices/disk.h"
 #include "filesys/cache.h"
+#include "threads/malloc.h"
 
 /* The disk that contains the file system. */
 struct disk *filesys_disk;
@@ -50,8 +51,10 @@ bool
 filesys_create (const char *name, off_t initial_size) 
 {
   disk_sector_t inode_sector = 0;
-  struct dir *dir = dir_from_path (name);
-  char* file_name = filename_from_path(name);
+  char path[strlen(name) + 1];
+  memset(path,0, strlen(name)+1);
+  char* file_name = filename_from_path(name, path);
+  struct dir *dir = dir_from_path (path);
 
   if (file_name == NULL) {
     dir_close(dir);
@@ -79,14 +82,23 @@ filesys_create (const char *name, off_t initial_size)
 struct file *
 filesys_open (const char *name)
 {
-  struct dir *dir = dir_from_path (name);
+  char path[strlen(name) + 1];
+  memset(path,0, strlen(name)+1);
   struct inode *inode = NULL;
-  char *file_name = filename_from_path(name);
-
+  char *file_name = filename_from_path(name, path);
+  struct dir *dir = dir_from_path (path);
+ 
+  if (file_name == NULL) {
+    dir_close(dir);
+    free(file_name);
+    return false;
+  }
+  
   if (dir != NULL)
     dir_lookup (dir, file_name, &inode);
   dir_close (dir);
-
+  
+  free(file_name);
   return file_open (inode);
 }
 
@@ -97,8 +109,11 @@ filesys_open (const char *name)
 bool
 filesys_remove (const char *name) 
 {
-  struct dir *dir = dir_from_path (name);
-  char *file_name = filename_from_path(name);
+  char path[strlen(name) + 1];
+  memset(path,0, strlen(name)+1);
+
+  char *file_name = filename_from_path(name, path);
+  struct dir *dir = dir_from_path (path);
   bool success = dir != NULL && dir_remove (dir, file_name);
   dir_close (dir); 
 

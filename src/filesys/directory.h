@@ -28,6 +28,6 @@ bool dir_remove (struct dir *, const char *name);
 bool dir_readdir (struct dir *, char name[NAME_MAX + 1]);
 struct inode *parent_dir_inode(struct dir *dir);
 struct dir* dir_from_path(const char *imsi_path);
-char *filename_from_path(const char *imsi_path);
+char *filename_from_path(const char *imsi_path, char* path_wo_fn);
 
 #endif /* filesys/directory.h */

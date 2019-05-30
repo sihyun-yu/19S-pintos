@@ -35,12 +35,14 @@ dir_create (disk_sector_t sector, size_t entry_cnt)
 struct dir *
 dir_open (struct inode *inode) 
 {
+  //printf("dir open\n");
   struct dir *dir = calloc (1, sizeof *dir);
   if (inode != NULL && dir != NULL)
     {
       dir->inode = inode;
       dir->pos = 0;
-      thread_current()->dir = dir;
+      //thread_current()->dir = dir;
+      //printf("dir open success");
       return dir;
     }
   else
@@ -56,6 +58,7 @@ dir_open (struct inode *inode)
 struct dir *
 dir_open_root (void)
 {
+  //printf("open root \n");
   return dir_open (inode_open (ROOT_DIR_SECTOR));
 }
 
@@ -239,6 +242,7 @@ dir_readdir (struct dir *dir, char name[NAME_MAX + 1])
 
 struct dir* dir_from_path(const char *imsi_path){
 
+  struct dir_entry dir_entry;
   char *token;
   char *next_ptr;
   struct dir *dir;
@@ -247,20 +251,72 @@ struct dir* dir_from_path(const char *imsi_path){
   char *path = malloc(n + 1);
   memcpy (path, imsi_path, (n + 1));  
 
-  dir = dir_open_root();
+  /*path 잘 들어갔는지 확인*/
+  /*if (strlen(path) > 0){
+    printf("path : %s\n", path);
+  }*/
+  /*path는 잘 들어감*/
 
-  if (path == NULL) return dir;
+  /*path is relative or not?*/
+  if (path[0] == '/') {
+    //printf("here1\n");
+    dir = dir_open_root();
+  }
 
+  else {
+    if (thread_current()->dir == NULL) {
+      //printf("here2\n");
+      dir = dir_open_root();
+    }
+    else {
+      //printf("here3\n");
+      //printf("%p\n", thread_current()->dir);
+      dir = dir_reopen(thread_current()->dir);
+    }
+  }
+  //dir = dir_open_root();
+  //printf("%p\n", dir);
+  
   token = strtok_r(path, "/", &next_ptr);
 
   while (token != NULL) {
+    struct inode *inode = NULL;
+    if (strcmp(token, ".") == 0) continue;
+    else if (strcmp(token, "..")) {
+
+    }
+    else{ 
+      if (dir_lookup((const struct dir *) dir, (const char *) token, &inode)) {
+        struct dir* next_dir = dir_open(inode);
+        if (next_dir == NULL) {
+          dir_close(dir);
+          free(path);
+          return NULL;
+        }
+        else {
+          dir_close(dir);
+          dir = next_dir;
+        }
+      }
+
+      else {
+        dir_close(dir);
+        free(path);
+        return NULL;
+      }
+    }
     token = strtok_r(NULL, "/", &next_ptr);
   }
-
+  if (inode_is_removed(dir->inode)) {
+    dir_close(dir);
+    free(path);
+    return NULL;
+  }
+  free(path);
   return dir; 
 }
 
-char *filename_from_path(const char *imsi_path){
+char *filename_from_path(const char *imsi_path, char* path_wo_fn){
 
   char *token;
   char *next_ptr;
@@ -269,10 +325,14 @@ char *filename_from_path(const char *imsi_path){
 
   char *path = malloc(n + 1);
   char *file_name = malloc(n + 1);
-  char *last = NULL;
+  char *last = "";
 
+  memcpy (path, imsi_path, (n + 1)); 
 
-  memcpy (path, imsi_path, (n + 1));  
+  if (path[0] == '/') {
+    path_wo_fn[0] = '/';
+    path_wo_fn++;
+  } 
 
   token = strtok_r(path, "/", &next_ptr);
 
@@ -282,7 +342,13 @@ char *filename_from_path(const char *imsi_path){
   }
 
   while (token != NULL) {
-     if (token == NULL)
+    if (strlen(last) > 0){
+      memcpy(path_wo_fn, last, strlen(last));
+      path_wo_fn += strlen(last);
+      path_wo_fn[0] = '/';
+      path_wo_fn++;
+    }
+    if (token == NULL)
       break;
     else {
       last = token;

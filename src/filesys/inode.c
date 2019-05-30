@@ -361,6 +361,7 @@ inode_reopen (struct inode *inode)
 {
   if (inode != NULL)
     inode->open_cnt++;
+  //printf("reopen success\n");
   return inode;
 }
 
@@ -578,4 +579,8 @@ bool inode_is_dir(struct inode *inode) {
 
 disk_sector_t inode_number(struct inode *inode) {
   return inode->sector;
+}
+
+bool inode_is_removed(struct inode *inode) {
+  return inode->removed;
 }

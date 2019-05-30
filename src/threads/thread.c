@@ -643,6 +643,8 @@ init_thread (struct thread *t, const char *name, int priority)
   t->mm_id = 1;
   t->esp = PHYS_BASE;
 #endif
+
+  t->dir = NULL;
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and

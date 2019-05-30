@@ -226,7 +226,7 @@ process_exit (void)
 #ifdef VM
   destroy_supt (&thread_current ()->supt, NULL);
 #endif
-  
+  dir_close(thread_current()->dir);
 
   //free_all_page(curr);
 
@@ -350,8 +350,11 @@ load (const char *file_name, void (**eip) (void), void **esp)
       printf ("load: %s: open failed\n", file_name);
       goto done; 
     }
+  
+  if (!thread_current()->dir)
+    thread_current()->dir = dir_open_root();
 
-  /* Read and verify executable header. */
+    /* Read and verify executable header. */
   if (file_read (file, &ehdr, sizeof ehdr) != sizeof ehdr
       || memcmp (ehdr.e_ident, "\177ELF\1\1\1", 7)
       || ehdr.e_type != 2
