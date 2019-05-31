@@ -401,7 +401,7 @@ unsigned sys_tell (int fd) {
 void sys_close(int fd){
 	struct file *file_for_close = thread_current()->fds[fd];
 	thread_current()->fds[fd] = NULL;
-	dir_close(thread_current()->fds_dir[fd]);
+	if (thread_current()->fds_dir[fd] != NULL) dir_close(thread_current()->fds_dir[fd]);
 	return file_close(file_for_close);
 }
 
@@ -511,9 +511,9 @@ int sys_chdir (const char *dir) {
   lock_acquire(&sys_lock);
 
   char path[strlen(dir) + 1];
-  memset(path,0, strlen(dir)+1);
+  memcpy(path, dir, strlen(dir)+1);
 
-  char* name = filename_from_path(dir, path);
+  //sprintf("path : %s\n", path);
   struct dir *next_dir = dir_from_path (path);
 
   if(next_dir == NULL)
@@ -522,9 +522,6 @@ int sys_chdir (const char *dir) {
     return 0;
   }
   else {
-  	struct inode *inode = NULL;
-    dir_lookup (next_dir, name, &inode);
-    if(inode == NULL) return 0;
   	if (thread_current()->dir != NULL) {
   		dir_close(thread_current()->dir);
   	}
@@ -572,10 +569,7 @@ int sys_readdir (int fd, char *name) {
 		lock_release(&sys_lock);
 		return 0;
 	}
-	if (thread_current()->fds_dir[fd] != NULL)
-	  	bool ret = dir_readdir(thread_current()->fds_dir[fd], name);
-	else 
-		ret = 0;
+	bool ret = dir_readdir(thread_current()->fds_dir[fd], name);
 	lock_release(&sys_lock);
   	return (int) ret;
 }

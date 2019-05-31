@@ -132,8 +132,14 @@ dir_lookup (const struct dir *dir, const char *name,
 
   ASSERT (dir != NULL);
   ASSERT (name != NULL);
+  if (strcmp(name, ".") == 0)
+    *inode = inode_reopen (dir->inode);
 
-  if (lookup (dir, name, &e, NULL))
+  else if (strcmp(name, "..") == 0) {
+    *inode = inode_open(inode_parent_sector(dir->inode));
+  }
+
+  else if (lookup (dir, name, &e, NULL))
     *inode = inode_open (e.inode_sector);
   else
     *inode = NULL;
@@ -297,7 +303,8 @@ struct dir* dir_from_path(const char *imsi_path){
 
   while (token != NULL) {
     struct inode *inode = NULL;
-    if (strcmp(token, ".") == 0) continue;
+    if (strcmp(token, ".") == 0);
+    else if(strcmp(token,"")==0);
     else if (strcmp(token, "..") == 0) {
       inode = inode_open(inode_parent_sector(dir_get_inode(dir)));
       struct dir* next_dir = dir_open(inode);

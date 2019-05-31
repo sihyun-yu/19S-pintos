@@ -87,11 +87,11 @@ filesys_open (const char *name)
   struct inode *inode = NULL;
   char *file_name = filename_from_path(name, path);
   struct dir *dir = dir_from_path (path);
- 
+  //if () printf("file name : %s", file_name);
   if (file_name == NULL) {
     dir_close(dir);
     free(file_name);
-    return false;
+    return NULL;
   }
   
   if (dir != NULL)
