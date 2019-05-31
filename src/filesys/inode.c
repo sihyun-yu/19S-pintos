@@ -607,3 +607,4 @@ bool inode_equip_parent(disk_sector_t parent, struct inode *inode) {
 disk_sector_t inode_parent_sector(struct inode* inode) {
   return inode->data.parent_disk_sector; 
 }
+

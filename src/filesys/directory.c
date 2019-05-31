@@ -216,6 +216,7 @@ dir_remove (struct dir *dir, const char *name)
   if (inode == NULL)
     goto done;
 
+
   bool flag = true;
 
   while ((sizeof e) != inode_read_at (dir->inode, &e, sizeof e, offset)) {
@@ -223,6 +224,17 @@ dir_remove (struct dir *dir, const char *name)
       flag = false;
     }
     offset += (sizeof e);
+  }
+
+  offset = 0;
+
+  if(inode_is_dir(inode)){
+    while ((sizeof e) == inode_read_at (inode, &e, sizeof e, offset)) {
+      if (e.in_use) {
+        flag = false;
+      }
+      offset += (sizeof e);
+    }
   }
 
   if (flag == false) {
