@@ -284,7 +284,13 @@ int sys_create(const char *file, unsigned initial_size)
 		sys_exit(-1);
 		return 0; 
 	}
-
+	  void *p = palloc_get_page(0);
+	  if (p == NULL) {
+	  	return 0;
+	  }
+	  else {
+	  	palloc_free_page(p);
+	  }
 	return filesys_create(file, initial_size, false);
 }
 
@@ -531,7 +537,13 @@ int sys_chdir (const char *dir) {
 }
 
 int sys_mkdir (const char *dir) {
-  
+  void *p = palloc_get_page(0);
+  if (p == NULL) {
+  	return 0;
+  }
+  else {
+  	palloc_free_page(p);
+  }
   lock_acquire (&sys_lock);
   bool ret = filesys_create(dir, 0, true);
   lock_release (&sys_lock);
@@ -560,9 +572,10 @@ int sys_readdir (int fd, char *name) {
 		lock_release(&sys_lock);
 		return 0;
 	}
-
-  	bool ret = dir_readdir(thread_current()->fds_dir[fd], name);
-
+	if (thread_current()->fds_dir[fd] != NULL)
+	  	bool ret = dir_readdir(thread_current()->fds_dir[fd], name);
+	else 
+		ret = 0;
 	lock_release(&sys_lock);
   	return (int) ret;
 }

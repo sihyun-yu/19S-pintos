@@ -115,7 +115,9 @@ static bool inode_allocate (struct inode_disk* inode_disk) {
     imsi = sector_cnt > DIRECT_BLOCK_CNT ? DIRECT_BLOCK_CNT : sector_cnt;
     for (i=0; i<imsi; i++) {
       if (inode_disk->direct_block[i] == 0) {
-        free_map_allocate (1, &inode_disk->direct_block[i]);
+        if (!free_map_allocate (1, &inode_disk->direct_block[i])) {
+          return false;
+        }
         cache_write (inode_disk->direct_block[i], for_init);
       }
     }
@@ -150,7 +152,9 @@ static bool inode_allocate (struct inode_disk* inode_disk) {
 
     /*First, allocate the base block*/
     if (inode_disk->double_indirect_block == 0) {
-      free_map_allocate(1, &inode_disk->double_indirect_block);
+      if (!free_map_allocate(1, &inode_disk->double_indirect_block)) {
+        return false;
+      }
       cache_write (inode_disk->double_indirect_block, for_init);
     }
 
@@ -170,7 +174,9 @@ static bool inode_allocate (struct inode_disk* inode_disk) {
       /* Allocate new sector at first level*/
       if (second_index == 0) {
         if (indirect_idisk_first->sector_block[first_index] == 0) {
-          free_map_allocate(1, &indirect_idisk_first->sector_block[first_index]); 
+          if (!free_map_allocate(1, &indirect_idisk_first->sector_block[first_index])) {
+            return false;
+          }
           cache_write(indirect_idisk_first->sector_block[first_index], for_init);
           //printf("first index : %d\n", indirect_idisk_first->sector_block[first_index]);
         }
@@ -178,7 +184,9 @@ static bool inode_allocate (struct inode_disk* inode_disk) {
 
       /* Allocate at second level */
       if(indirect_idisk_second->sector_block[second_index] == 0) {
-        free_map_allocate(1, &indirect_idisk_second->sector_block[second_index]);
+        if (!free_map_allocate(1, &indirect_idisk_second->sector_block[second_index])) {
+          return false;
+        }
         cache_write(indirect_idisk_second->sector_block[second_index], for_init);
       }
       //printf("second index : %d\n", indirect_idisk_second->sector_block[second_index]);
@@ -313,6 +321,10 @@ inode_create (disk_sector_t sector, off_t length, bool is_dir)
       if (inode_allocate(inode_disk) == true) {
         cache_write(sector, inode_disk);
         success = true;
+      }
+
+      else {
+        return false;
       }
 
       free (inode_disk);

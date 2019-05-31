@@ -212,7 +212,6 @@ dir_remove (struct dir *dir, const char *name)
 
   bool flag = true;
 
-  /*여기가 rm-parent (확인)*/
   while ((sizeof e) != inode_read_at (dir->inode, &e, sizeof e, offset)) {
     if (e.in_use) {
       flag = false;
@@ -299,7 +298,7 @@ struct dir* dir_from_path(const char *imsi_path){
   while (token != NULL) {
     struct inode *inode = NULL;
     if (strcmp(token, ".") == 0) continue;
-    else if (strcmp(token, "..")) {
+    else if (strcmp(token, "..") == 0) {
       inode = inode_open(inode_parent_sector(dir_get_inode(dir)));
       struct dir* next_dir = dir_open(inode);
       if (next_dir == NULL) {
