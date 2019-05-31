@@ -212,7 +212,7 @@ dir_remove (struct dir *dir, const char *name)
 
   bool flag = true;
 
-  /*여기가 rm-parent (확안)*/
+  /*여기가 rm-parent (확인)*/
   while ((sizeof e) != inode_read_at (dir->inode, &e, sizeof e, offset)) {
     if (e.in_use) {
       flag = false;
@@ -220,7 +220,7 @@ dir_remove (struct dir *dir, const char *name)
     offset += (sizeof e);
   }
 
-  if (flag == true) {
+  if (flag == false) {
     goto done;
   }
 
