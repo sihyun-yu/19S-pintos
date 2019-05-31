@@ -55,21 +55,38 @@ filesys_create (const char *name, off_t initial_size, bool is_dir)
   memset(path,0, strlen(name)+1);
   char* file_name = filename_from_path(name, path);
   struct dir *dir = dir_from_path (path);
-
+  bool success = false;
   if (file_name == NULL) {
     dir_close(dir);
     free(file_name);
     return false;
   }
+
+  if (is_dir == false) {
+    success = (dir != NULL
+                    && free_map_allocate (1, &inode_sector)
+                    && inode_create (inode_sector, initial_size, is_dir)
+                    && dir_add (dir, file_name, inode_sector));
+    if (!success && inode_sector != 0) 
+      free_map_release (inode_sector, 1);
+    dir_close (dir);
+    free(file_name);
+
+  }
   
-  bool success = (dir != NULL
-                  && free_map_allocate (1, &inode_sector)
-                  && inode_create (inode_sector, initial_size, is_dir)
-                  && dir_add (dir, file_name, inode_sector));
-  if (!success && inode_sector != 0) 
-    free_map_release (inode_sector, 1);
-  dir_close (dir);
-  free(file_name);
+  else 
+  {
+    struct inode *inode = NULL;
+    success = !dir_lookup(dir, file_name, &inode) 
+                    && free_map_allocate (1, &inode_sector)
+                    && dir_create(inode_sector, 16, inode_number(dir_get_inode(dir)))
+                    && dir_add (dir, file_name, inode_sector);
+      if (!success && inode_sector != 0) 
+        free_map_release (inode_sector, 1);
+      dir_close (dir);
+      free(file_name);
+
+  }
 
   return success;
 }
@@ -87,7 +104,7 @@ filesys_open (const char *name)
   struct inode *inode = NULL;
   char *file_name = filename_from_path(name, path);
   struct dir *dir = dir_from_path (path);
-  //if () printf("file name : %s", file_name);
+  //mif () printf("file name : %s", file_name);
   if (file_name == NULL) {
     dir_close(dir);
     free(file_name);
