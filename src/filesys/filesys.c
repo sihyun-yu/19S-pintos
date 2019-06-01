@@ -105,7 +105,11 @@ filesys_open (const char *name)
   char *file_name = filename_from_path(name, path);
   struct dir *dir = dir_from_path (path);
   //mif () printf("file name : %s", file_name);
-  if (file_name == NULL) {
+  if (file_name == NULL || strlen(file_name) == 0) {
+    if (strlen(path) == 1 && path[0] == '/') {
+     if (file_name != NULL) free(file_name);
+      return file_open (inode_open (ROOT_DIR_SECTOR));    
+    }
     dir_close(dir);
     free(file_name);
     return NULL;
@@ -133,7 +137,7 @@ filesys_remove (const char *name)
   struct dir *dir = dir_from_path (path);
   bool success = dir != NULL && dir_remove (dir, file_name);
   dir_close (dir); 
-
+  free(file_name);
   return success;
 }
 

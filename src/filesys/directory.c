@@ -285,6 +285,10 @@ struct dir* dir_from_path(const char *imsi_path){
   char *path = malloc(n + 1);
   memcpy (path, imsi_path, (n + 1));  
 
+  if(!strcmp(imsi_path, "/")){
+    dir = dir_open_root();
+    return dir;
+  }
   /*path 잘 들어갔는지 확인*/
   /*if (strlen(path) > 0){
     printf("path : %s\n", path);
@@ -375,9 +379,16 @@ char *filename_from_path(const char *imsi_path, char* path_wo_fn){
   if (path[0] == '/') {
     path_wo_fn[0] = '/';
     path_wo_fn++;
+    token = strtok_r(path+1, "/", &next_ptr);
   } 
 
-  token = strtok_r(path, "/", &next_ptr);
+  else {
+    token = strtok_r(path, "/", &next_ptr);
+  }
+
+  if (token == NULL) {
+    return NULL;
+  }
 
   if (token == NULL) {
     memcpy(file_name, imsi_path, n + 1);
