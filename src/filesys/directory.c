@@ -375,9 +375,16 @@ char *filename_from_path(const char *imsi_path, char* path_wo_fn){
   if (path[0] == '/') {
     path_wo_fn[0] = '/';
     path_wo_fn++;
+    token = strtok_r(path+1, "/", &next_ptr);
   } 
 
-  token = strtok_r(path, "/", &next_ptr);
+  else {
+    token = strtok_r(path, "/", &next_ptr);
+  }
+
+  if (token == NULL) {
+    return NULL;
+  }
 
   if (token == NULL) {
     memcpy(file_name, imsi_path, n + 1);

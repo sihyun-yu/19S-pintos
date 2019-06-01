@@ -203,6 +203,7 @@ syscall_handler (struct intr_frame *f)
 			int fd = (int) *((uint32_t *)(f->esp+4));
 			char *name = (char *) *((uint32_t *)(f->esp+4));
 			f->eax = (bool) sys_readdir(fd, name);
+			break;
 		}
 
 		case SYS_ISDIR:
@@ -218,6 +219,7 @@ syscall_handler (struct intr_frame *f)
 			check_address(f->esp+4);
 			int fd = (int) *((uint32_t *)(f->esp+4));
 			f->eax = sys_inumber(fd);
+			break;
 		}
 
 	}
@@ -295,7 +297,7 @@ int sys_create(const char *file, unsigned initial_size)
 }
 
 int sys_remove (const char *file) {
-
+	if (!strcmp(file, "/")) return 0;
 	//struct file *open_file = filesys_open(file);
 	/*remove_file_from_list (open_file);
 	if (find_filefd_from_file(open_file) != NULL)
@@ -313,6 +315,12 @@ int sys_open (const char *file) {
 	lock_release(&sys_lock);
 	
 	if (open_file == NULL) {
+		return -1;
+	}
+	if (file_get_inode(open_file) == NULL) {
+		return -1;
+	}
+	if (inode_is_removed(file_get_inode(open_file))) {
 		return -1;
 	}
 
