@@ -1,13 +1,13 @@
-Copying tests/filesys/extended/dir-mk-tree into /tmp/6AEYx3RvaN.dsk...
-Copying tests/filesys/extended/tar into /tmp/6AEYx3RvaN.dsk...
-Writing command line to /tmp/xQ9czn9Su2.dsk...
-qemu -hda /tmp/xQ9czn9Su2.dsk -hdb tmp.dsk -hdc /tmp/6AEYx3RvaN.dsk -hdd /tmp/0wEFNMVUD_.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/extended/dir-mk-tree into /tmp/ZGapAQsOQn.dsk...
+Copying tests/filesys/extended/tar into /tmp/ZGapAQsOQn.dsk...
+Writing command line to /tmp/vzf4qIqU9j.dsk...
+qemu -hda /tmp/vzf4qIqU9j.dsk -hdb tmp.dsk -hdc /tmp/ZGapAQsOQn.dsk -hdd /tmp/k0WqxpdVUy.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put dir-mk-tree put tar run dir-mk-tree
 Pintos booting with 4,096 kB RAM...
 373 pages available in kernel pool.
-373 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
-hd0:0: detected 153 sector (76 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+372 pages available in user pool.
+Calibrating timer...  107,110,400 loops/s.
+hd0:0: detected 161 sector (80 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 214 sector (107 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 hd1:1: detected 8,064 sector (3 MB) disk, model "QEMU HARDDISK", serial "QM00004"
@@ -23,10 +23,10 @@ Executing 'dir-mk-tree':
 (dir-mk-tree) end
 dir-mk-tree: exit(0)
 Execution of 'dir-mk-tree' complete.
-Timer: 242 ticks
-Thread: 30 idle ticks, 120 kernel ticks, 92 user ticks
+Timer: 245 ticks
+Thread: 30 idle ticks, 126 kernel ticks, 89 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 44 reads, 590 writes
+hd0:1: 52 reads, 691 writes
 hd1:0: 214 reads, 0 writes
 hd1:1: 0 reads, 0 writes
 Console: 1084 characters output

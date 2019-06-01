@@ -1,12 +1,12 @@
-Copying tests/userprog/close-bad-fd into /tmp/jFlCmHnPpf.dsk...
-Writing command line to /tmp/s1i8bsrvl6.dsk...
-qemu -hda /tmp/s1i8bsrvl6.dsk -hdb /tmp/Xt10UdBCaE.dsk -hdc /tmp/jFlCmHnPpf.dsk -hdd /tmp/lkHrSKJZE0.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/close-bad-fd into /tmp/v097oYSxeC.dsk...
+Writing command line to /tmp/ZO_ZFjLgDl.dsk...
+qemu -hda /tmp/ZO_ZFjLgDl.dsk -hdb /tmp/qpKQg5R09Z.dsk -hdc /tmp/v097oYSxeC.dsk -hdd /tmp/CJ8jFd6x2J.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put close-bad-fd run close-bad-fd
 Pintos booting with 4,096 kB RAM...
 373 pages available in kernel pool.
-373 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
-hd0:0: detected 153 sector (76 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+372 pages available in user pool.
+Calibrating timer...  111,206,400 loops/s.
+hd0:0: detected 161 sector (80 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 97 sector (48 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 hd1:1: detected 8,064 sector (3 MB) disk, model "QEMU HARDDISK", serial "QM00004"
@@ -17,13 +17,13 @@ Executing 'close-bad-fd':
 (close-bad-fd) begin
 close-bad-fd: exit(-1)
 Execution of 'close-bad-fd' complete.
-Timer: 99 ticks
-Thread: 30 idle ticks, 64 kernel ticks, 5 user ticks
+Timer: 103 ticks
+Thread: 30 idle ticks, 67 kernel ticks, 6 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 29 reads, 199 writes
 hd1:0: 97 reads, 0 writes
 hd1:1: 0 reads, 0 writes
-Console: 909 characters output
+Console: 910 characters output
 Keyboard: 0 keys pressed
 Exception: 6 page faults
 Powering off...

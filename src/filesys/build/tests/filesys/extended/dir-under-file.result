@@ -1,2 +1,1 @@
-FAIL
-run: mkdir "abc" (must return false): FAILED
+PASS

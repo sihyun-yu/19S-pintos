@@ -201,7 +201,7 @@ syscall_handler (struct intr_frame *f)
 			check_address(f->esp+4);
 			check_address(f->esp+8);
 			int fd = (int) *((uint32_t *)(f->esp+4));
-			char *name = (char *) *((uint32_t *)(f->esp+4));
+			char *name = (char *) *((uint32_t *)(f->esp+8));
 			f->eax = (bool) sys_readdir(fd, name);
 			break;
 		}
@@ -409,7 +409,11 @@ unsigned sys_tell (int fd) {
 void sys_close(int fd){
 	struct file *file_for_close = thread_current()->fds[fd];
 	thread_current()->fds[fd] = NULL;
-	if (thread_current()->fds_dir[fd] != NULL) dir_close(thread_current()->fds_dir[fd]);
+
+	if (thread_current()->fds_dir[fd] != NULL) {
+		dir_close(thread_current()->fds_dir[fd]);
+		thread_current()->fds_dir[fd] = NULL;
+	}
 	return file_close(file_for_close);
 }
 
@@ -556,30 +560,15 @@ int sys_mkdir (const char *dir) {
 }
 
 int sys_readdir (int fd, char *name) {
-	lock_acquire(&sys_lock);
+	//printf("readdir !\n");
 	struct file *file = thread_current()->fds[fd];
-	if (file == NULL) {
-		lock_release(&sys_lock);
-		return 0;
-	}
-	struct inode *inode = file_get_inode(file);
-	if (inode == NULL) {
-		lock_release(&sys_lock);
-		return 0;
-	}
+	struct dir *dir = thread_current()->fds_dir[fd];
 
-	if (inode_is_dir(inode) == false) {
-		lock_release(&sys_lock);
+	bool ret = dir_readdir(dir, name);
+	if(!ret){
 		return 0;
 	}
-
-	if (thread_current()->fds_dir[fd] == NULL) {
-		lock_release(&sys_lock);
-		return 0;
-	}
-	bool ret = dir_readdir(thread_current()->fds_dir[fd], name);
-	lock_release(&sys_lock);
-  	return (int) ret;
+  	return 1;
 }
 
 int sys_isdir (int fd) {

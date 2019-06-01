@@ -1,13 +1,13 @@
-Copying tests/userprog/open-twice into /tmp/5pjNMfN8b3.dsk...
-Copying ../../tests/userprog/sample.txt into /tmp/5pjNMfN8b3.dsk...
-Writing command line to /tmp/TBj_TWZKeJ.dsk...
-qemu -hda /tmp/TBj_TWZKeJ.dsk -hdb /tmp/_BvkJz8MYe.dsk -hdc /tmp/5pjNMfN8b3.dsk -hdd /tmp/VlA0SCNLXL.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/open-twice into /tmp/v6jdXRU3zW.dsk...
+Copying ../../tests/userprog/sample.txt into /tmp/v6jdXRU3zW.dsk...
+Writing command line to /tmp/7lhroe_Gvd.dsk...
+qemu -hda /tmp/7lhroe_Gvd.dsk -hdb /tmp/4LJCyoEZHt.dsk -hdc /tmp/v6jdXRU3zW.dsk -hdd /tmp/mIw_tI4rwE.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put open-twice put sample.txt run open-twice
 Pintos booting with 4,096 kB RAM...
 373 pages available in kernel pool.
-373 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
-hd0:0: detected 153 sector (76 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+372 pages available in user pool.
+Calibrating timer...  78,540,800 loops/s.
+hd0:0: detected 161 sector (80 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 99 sector (49 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 hd1:1: detected 8,064 sector (3 MB) disk, model "QEMU HARDDISK", serial "QM00004"
@@ -28,7 +28,7 @@ hd0:0: 0 reads, 0 writes
 hd0:1: 31 reads, 203 writes
 hd1:0: 99 reads, 0 writes
 hd1:1: 0 reads, 0 writes
-Console: 1044 characters output
+Console: 1043 characters output
 Keyboard: 0 keys pressed
 Exception: 5 page faults
 Powering off...

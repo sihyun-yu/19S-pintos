@@ -1,12 +1,12 @@
-Copying tests/userprog/create-long into /tmp/KEG9rjlWvQ.dsk...
-Writing command line to /tmp/uy41pXUIh_.dsk...
-qemu -hda /tmp/uy41pXUIh_.dsk -hdb /tmp/Ue8yH7CoXK.dsk -hdc /tmp/KEG9rjlWvQ.dsk -hdd /tmp/tF_X0azjP7.dsk -m 4 -net none -nographic -monitor null
+Copying tests/userprog/create-long into /tmp/sDVDKjP6OB.dsk...
+Writing command line to /tmp/OiVmZWMuSG.dsk...
+qemu -hda /tmp/OiVmZWMuSG.dsk -hdb /tmp/rNoS0IA2p8.dsk -hdc /tmp/sDVDKjP6OB.dsk -hdd /tmp/O5HU2SrP6j.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put create-long run create-long
 Pintos booting with 4,096 kB RAM...
 373 pages available in kernel pool.
-373 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
-hd0:0: detected 153 sector (76 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+372 pages available in user pool.
+Calibrating timer...  107,929,600 loops/s.
+hd0:0: detected 161 sector (80 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 97 sector (48 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 hd1:1: detected 8,064 sector (3 MB) disk, model "QEMU HARDDISK", serial "QM00004"
@@ -19,13 +19,13 @@ Executing 'create-long':
 (create-long) end
 create-long: exit(0)
 Execution of 'create-long' complete.
-Timer: 97 ticks
-Thread: 30 idle ticks, 61 kernel ticks, 7 user ticks
+Timer: 104 ticks
+Thread: 30 idle ticks, 67 kernel ticks, 7 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 30 reads, 201 writes
+hd0:1: 29 reads, 199 writes
 hd1:0: 97 reads, 0 writes
 hd1:1: 0 reads, 0 writes
-Console: 951 characters output
+Console: 952 characters output
 Keyboard: 0 keys pressed
 Exception: 5 page faults
 Powering off...

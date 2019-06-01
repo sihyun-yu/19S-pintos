@@ -1,28 +1,27 @@
-Writing command line to /tmp/faPxh6wvI2.dsk...
-qemu -hda /tmp/faPxh6wvI2.dsk -hdb tmp.dsk -hdc /tmp/F6jwEvTZzl.dsk -hdd /tmp/Vzo5Ekmo0N.dsk -m 4 -net none -nographic -monitor null
+Writing command line to /tmp/X0EpPhp4P_.dsk...
+qemu -hda /tmp/X0EpPhp4P_.dsk -hdb tmp.dsk -hdc /tmp/blEhKqFN8w.dsk -hdd /tmp/CnTzOFEMVb.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q run 'tar fs.tar /' get fs.tar
 Pintos booting with 4,096 kB RAM...
 373 pages available in kernel pool.
-373 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
-hd0:0: detected 153 sector (76 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+372 pages available in user pool.
+Calibrating timer...  107,929,600 loops/s.
+hd0:0: detected 161 sector (80 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 2,048 sector (1024 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 hd1:1: detected 8,064 sector (3 MB) disk, model "QEMU HARDDISK", serial "QM00004"
 Boot complete.
 Executing 'tar fs.tar /':
-/: open failed
-tar: exit(1)
+tar: exit(0)
 Execution of 'tar fs.tar /' complete.
 Getting 'fs.tar' from the file system...
-Timer: 55 ticks
-Thread: 30 idle ticks, 24 kernel ticks, 1 user ticks
+Timer: 179 ticks
+Thread: 30 idle ticks, 92 kernel ticks, 57 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 29 reads, 5 writes
-hd1:0: 0 reads, 3 writes
+hd0:1: 480 reads, 242 writes
+hd1:0: 0 reads, 220 writes
 hd1:1: 0 reads, 0 writes
-Console: 851 characters output
+Console: 843 characters output
 Keyboard: 0 keys pressed
 Exception: 4 page faults
 Powering off...
-Copying tests/filesys/extended/grow-tell.tar out of /tmp/F6jwEvTZzl.dsk...
+Copying tests/filesys/extended/grow-tell.tar out of /tmp/blEhKqFN8w.dsk...

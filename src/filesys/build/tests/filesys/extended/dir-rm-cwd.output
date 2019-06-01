@@ -1,13 +1,13 @@
-Copying tests/filesys/extended/dir-rm-cwd into /tmp/UxFoctru81.dsk...
-Copying tests/filesys/extended/tar into /tmp/UxFoctru81.dsk...
-Writing command line to /tmp/SZcZtZRxkL.dsk...
-qemu -hda /tmp/SZcZtZRxkL.dsk -hdb tmp.dsk -hdc /tmp/UxFoctru81.dsk -hdd /tmp/0uriIoLXwD.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/extended/dir-rm-cwd into /tmp/BYbjzGKJ45.dsk...
+Copying tests/filesys/extended/tar into /tmp/BYbjzGKJ45.dsk...
+Writing command line to /tmp/A08MrtC5Kb.dsk...
+qemu -hda /tmp/A08MrtC5Kb.dsk -hdb tmp.dsk -hdc /tmp/BYbjzGKJ45.dsk -hdd /tmp/y3rpBJ28KF.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put dir-rm-cwd put tar run dir-rm-cwd
 Pintos booting with 4,096 kB RAM...
 373 pages available in kernel pool.
-373 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
-hd0:0: detected 153 sector (76 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+372 pages available in user pool.
+Calibrating timer...  111,206,400 loops/s.
+hd0:0: detected 161 sector (80 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 214 sector (107 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 hd1:1: detected 8,064 sector (3 MB) disk, model "QEMU HARDDISK", serial "QM00004"
@@ -18,16 +18,28 @@ Putting 'tar' into the file system...
 Executing 'dir-rm-cwd':
 (dir-rm-cwd) begin
 (dir-rm-cwd) open "/"
-(dir-rm-cwd) open "/": FAILED
-dir-rm-cwd: exit(1)
+(dir-rm-cwd) mkdir "a"
+(dir-rm-cwd) open "/a"
+(dir-rm-cwd) verify "/a" is empty
+(dir-rm-cwd) "/" and "/a" must have different inumbers
+(dir-rm-cwd) chdir "a"
+(dir-rm-cwd) try to remove "/a"
+(dir-rm-cwd) remove successful
+(dir-rm-cwd) open "/a" (must fail)
+(dir-rm-cwd) open "." (must fail)
+(dir-rm-cwd) open ".." (must fail)
+(dir-rm-cwd) create "x" (must fail)
+(dir-rm-cwd) verify "/a" is empty
+(dir-rm-cwd) end
+dir-rm-cwd: exit(0)
 Execution of 'dir-rm-cwd' complete.
-Timer: 155 ticks
-Thread: 30 idle ticks, 117 kernel ticks, 8 user ticks
+Timer: 156 ticks
+Thread: 30 idle ticks, 116 kernel ticks, 10 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 37 reads, 435 writes
+hd0:1: 39 reads, 439 writes
 hd1:0: 214 reads, 0 writes
 hd1:1: 0 reads, 0 writes
-Console: 997 characters output
+Console: 1380 characters output
 Keyboard: 0 keys pressed
 Exception: 4 page faults
 Powering off...

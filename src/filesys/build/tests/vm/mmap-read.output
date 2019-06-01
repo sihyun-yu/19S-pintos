@@ -1,13 +1,13 @@
-Copying tests/vm/mmap-read into /tmp/Z4F12Q4zya.dsk...
-Copying ../../tests/vm/sample.txt into /tmp/Z4F12Q4zya.dsk...
-Writing command line to /tmp/3CVxtMO3dv.dsk...
-qemu -hda /tmp/3CVxtMO3dv.dsk -hdb /tmp/V1OYI4Bo9G.dsk -hdc /tmp/Z4F12Q4zya.dsk -hdd /tmp/DFMEcUE0Kv.dsk -m 4 -net none -nographic -monitor null
+Copying tests/vm/mmap-read into /tmp/OSwSZfjmCO.dsk...
+Copying ../../tests/vm/sample.txt into /tmp/OSwSZfjmCO.dsk...
+Writing command line to /tmp/jKaU0t2h5y.dsk...
+qemu -hda /tmp/jKaU0t2h5y.dsk -hdb /tmp/LT_DkEL8If.dsk -hdc /tmp/OSwSZfjmCO.dsk -hdd /tmp/aSM8qZpbxe.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put mmap-read put sample.txt run mmap-read
 Pintos booting with 4,096 kB RAM...
 373 pages available in kernel pool.
-373 pages available in user pool.
-Calibrating timer...  78,540,800 loops/s.
-hd0:0: detected 153 sector (76 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+372 pages available in user pool.
+Calibrating timer...  111,206,400 loops/s.
+hd0:0: detected 161 sector (80 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 103 sector (51 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 hd1:1: detected 8,064 sector (3 MB) disk, model "QEMU HARDDISK", serial "QM00004"
@@ -23,12 +23,12 @@ Executing 'mmap-read':
 mmap-read: exit(0)
 Execution of 'mmap-read' complete.
 Timer: 99 ticks
-Thread: 30 idle ticks, 63 kernel ticks, 6 user ticks
+Thread: 30 idle ticks, 64 kernel ticks, 5 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 32 reads, 210 writes
 hd1:0: 103 reads, 0 writes
 hd1:1: 0 reads, 0 writes
-Console: 1024 characters output
+Console: 1025 characters output
 Keyboard: 0 keys pressed
 Exception: 6 page faults
 Powering off...

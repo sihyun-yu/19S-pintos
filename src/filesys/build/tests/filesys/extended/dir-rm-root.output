@@ -1,13 +1,13 @@
-Copying tests/filesys/extended/dir-rm-root into /tmp/wuRvrYgX9s.dsk...
-Copying tests/filesys/extended/tar into /tmp/wuRvrYgX9s.dsk...
-Writing command line to /tmp/tErze46v2K.dsk...
-qemu -hda /tmp/tErze46v2K.dsk -hdb tmp.dsk -hdc /tmp/wuRvrYgX9s.dsk -hdd /tmp/Yjlnays96j.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/extended/dir-rm-root into /tmp/qoB5LVQ_ru.dsk...
+Copying tests/filesys/extended/tar into /tmp/qoB5LVQ_ru.dsk...
+Writing command line to /tmp/DJUC5H_P4b.dsk...
+qemu -hda /tmp/DJUC5H_P4b.dsk -hdb tmp.dsk -hdc /tmp/qoB5LVQ_ru.dsk -hdd /tmp/tZqw5e4N3c.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put dir-rm-root put tar run dir-rm-root
 Pintos booting with 4,096 kB RAM...
 373 pages available in kernel pool.
-373 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
-hd0:0: detected 153 sector (76 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+372 pages available in user pool.
+Calibrating timer...  111,206,400 loops/s.
+hd0:0: detected 161 sector (80 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 209 sector (104 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 hd1:1: detected 8,064 sector (3 MB) disk, model "QEMU HARDDISK", serial "QM00004"
@@ -22,8 +22,8 @@ Executing 'dir-rm-root':
 (dir-rm-root) end
 dir-rm-root: exit(0)
 Execution of 'dir-rm-root' complete.
-Timer: 149 ticks
-Thread: 30 idle ticks, 112 kernel ticks, 7 user ticks
+Timer: 151 ticks
+Thread: 30 idle ticks, 114 kernel ticks, 7 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 36 reads, 428 writes
 hd1:0: 209 reads, 0 writes

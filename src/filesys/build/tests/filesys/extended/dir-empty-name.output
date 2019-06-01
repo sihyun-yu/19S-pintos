@@ -1,13 +1,13 @@
-Copying tests/filesys/extended/dir-empty-name into /tmp/hQojDGBFmI.dsk...
-Copying tests/filesys/extended/tar into /tmp/hQojDGBFmI.dsk...
-Writing command line to /tmp/v5IvoSp1Pb.dsk...
-qemu -hda /tmp/v5IvoSp1Pb.dsk -hdb tmp.dsk -hdc /tmp/hQojDGBFmI.dsk -hdd /tmp/M0YP3GumIu.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/extended/dir-empty-name into /tmp/ki9UHBpiIp.dsk...
+Copying tests/filesys/extended/tar into /tmp/ki9UHBpiIp.dsk...
+Writing command line to /tmp/51zl27FfgY.dsk...
+qemu -hda /tmp/51zl27FfgY.dsk -hdb tmp.dsk -hdc /tmp/ki9UHBpiIp.dsk -hdd /tmp/aiPDcIKcX7.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put dir-empty-name put tar run dir-empty-name
 Pintos booting with 4,096 kB RAM...
 373 pages available in kernel pool.
-373 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
-hd0:0: detected 153 sector (76 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+372 pages available in user pool.
+Calibrating timer...  78,540,800 loops/s.
+hd0:0: detected 161 sector (80 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 209 sector (104 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 hd1:1: detected 8,064 sector (3 MB) disk, model "QEMU HARDDISK", serial "QM00004"
@@ -18,16 +18,16 @@ Putting 'tar' into the file system...
 Executing 'dir-empty-name':
 (dir-empty-name) begin
 (dir-empty-name) mkdir "" (must return false)
-(dir-empty-name) mkdir "" (must return false): FAILED
-dir-empty-name: exit(1)
+(dir-empty-name) end
+dir-empty-name: exit(0)
 Execution of 'dir-empty-name' complete.
 Timer: 149 ticks
-Thread: 30 idle ticks, 112 kernel ticks, 7 user ticks
+Thread: 30 idle ticks, 113 kernel ticks, 6 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 35 reads, 424 writes
 hd1:0: 209 reads, 0 writes
 hd1:1: 0 reads, 0 writes
-Console: 1073 characters output
+Console: 1039 characters output
 Keyboard: 0 keys pressed
 Exception: 5 page faults
 Powering off...

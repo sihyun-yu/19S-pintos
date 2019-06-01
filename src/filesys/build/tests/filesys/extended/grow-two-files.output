@@ -1,13 +1,13 @@
-Copying tests/filesys/extended/grow-two-files into /tmp/BelTkp1bks.dsk...
-Copying tests/filesys/extended/tar into /tmp/BelTkp1bks.dsk...
-Writing command line to /tmp/JMm9w8NC3a.dsk...
-qemu -hda /tmp/JMm9w8NC3a.dsk -hdb tmp.dsk -hdc /tmp/BelTkp1bks.dsk -hdd /tmp/ocLCNa6KEo.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/extended/grow-two-files into /tmp/3ESkoyibKW.dsk...
+Copying tests/filesys/extended/tar into /tmp/3ESkoyibKW.dsk...
+Writing command line to /tmp/8__0pUh_HN.dsk...
+qemu -hda /tmp/8__0pUh_HN.dsk -hdb tmp.dsk -hdc /tmp/3ESkoyibKW.dsk -hdd /tmp/Ivr5VgLYIU.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put grow-two-files put tar run grow-two-files
 Pintos booting with 4,096 kB RAM...
 373 pages available in kernel pool.
-373 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
-hd0:0: detected 153 sector (76 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+372 pages available in user pool.
+Calibrating timer...  107,929,600 loops/s.
+hd0:0: detected 161 sector (80 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 212 sector (106 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 hd1:1: detected 8,064 sector (3 MB) disk, model "QEMU HARDDISK", serial "QM00004"
@@ -33,8 +33,8 @@ Executing 'grow-two-files':
 (grow-two-files) end
 grow-two-files: exit(0)
 Execution of 'grow-two-files' complete.
-Timer: 160 ticks
-Thread: 30 idle ticks, 113 kernel ticks, 17 user ticks
+Timer: 167 ticks
+Thread: 30 idle ticks, 121 kernel ticks, 16 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 38 reads, 467 writes
 hd1:0: 212 reads, 0 writes
