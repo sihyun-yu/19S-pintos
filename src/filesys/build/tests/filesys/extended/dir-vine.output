@@ -1,13 +1,13 @@
-Copying tests/filesys/extended/dir-vine into /tmp/Gn8QxPZi2W.dsk...
-Copying tests/filesys/extended/tar into /tmp/Gn8QxPZi2W.dsk...
-Writing command line to /tmp/k_T55kyPSA.dsk...
-qemu -hda /tmp/k_T55kyPSA.dsk -hdb tmp.dsk -hdc /tmp/Gn8QxPZi2W.dsk -hdd /tmp/v9I3WypLJd.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/extended/dir-vine into /tmp/Avz3VLkc3Z.dsk...
+Copying tests/filesys/extended/tar into /tmp/Avz3VLkc3Z.dsk...
+Writing command line to /tmp/Vf3XZ9dmkm.dsk...
+qemu -hda /tmp/Vf3XZ9dmkm.dsk -hdb tmp.dsk -hdc /tmp/Avz3VLkc3Z.dsk -hdd /tmp/lqAkQnUzVY.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put dir-vine put tar run dir-vine
 Pintos booting with 4,096 kB RAM...
 373 pages available in kernel pool.
-373 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
-hd0:0: detected 153 sector (76 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+372 pages available in user pool.
+Calibrating timer...  111,206,400 loops/s.
+hd0:0: detected 161 sector (80 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 213 sector (106 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 hd1:1: detected 8,064 sector (3 MB) disk, model "QEMU HARDDISK", serial "QM00004"
@@ -18,16 +18,17 @@ Putting 'tar' into the file system...
 Executing 'dir-vine':
 (dir-vine) begin
 (dir-vine) creating many levels of files and directories...
-(dir-vine) open ".": FAILED
-dir-vine: exit(1)
+(dir-vine) removing all but top 10 levels of files and directories...
+(dir-vine) end
+dir-vine: exit(0)
 Execution of 'dir-vine' complete.
-Timer: 152 ticks
-Thread: 30 idle ticks, 115 kernel ticks, 7 user ticks
+Timer: 1858 ticks
+Thread: 30 idle ticks, 115 kernel ticks, 1713 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 40 reads, 437 writes
+hd0:1: 2923 reads, 5276 writes
 hd1:0: 213 reads, 0 writes
 hd1:1: 0 reads, 0 writes
-Console: 1019 characters output
+Console: 1083 characters output
 Keyboard: 0 keys pressed
 Exception: 5 page faults
 Powering off...

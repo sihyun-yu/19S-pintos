@@ -1,13 +1,13 @@
-Copying tests/vm/page-merge-stk into /tmp/LBG9AgkaPR.dsk...
-Copying tests/vm/child-qsort into /tmp/LBG9AgkaPR.dsk...
-Writing command line to /tmp/eqKu0EpnrI.dsk...
-qemu -hda /tmp/eqKu0EpnrI.dsk -hdb /tmp/fFL4nyhBKA.dsk -hdc /tmp/LBG9AgkaPR.dsk -hdd /tmp/q7bury5KAV.dsk -m 4 -net none -nographic -monitor null
+Copying tests/vm/page-merge-stk into /tmp/IQZ750lf59.dsk...
+Copying tests/vm/child-qsort into /tmp/IQZ750lf59.dsk...
+Writing command line to /tmp/m5mlLgyI5J.dsk...
+qemu -hda /tmp/m5mlLgyI5J.dsk -hdb /tmp/RXoadYfUbI.dsk -hdc /tmp/IQZ750lf59.dsk -hdd /tmp/MxbXVVrzz_.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put page-merge-stk put child-qsort run page-merge-stk
 Pintos booting with 4,096 kB RAM...
 373 pages available in kernel pool.
-373 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
-hd0:0: detected 153 sector (76 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+372 pages available in user pool.
+Calibrating timer...  106,291,200 loops/s.
+hd0:0: detected 161 sector (80 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 211 sector (105 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 hd1:1: detected 8,064 sector (3 MB) disk, model "QEMU HARDDISK", serial "QM00004"
@@ -28,8 +28,8 @@ child-qsort: exit(72)
 (page-merge-stk) sort chunk 4
 child-qsort: exit(72)
 (page-merge-stk) sort chunk 5
-child-qsort: exit(72)
 (page-merge-stk) sort chunk 6
+child-qsort: exit(72)
 child-qsort: exit(72)
 (page-merge-stk) sort chunk 7
 child-qsort: exit(72)
@@ -48,12 +48,12 @@ child-qsort: exit(72)
 (page-merge-stk) end
 page-merge-stk: exit(0)
 Execution of 'page-merge-stk' complete.
-Timer: 1540 ticks
-Thread: 30 idle ticks, 531 kernel ticks, 979 user ticks
+Timer: 1544 ticks
+Thread: 30 idle ticks, 547 kernel ticks, 968 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 348 reads, 3029 writes
+hd0:1: 345 reads, 3029 writes
 hd1:0: 211 reads, 0 writes
-hd1:1: 432 reads, 1584 writes
+hd1:1: 432 reads, 1592 writes
 Console: 1821 characters output
 Keyboard: 0 keys pressed
 Exception: 858 page faults

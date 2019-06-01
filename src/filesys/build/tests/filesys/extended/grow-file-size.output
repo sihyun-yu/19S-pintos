@@ -1,13 +1,13 @@
-Copying tests/filesys/extended/grow-file-size into /tmp/TagOmq89JE.dsk...
-Copying tests/filesys/extended/tar into /tmp/TagOmq89JE.dsk...
-Writing command line to /tmp/938Pe0Bos6.dsk...
-qemu -hda /tmp/938Pe0Bos6.dsk -hdb tmp.dsk -hdc /tmp/TagOmq89JE.dsk -hdd /tmp/oNGqxjs0LN.dsk -m 4 -net none -nographic -monitor null
+Copying tests/filesys/extended/grow-file-size into /tmp/yQwf_mlYPD.dsk...
+Copying tests/filesys/extended/tar into /tmp/yQwf_mlYPD.dsk...
+Writing command line to /tmp/hyLlaRTOCF.dsk...
+qemu -hda /tmp/hyLlaRTOCF.dsk -hdb tmp.dsk -hdc /tmp/yQwf_mlYPD.dsk -hdd /tmp/Yn7xhMSDAu.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put grow-file-size put tar run grow-file-size
 Pintos booting with 4,096 kB RAM...
 373 pages available in kernel pool.
-373 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
-hd0:0: detected 153 sector (76 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+372 pages available in user pool.
+Calibrating timer...  106,291,200 loops/s.
+hd0:0: detected 161 sector (80 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 211 sector (105 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 hd1:1: detected 8,064 sector (3 MB) disk, model "QEMU HARDDISK", serial "QM00004"
@@ -27,13 +27,13 @@ Executing 'grow-file-size':
 (grow-file-size) end
 grow-file-size: exit(0)
 Execution of 'grow-file-size' complete.
-Timer: 153 ticks
-Thread: 30 idle ticks, 113 kernel ticks, 10 user ticks
+Timer: 159 ticks
+Thread: 30 idle ticks, 120 kernel ticks, 9 user ticks
 hd0:0: 0 reads, 0 writes
 hd0:1: 36 reads, 436 writes
 hd1:0: 211 reads, 0 writes
 hd1:1: 0 reads, 0 writes
-Console: 1266 characters output
+Console: 1265 characters output
 Keyboard: 0 keys pressed
 Exception: 5 page faults
 Powering off...

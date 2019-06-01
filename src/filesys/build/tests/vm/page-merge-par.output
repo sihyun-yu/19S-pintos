@@ -1,13 +1,13 @@
-Copying tests/vm/page-merge-par into /tmp/P4xraeMRLC.dsk...
-Copying tests/vm/child-sort into /tmp/P4xraeMRLC.dsk...
-Writing command line to /tmp/e8nfMxFyOJ.dsk...
-qemu -hda /tmp/e8nfMxFyOJ.dsk -hdb /tmp/2CBHSr5d9S.dsk -hdc /tmp/P4xraeMRLC.dsk -hdd /tmp/qnUIbQnn7r.dsk -m 4 -net none -nographic -monitor null
+Copying tests/vm/page-merge-par into /tmp/vhbu7Ia3yB.dsk...
+Copying tests/vm/child-sort into /tmp/vhbu7Ia3yB.dsk...
+Writing command line to /tmp/faiEuDNwvC.dsk...
+qemu -hda /tmp/faiEuDNwvC.dsk -hdb /tmp/6ar3andOP7.dsk -hdc /tmp/vhbu7Ia3yB.dsk -hdd /tmp/SxgdEa4CuO.dsk -m 4 -net none -nographic -monitor null
 Kernel command line: -q -f put page-merge-par put child-sort run page-merge-par
 Pintos booting with 4,096 kB RAM...
 373 pages available in kernel pool.
-373 pages available in user pool.
-Calibrating timer...  104,755,200 loops/s.
-hd0:0: detected 153 sector (76 kB) disk, model "QEMU HARDDISK", serial "QM00001"
+372 pages available in user pool.
+Calibrating timer...  111,206,400 loops/s.
+hd0:0: detected 161 sector (80 kB) disk, model "QEMU HARDDISK", serial "QM00001"
 hd0:1: detected 4,032 sector (1 MB) disk, model "QEMU HARDDISK", serial "QM00002"
 hd1:0: detected 206 sector (103 kB) disk, model "QEMU HARDDISK", serial "QM00003"
 hd1:1: detected 8,064 sector (3 MB) disk, model "QEMU HARDDISK", serial "QM00004"
@@ -48,13 +48,13 @@ child-sort: exit(123)
 (page-merge-par) end
 page-merge-par: exit(0)
 Execution of 'page-merge-par' complete.
-Timer: 1495 ticks
-Thread: 30 idle ticks, 524 kernel ticks, 941 user ticks
+Timer: 1634 ticks
+Thread: 30 idle ticks, 529 kernel ticks, 1075 user ticks
 hd0:0: 0 reads, 0 writes
-hd0:1: 382 reads, 3019 writes
+hd0:1: 343 reads, 3221 writes
 hd1:0: 206 reads, 0 writes
-hd1:1: 432 reads, 1584 writes
-Console: 1819 characters output
+hd1:1: 432 reads, 1592 writes
+Console: 1820 characters output
 Keyboard: 0 keys pressed
 Exception: 858 page faults
 Powering off...
