@@ -285,6 +285,10 @@ struct dir* dir_from_path(const char *imsi_path){
   char *path = malloc(n + 1);
   memcpy (path, imsi_path, (n + 1));  
 
+  if(!strcmp(imsi_path, "/")){
+    dir = dir_open_root();
+    return dir;
+  }
   /*path 잘 들어갔는지 확인*/
   /*if (strlen(path) > 0){
     printf("path : %s\n", path);
